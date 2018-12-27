@@ -1,0 +1,14 @@
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\bin\Debug\netcoreapp2.1\backend-dubbing-project.deps.json
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\bin\Debug\netcoreapp2.1\backend-dubbing-project.runtimeconfig.json
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\bin\Debug\netcoreapp2.1\backend-dubbing-project.runtimeconfig.dev.json
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\bin\Debug\netcoreapp2.1\backend-dubbing-project.dll
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\bin\Debug\netcoreapp2.1\backend-dubbing-project.pdb
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\obj\Debug\netcoreapp2.1\backend-dubbing-project.csprojAssemblyReference.cache
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\obj\Debug\netcoreapp2.1\backend-dubbing-project.csproj.CoreCompileInputs.cache
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\obj\Debug\netcoreapp2.1\backend-dubbing-project.RazorAssemblyInfo.cache
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\obj\Debug\netcoreapp2.1\backend-dubbing-project.RazorAssemblyInfo.cs
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\obj\Debug\netcoreapp2.1\backend-dubbing-project.AssemblyInfoInputs.cache
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\obj\Debug\netcoreapp2.1\backend-dubbing-project.AssemblyInfo.cs
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\obj\Debug\netcoreapp2.1\backend-dubbing-project.RazorTargetAssemblyInfo.cache
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\obj\Debug\netcoreapp2.1\backend-dubbing-project.dll
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project\obj\Debug\netcoreapp2.1\backend-dubbing-project.pdb

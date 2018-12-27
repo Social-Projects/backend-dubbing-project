@@ -1,0 +1,15 @@
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\bin\Debug\netcoreapp2.1\NUnit3.TestAdapter.dll
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\bin\Debug\netcoreapp2.1\NUnit3.TestAdapter.pdb
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\bin\Debug\netcoreapp2.1\nunit.engine.netstandard.dll
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\bin\Debug\netcoreapp2.1\Mono.Cecil.dll
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\bin\Debug\netcoreapp2.1\backend-dubbing-project-tests.deps.json
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\bin\Debug\netcoreapp2.1\backend-dubbing-project-tests.runtimeconfig.json
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\bin\Debug\netcoreapp2.1\backend-dubbing-project-tests.runtimeconfig.dev.json
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\bin\Debug\netcoreapp2.1\backend-dubbing-project-tests.dll
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\bin\Debug\netcoreapp2.1\backend-dubbing-project-tests.pdb
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\obj\Debug\netcoreapp2.1\backend-dubbing-project-tests.csprojAssemblyReference.cache
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\obj\Debug\netcoreapp2.1\backend-dubbing-project-tests.csproj.CoreCompileInputs.cache
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\obj\Debug\netcoreapp2.1\backend-dubbing-project-tests.AssemblyInfoInputs.cache
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\obj\Debug\netcoreapp2.1\backend-dubbing-project-tests.AssemblyInfo.cs
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\obj\Debug\netcoreapp2.1\backend-dubbing-project-tests.dll
+C:\Users\misha\Repository\backend-dubbing-project\backend-dubbing-project-tests\obj\Debug\netcoreapp2.1\backend-dubbing-project-tests.pdb
