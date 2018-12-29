@@ -10,7 +10,9 @@
     <e p="C:\Users\misha\.Rider2018.3\system\extResources" t="IncludeRecursive" />
     <e p="C:\Users\misha\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_backend-dubbing-project.-92335853.00" t="ExcludeRecursive" />
     <e p="C:\Users\misha\Repository\backend-dubbing-project" t="IncludeFlat">
+      <e p=".git\info\exclude" t="IncludeRecursive" />
       <e p="backend-dubbing-project" t="IncludeRecursive">
+        <e p=".gitignore" t="Include" />
         <e p="appsettings.Development.json" t="Include" />
         <e p="appsettings.json" t="Include" />
         <e p="backend-dubbing-project.csproj" t="IncludeRecursive" />
