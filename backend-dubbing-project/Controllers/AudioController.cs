@@ -16,17 +16,17 @@ namespace backend_dubbing_project.Controllers
     [Produces("application/json")]
     [EnableCors("AllowAllOrigins")]
     [ApiController]
-    public class AudioUploadController : Controller
+    public class AudioController : Controller
     {
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public AudioUploadController(IHostingEnvironment hostingEnvironment)
+        public AudioController(IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
         }
 
         [HttpPost]
-        [Route("api/upload")]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> Upload(Translation model)
         {
             if (model == null)
