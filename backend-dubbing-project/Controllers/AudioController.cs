@@ -27,7 +27,7 @@ namespace backend_dubbing_project.Controllers
 
         [HttpPost]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> Upload(Translation model)
+        public async Task<IActionResult> Upload(Audio model)
         {
             if (model == null)
                 throw new ArgumentNullException();
