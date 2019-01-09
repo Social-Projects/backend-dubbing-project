@@ -11,8 +11,7 @@ using Microsoft.AspNetCore.Cors;
 
 namespace backend_dubbing_project.Controllers
 {
-
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [Produces("application/json")]
     [EnableCors("AllowAllOrigins")]
     [ApiController]
@@ -30,10 +29,7 @@ namespace backend_dubbing_project.Controllers
         public async Task<IActionResult> Upload(Audio model)
         {
             if (model == null)
-                throw new ArgumentNullException();
-
-            if (model.AudioFile == null || model.AudioFile.Length <= 0)
-                throw new Exception("Audio file is empty");
+                return BadRequest();
 
             // Path to '~/wwwroot'
             string path = _hostingEnvironment.WebRootPath;
