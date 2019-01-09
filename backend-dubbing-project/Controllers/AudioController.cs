@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using backend_dubbing_project.Models;
+using Dubbing.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Cors;
 
-namespace backend_dubbing_project.Controllers
+namespace Dubbing.Controllers
 {
-    [Route("api/[controller]/[action]")]
     [Produces("application/json")]
     [EnableCors("AllowAllOrigins")]
     [ApiController]

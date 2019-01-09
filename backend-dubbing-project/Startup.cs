@@ -72,7 +72,10 @@ namespace backend_dubbing_project
 
             app.UseCors("AllowAllOrigins");
 
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute("api","api/{controller}/{action}/{id?}");
+            });
         }
     }
 }
