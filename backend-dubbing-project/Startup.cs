@@ -16,6 +16,7 @@ namespace backend_dubbing_project
 {
     public class Startup
     {
+        private readonly string corsName = "AllowAllOrigins";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -28,7 +29,7 @@ namespace backend_dubbing_project
         {
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowAllOrigins",
+                options.AddPolicy(corsName,
                     builder =>
                     {
                         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
@@ -70,7 +71,7 @@ namespace backend_dubbing_project
             
             app.UseHttpsRedirection();
 
-            app.UseCors();
+            app.UseCors(corsName);
 
             app.UseMvc(routes =>
             {
