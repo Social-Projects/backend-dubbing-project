@@ -20,6 +20,9 @@ namespace Dubbing.Controllers
         [HttpPost]
         public async Task<IActionResult> Upload(Audio model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
             // Path to '~/wwwroot'
             string path = _hostingEnvironment.WebRootPath;
 
