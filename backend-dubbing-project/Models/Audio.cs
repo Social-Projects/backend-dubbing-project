@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 
 namespace Dubbing.Models
@@ -7,8 +8,10 @@ namespace Dubbing.Models
     {
         public int Id { get; set; }
 
+        [Required]
         public IFormFile AudioFile { get; set; }
 
+        [Required]
         public string Text { get; set; }
 
         //public string Language { get; set; }

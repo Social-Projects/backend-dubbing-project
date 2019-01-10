@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Cors;
 
 namespace Dubbing.Controllers
 {
-    [Produces("application/json")]
-    [EnableCors("AllowAllOrigins")]
     [ApiController]
     public class AudioController : Controller
     {
@@ -20,12 +18,8 @@ namespace Dubbing.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(200)]
         public async Task<IActionResult> Upload(Audio model)
         {
-            if (model == null)
-                return BadRequest();
-
             // Path to '~/wwwroot'
             string path = _hostingEnvironment.WebRootPath;
 
