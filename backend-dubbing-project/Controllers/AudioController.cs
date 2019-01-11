@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Cors;
 namespace Dubbing.Controllers
 {
     [ApiController]
-    public class AudioController : Controller
+    public class AudioController : ControllerBase
     {
         private readonly IHostingEnvironment _hostingEnvironment;
 
@@ -20,9 +20,6 @@ namespace Dubbing.Controllers
         [HttpPost]
         public async Task<IActionResult> Upload(Audio model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-
             // Path to '~/wwwroot'
             string path = _hostingEnvironment.WebRootPath;
 
