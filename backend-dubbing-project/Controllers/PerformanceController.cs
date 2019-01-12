@@ -12,11 +12,10 @@ namespace Dubbing.Controllers
     [Route("api/performance")]
     public class PerformanceController : ControllerBase
     {
-        UnitOfWork unitOfWork;
-
-        public PerformanceController()
+        private IRepository<Performance> performances;
+        public PerformanceController(IRepository<Performance> performances)
         {
-            unitOfWork = new UnitOfWork();
+            this.performances = performances;
         }
         /// <summary>
         /// Get all performances
@@ -25,7 +24,7 @@ namespace Dubbing.Controllers
         [HttpGet]
         public IEnumerable<Performance> Get()
         {
-            return unitOfWork.Performances.GetAllItems();
+            return performances.GetAllItems();
         }
         /// <summary>
         /// Get performance by id
@@ -37,10 +36,10 @@ namespace Dubbing.Controllers
         [ProducesResponseType(404)]
         public ActionResult<Performance> GetById(int id)
         {
-            if (!unitOfWork.Performances.GetAllItems().Any(x => x.Id == id))
+            if (!performances.GetAllItems().Any(x => x.Id == id))
                 return NotFound();
 
-            return unitOfWork.Performances.GetItem(id);
+            return performances.GetItem(id);
         }
         /// <summary>
         /// Creates a new performance
@@ -52,10 +51,9 @@ namespace Dubbing.Controllers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<Performance>> Create(Performance performance)
+        public ActionResult<Performance> Create(Performance performance)
         {
-            unitOfWork.Performances.Create(performance);
-            await unitOfWork.CommitAsync();
+            performances.Create(performance);
             return CreatedAtAction(nameof(GetById), new { id = performance.Id }, performance);
         }
         /// <summary>
@@ -69,13 +67,12 @@ namespace Dubbing.Controllers
         [HttpPut]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Performance>> Update(Performance performance)
+        public ActionResult<Performance> Update(Performance performance)
         {
-            if (!unitOfWork.Performances.GetAllItems().Any(x => x.Id == performance.Id))
+            if (!performances.GetAllItems().Any(x => x.Id == performance.Id))
                 return NotFound();
             
-            unitOfWork.Performances.Update(performance);
-            await unitOfWork.CommitAsync();
+            performances.Update(performance);
             return performance;
         }
         /// <summary>
@@ -87,17 +84,15 @@ namespace Dubbing.Controllers
         /// <response code="404">If the performance with the following id does not exist</response>     
         [HttpDelete("{id}")]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Performance>> Delete(int id)
+        public ActionResult<Performance> Delete(int id)
         {
-            var list = unitOfWork.Performances.GetAllItems();
+            var list = performances.GetAllItems();
             var performance = list.FirstOrDefault(x => x.Id == id);
 
             if (performance == null)
                 return NotFound();
 
-            unitOfWork.Performances.Delete(performance);
-            await unitOfWork.CommitAsync();
-          
+            performances.Delete(performance);          
             return performance;
         }
     }

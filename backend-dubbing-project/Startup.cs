@@ -14,6 +14,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Sqlite;
+using Dubbing.Util;
 
 namespace Dubbing
 {
@@ -37,6 +40,11 @@ namespace Dubbing
                         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                     });
             });
+            var connection = Configuration.GetConnectionString("SqliteConntectionString");
+            
+            services.AddDbContext<DubbingContext>(options => options.UseSqlite(connection));
+            services.AddScoped<DbContext, DubbingContext>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             
             services.AddSwaggerGen(c =>

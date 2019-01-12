@@ -1,41 +1,48 @@
 ﻿using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-
+using System.Linq;
+using Dubbing.Models;
 namespace Dubbing.Util
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : BaseEntity
     {
-        private DbContext _context;
-        private DbSet<T> _entities;
+        private DbContext context;
+        private DbSet<T> entities;
         public Repository(DbContext context)
         {
-            this._context = context;
-            this._entities = context.Set<T>();
+            this.context = context;
+            this.entities = context.Set<T>();
         }
 
         public IEnumerable<T> GetAllItems()
         {
-            return this._entities;
+            return this.entities.AsEnumerable<T>();
         }
 
         public T GetItem(int id)
         {
-            return this._entities.Find(id);
+            return this.entities.Find(id);
         }
 
         public void Create(T entity)
         {
-            this._entities.Add(entity);
+            entity.Id = default(int);
+            this.entities.Add(entity);
+            this.context.SaveChanges();
         }
 
         public void Update(T entity)
         {
-            this._entities.Update(entity);
+            T exist = this.entities.Find(entity.Id);
+            this.context.Entry(exist).CurrentValues.SetValues(entity);  
+  
+            this.context.SaveChanges();
         }
 
         public void Delete(T entity)
         {
-            this._entities.Remove(entity);
+            this.entities.Remove(entity);
+            this.context.SaveChanges();
         }
     }
 }
