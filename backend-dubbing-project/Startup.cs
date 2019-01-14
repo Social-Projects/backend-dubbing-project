@@ -32,15 +32,13 @@ namespace Dubbing
             services.AddCors(options =>
             {
                 options.AddPolicy(corsName,
-                    options.AddPolicy(corsName,
-                    builder =>
-                    {
-                        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                    }));
+                builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
             });
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "APIs", Version = "v1" });
@@ -58,26 +56,26 @@ namespace Dubbing
                 app.UseDeveloperExceptionPage();
             }
             else
-            {                
+            {
                 app.UseHsts();
             }
-            
+
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "APIs V1");
             });
-            
-            app.UseDefaultFiles();
-            
-            app.UseStaticFiles();
-            
-            app.UseHttpsRedirection();
 
+            app.UseDefaultFiles();
+
+            app.UseStaticFiles();
+
+            app.UseHttpsRedirection();
             app.UseCors(corsName);
 
             app.UseMvc();
+
         }
     }
 }
