@@ -12,6 +12,8 @@
 *.user
 *.userosscache
 *.sln.docstates
+bin
+obj
 
 #SQLite database file
 *.db
@@ -30,6 +32,8 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+
+# Visual Studio 2015 cache/options directory
 backend-dubbing-project/[Bb]in/
 backend-dubbing-project/[Oo]bj/
 backend-dubbing-project-tests/[Bb]in/
@@ -549,6 +553,10 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 ### VisualStudioCode ###
+<<<<<<< HEAD
+.vscode
+=======
+>>>>>>> dev
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -721,4 +729,8 @@ fabric.properties
 
 # BeatPulse healthcheck temp database
 
+<<<<<<< HEAD
 # End of https://www.gitignore.io/api/rider,csharp,aspnetcore,visualstudio,visualstudiocode
+=======
+# End of https://www.gitignore.io/api/rider,csharp,aspnetcore,visualstudio,visualstudiocode
+>>>>>>> dev
