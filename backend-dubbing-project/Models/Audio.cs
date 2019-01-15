@@ -1,8 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-
-namespace Dubbing.Models
+namespace SoftServe.ITAcademy.BackendDubbingProject.Models
 {
     public class Audio
     {
@@ -14,6 +13,6 @@ namespace Dubbing.Models
         [Required]
         public string Text { get; set; }
 
-        //public string Language { get; set; }
+        // public string Language { get; set; }
     }
 }

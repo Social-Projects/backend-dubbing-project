@@ -6,7 +6,7 @@
         <RootNamespace>backend_dubbing_project</RootNamespace>
         <LangVersion>7.3</LangVersion>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <NoWarn>$(NoWarn);1591</NoWarn>
+        <CodeAnalysisRuleSet>CodeStyle.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,6 +16,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.4" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.1-beta.61" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
     </ItemGroup>
 
