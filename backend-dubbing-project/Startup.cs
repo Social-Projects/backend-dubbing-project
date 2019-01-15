@@ -4,17 +4,18 @@ using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.EntityFrameworkCore;
-using Dubbing.Util;
 
-namespace Dubbing
+namespace SoftServe.ITAcademy.BackendDubbingProject
 {
     public class Startup
     {
         private readonly string _corsName = "AllowAllOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -26,21 +27,21 @@ namespace Dubbing
         {
             services.AddCors(options =>
             {
-                options.AddPolicy(_corsName,
-                builder =>
-                {
-                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                });
+                    options.AddPolicy(
+                        _corsName,
+                        builder =>
+                    {
+                        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    });
             });
             var connection = Configuration.GetConnectionString("SqliteConntectionString");
-            
+
             services.AddDbContext<DubbingContext>(options => options.UseLazyLoadingProxies().UseSqlite(connection), ServiceLifetime.Singleton);
             services.AddSingleton<DbContext, DubbingContext>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(
-                options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            );
-            
+                options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "APIs", Version = "v1" });
@@ -48,7 +49,6 @@ namespace Dubbing
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
-
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -74,10 +74,10 @@ namespace Dubbing
             app.UseStaticFiles();
 
             app.UseHttpsRedirection();
+
             app.UseCors(_corsName);
 
             app.UseMvc();
-
         }
     }
 }

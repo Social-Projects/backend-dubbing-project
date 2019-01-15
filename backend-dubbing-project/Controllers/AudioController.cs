@@ -1,16 +1,15 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Dubbing.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Cors;
-using Dubbing.Util;
-using Microsoft.AspNetCore.Http;
-using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using SoftServe.ITAcademy.BackendDubbingProject.Models;
+using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 
-namespace Dubbing.Controllers
+namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
 {
     [Route("api/audio")]
     [ApiController]
@@ -24,23 +23,27 @@ namespace Dubbing.Controllers
             _hostingEnvironment = hostingEnvironment;
             _audios = audios;
         }
+
         /// <summary>
         /// Uploads a file and saves it to a local storage
         /// </summary>
         [HttpPost("upload")]
-        public async Task<IActionResult> Upload(IFormFile file)
+        public async Task<IActionResult> Upload([FromForm]Audio model)
         {
             // Path to '~/wwwroot'
-            string path = _hostingEnvironment.WebRootPath;
+            var path = _hostingEnvironment.WebRootPath;
 
             // Example of saving file to local root '~/wwwroot'
-            using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+            using (var fileStream = new FileStream(Path.Combine(path, model.AudioFile.FileName), FileMode.Create))
             {
-                await file.CopyToAsync(fileStream);
+                await model.AudioFile.CopyToAsync(fileStream);
             }
 
+            model.FileName = model.AudioFile.FileName;
+            Create(model);
             return Ok();
         }
+
         /// <summary>
         /// Removes a file from a local storage
         /// </summary>
@@ -49,6 +52,7 @@ namespace Dubbing.Controllers
         {
             throw new NotImplementedException();
         }
+
         /// <summary>
         /// Get all audios
         /// </summary>
@@ -58,12 +62,13 @@ namespace Dubbing.Controllers
         {
             return _audios.GetAllItems();
         }
+
         /// <summary>
         /// Get audios by id
         /// </summary>
         /// <returns>Audio with the following id</returns>
         /// <response code="200">Returns the audio with the following id</response>
-        /// <response code="404">If the audio with the following id does not exist</response>     
+        /// <response code="404">If the audio with the following id does not exist</response>
         [HttpGet("{id}")]
         [ProducesResponseType(404)]
         public ActionResult<Audio> GetById(int id)
@@ -73,13 +78,14 @@ namespace Dubbing.Controllers
 
             return _audios.GetItem(id);
         }
+
         /// <summary>
         /// Creates a new audio
         /// </summary>
         /// <param name="model"></param>
         /// <returns>A newly created audio</returns>
         /// <response code="201">Returns the newly created audio</response>
-        /// <response code="400">If the audio is not valid</response>      
+        /// <response code="400">If the audio is not valid</response>
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
@@ -89,7 +95,7 @@ namespace Dubbing.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
         }
-        
+
         /// <summary>
         /// Updates the audio
         /// </summary>
@@ -105,17 +111,17 @@ namespace Dubbing.Controllers
         {
             if (!_audios.GetAllItems().Any(x => x.Id == model.Id))
                 return NotFound();
-            
             _audios.Update(model);
             return model;
         }
+
         /// <summary>
         /// Deletes the audio
         /// </summary>
         /// <param name="id">Audio id</param>
         /// <returns>Deleted audio</returns>
         /// <response code="200">Returns the deleted audio</response>
-        /// <response code="404">If the audio with the following id does not exist</response>     
+        /// <response code="404">If the audio with the following id does not exist</response>
         [HttpDelete("{id}")]
         [ProducesResponseType(404)]
         public ActionResult<Audio> Delete(int id)
@@ -125,10 +131,8 @@ namespace Dubbing.Controllers
 
             if (audio == null)
                 return NotFound();
-
-            _audios.Delete(audio);          
+            _audios.Delete(audio);
             return audio;
         }
-        
     }
 }

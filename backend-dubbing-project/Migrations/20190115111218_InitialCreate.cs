@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Dubbing.Migrations
+namespace SoftServe.ITAcademy.BackendDubbingProject.Migrations
 {
     public partial class InitialCreate : Migration
     {

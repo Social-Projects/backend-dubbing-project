@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Dubbing.Models
+namespace SoftServe.ITAcademy.BackendDubbingProject.Models
 {
     public class Language : BaseEntity
     {
         [Required]
         public string Name { get; set; }
-        
     }
 }

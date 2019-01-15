@@ -1,21 +1,22 @@
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Dubbing.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Cors;
-using Dubbing.Util;
-using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using SoftServe.ITAcademy.BackendDubbingProject.Models;
+using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 
-namespace Dubbing.Controllers
+namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
 {
     [Route("api/speech")]
     [ApiController]
     public class SpeechController : ControllerBase
     {
         private IRepository<Speech> _speeches;
+
         public SpeechController(IRepository<Speech> speeches)
         {
             _speeches = speeches;
@@ -26,6 +27,7 @@ namespace Dubbing.Controllers
         {
             return _speeches.GetAllItems();
         }
+
         [HttpGet("{id}")]
         [ProducesResponseType(404)]
         public ActionResult<Speech> GetById(int id)
@@ -52,7 +54,7 @@ namespace Dubbing.Controllers
         public ActionResult<Speech> Create(Speech model)
         {
             _speeches.Create(model);
-            
+
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
         }
 
@@ -63,11 +65,10 @@ namespace Dubbing.Controllers
         {
             if (!_speeches.GetAllItems().Any(x => x.Id == model.Id))
                 return NotFound();
-            
+
             _speeches.Update(model);
             return model;
         }
-
 
         [HttpDelete("{id}")]
         [ProducesResponseType(404)]
@@ -79,9 +80,8 @@ namespace Dubbing.Controllers
             if (speech == null)
                 return NotFound();
 
-            _speeches.Delete(speech);         
+            _speeches.Delete(speech);
             return speech;
         }
-       
     }
 }

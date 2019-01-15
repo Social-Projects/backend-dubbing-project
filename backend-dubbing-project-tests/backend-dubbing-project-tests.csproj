@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.1</TargetFramework>
-
+        <CodeAnalysisRuleSet>CodeStyle.ruleset</CodeAnalysisRuleSet>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
@@ -10,6 +10,7 @@
         <PackageReference Include="nunit" Version="3.10.1" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.1-beta.61" />
     </ItemGroup>
 
 </Project>

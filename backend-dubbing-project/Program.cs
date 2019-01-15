@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Dubbing
+namespace SoftServe.ITAcademy.BackendDubbingProject
 {
     public class Program
     {

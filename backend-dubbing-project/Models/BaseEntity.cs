@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Dubbing.Models
+namespace SoftServe.ITAcademy.BackendDubbingProject.Models
 {
     public class BaseEntity
     {

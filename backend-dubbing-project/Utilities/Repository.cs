@@ -1,17 +1,20 @@
 ﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using Dubbing.Models;
-namespace Dubbing.Util
+using Microsoft.EntityFrameworkCore;
+using SoftServe.ITAcademy.BackendDubbingProject.Models;
+
+namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
 {
-    public class Repository<T> : IRepository<T> where T : BaseEntity
+    public class Repository<T> : IRepository<T>
+        where T : BaseEntity
     {
+        private readonly DbSet<T> _entities;
         private DbContext _context;
-        private DbSet<T> _entities;
+
         public Repository(DbContext context)
         {
-            this._context = context;
-            this._entities = context.Set<T>();
+            _context = context;
+            _entities = context.Set<T>();
         }
 
         public IEnumerable<T> GetAllItems()
@@ -34,7 +37,7 @@ namespace Dubbing.Util
         public void Update(T entity)
         {
             T exist = _entities.Find(entity.Id);
-            _context.Entry(exist).CurrentValues.SetValues(entity);  
+            _context.Entry(exist).CurrentValues.SetValues(entity);
         }
 
         public void Delete(T entity)
