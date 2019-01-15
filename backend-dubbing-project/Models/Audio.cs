@@ -1,18 +1,25 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Models
 {
-    public class Audio
+    public class Audio : BaseEntity
     {
-        public int Id { get; set; }
-
-        [Required]
+        [NotMapped]
         public IFormFile AudioFile { get; set; }
 
-        [Required]
-        public string Text { get; set; }
+        public string FileName { get; set; }
 
-        // public string Language { get; set; }
+        public int LanguageId { get; set; }
+
+        public int SpeechId { get; set; }
+
+        [JsonIgnore]
+        public virtual Language Language { get; set; }
+
+        [JsonIgnore]
+        public virtual Speech Speech { get; set; }
     }
 }

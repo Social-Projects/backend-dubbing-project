@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using SoftServe.ITAcademy.BackendDubbingProject.Models;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
 {
     public class Repository<T> : IRepository<T>
-        where T : class
+        where T : BaseEntity
     {
         private readonly DbSet<T> _entities;
         private DbContext _context;
@@ -17,7 +19,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
 
         public IEnumerable<T> GetAllItems()
         {
-            return _entities;
+            return _entities.AsEnumerable<T>();
         }
 
         public T GetItem(int id)
@@ -27,17 +29,21 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
 
         public void Create(T entity)
         {
+            entity.Id = default(int);
             _entities.Add(entity);
+            _context.SaveChanges();
         }
 
         public void Update(T entity)
         {
-            _entities.Update(entity);
+            T exist = _entities.Find(entity.Id);
+            _context.Entry(exist).CurrentValues.SetValues(entity);
         }
 
         public void Delete(T entity)
         {
             _entities.Remove(entity);
+            _context.SaveChanges();
         }
     }
 }

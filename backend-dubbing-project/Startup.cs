@@ -4,8 +4,10 @@ using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject
@@ -32,7 +34,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject
                         builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                     });
             });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            var connection = Configuration.GetConnectionString("SqliteConntectionString");
+
+            services.AddDbContext<DubbingContext>(options => options.UseLazyLoadingProxies().UseSqlite(connection), ServiceLifetime.Singleton);
+            services.AddSingleton<DbContext, DubbingContext>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(
+                options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddSwaggerGen(c =>
             {

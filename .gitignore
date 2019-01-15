@@ -15,6 +15,9 @@
 bin
 obj
 
+#SQLite database file
+*.db
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

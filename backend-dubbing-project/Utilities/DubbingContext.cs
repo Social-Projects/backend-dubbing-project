@@ -7,6 +7,17 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
     {
         public DbSet<Performance> Performances { get; set; }
 
+        public DbSet<Audio> Audios { get; set; }
+
+        public DbSet<Language> Languages { get; set; }
+
+        public DbSet<Speech> Speeches { get; set; }
+
+        public DubbingContext(DbContextOptions<DubbingContext> options)
+        : base(options)
+        {
+        }
+
         public DubbingContext()
         {
         }

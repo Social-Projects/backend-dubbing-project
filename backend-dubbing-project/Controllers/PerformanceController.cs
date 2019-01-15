@@ -11,11 +11,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
     [Route("api/performance")]
     public class PerformanceController : ControllerBase
     {
-        private UnitOfWork _unitOfWork;
+        private IRepository<Performance> _performances;
 
-        public PerformanceController()
+        public PerformanceController(IRepository<Performance> performances)
         {
-            _unitOfWork = new UnitOfWork();
+            _performances = performances;
         }
 
         /// <summary>
@@ -25,7 +25,23 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpGet]
         public IEnumerable<Performance> Get()
         {
-            return _unitOfWork.Performances.GetAllItems();
+            return _performances.GetAllItems();
+        }
+
+        /// <summary>
+        /// Get all the perforamce's speeches
+        /// </summary>
+        /// <returns>Array of audio</returns>
+        /// <response code="200">Returns the array of audios of the performance with the following id</response>
+        /// <response code="404">If the performance with the following id does not exist</response>
+        [HttpGet("{id}/speeches")]
+        [ProducesResponseType(404)]
+        public ActionResult<IEnumerable<Speech>> GetSpeeches(int id)
+        {
+            if (!_performances.GetAllItems().Any(x => x.Id == id))
+                return NotFound();
+
+            return Ok(_performances.GetItem(id).Speeches);
         }
 
         /// <summary>
@@ -38,10 +54,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(404)]
         public ActionResult<Performance> GetById(int id)
         {
-            if (!_unitOfWork.Performances.GetAllItems().Any(x => x.Id == id))
+            if (!_performances.GetAllItems().Any(x => x.Id == id))
                 return NotFound();
 
-            return _unitOfWork.Performances.GetItem(id);
+            return _performances.GetItem(id);
         }
 
         /// <summary>
@@ -54,10 +70,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<Performance>> Create(Performance performance)
+        public ActionResult<Performance> Create(Performance performance)
         {
-            _unitOfWork.Performances.Create(performance);
-            await _unitOfWork.CommitAsync();
+            _performances.Create(performance);
             return CreatedAtAction(nameof(GetById), new { id = performance.Id }, performance);
         }
 
@@ -72,13 +87,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpPut]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Performance>> Update(Performance performance)
+        public ActionResult<Performance> Update(Performance performance)
         {
-            if (_unitOfWork.Performances.GetAllItems().All(x => x.Id != performance.Id))
+            if (!_performances.GetAllItems().Any(x => x.Id == performance.Id))
                 return NotFound();
 
-            _unitOfWork.Performances.Update(performance);
-            await _unitOfWork.CommitAsync();
+            _performances.Update(performance);
             return performance;
         }
 
@@ -91,17 +105,15 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="404">If the performance with the following id does not exist.</response>
         [HttpDelete("{id}")]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Performance>> Delete(int id)
+        public ActionResult<Performance> Delete(int id)
         {
-            var list = _unitOfWork.Performances.GetAllItems();
+            var list = _performances.GetAllItems();
             var performance = list.FirstOrDefault(x => x.Id == id);
 
             if (performance == null)
                 return NotFound();
 
-            _unitOfWork.Performances.Delete(performance);
-            await _unitOfWork.CommitAsync();
-
+            _performances.Delete(performance);
             return performance;
         }
     }
