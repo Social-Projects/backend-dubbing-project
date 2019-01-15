@@ -26,7 +26,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Migrations
                 name: "Text",
                 table: "Audios",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: string.Empty);
         }
     }
 }
