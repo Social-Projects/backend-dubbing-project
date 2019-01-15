@@ -1,11 +1,10 @@
-﻿using System.IO;
+using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Dubbing.Models;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
+using SoftServe.ITAcademy.BackendDubbingProject.Models;
 
-namespace Dubbing.Controllers
+namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
 {
     [Route("api/audio")]
     [ApiController]
@@ -22,8 +21,7 @@ namespace Dubbing.Controllers
         public async Task<IActionResult> Upload([FromForm]Audio model)
         {
             // Path to '~/wwwroot'
-            string path = _hostingEnvironment.WebRootPath;
-
+            var path = _hostingEnvironment.WebRootPath;
 
             // Example of saving file to local root '~/wwwroot'
             using (var fileStream = new FileStream(Path.Combine(path, model.AudioFile.FileName), FileMode.Create))
