@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Dubbing.Models;
-using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.AspNetCore.Cors;
 using Dubbing.Util;
 
 namespace Dubbing.Controllers
@@ -12,10 +10,10 @@ namespace Dubbing.Controllers
     [Route("api/performance")]
     public class PerformanceController : ControllerBase
     {
-        private IRepository<Performance> performances;
+        private IRepository<Performance> _performances;
         public PerformanceController(IRepository<Performance> performances)
         {
-            this.performances = performances;
+            _performances = performances;
         }
         /// <summary>
         /// Get all performances
@@ -24,8 +22,24 @@ namespace Dubbing.Controllers
         [HttpGet]
         public IEnumerable<Performance> Get()
         {
-            return performances.GetAllItems();
+            return _performances.GetAllItems();
         }
+        /// <summary>
+        /// Get all the perforamce's speeches
+        /// </summary>
+        /// <returns>Array of audio</returns>
+        /// <response code="200">Returns the array of audios of the performance with the following id</response>
+        /// <response code="404">If the performance with the following id does not exist</response>      
+        [HttpGet("{id}/speeches")]
+        [ProducesResponseType(404)]
+        public ActionResult<IEnumerable<Speech>> GetSpeeches(int id)
+        {
+            if (!_performances.GetAllItems().Any(x => x.Id == id))
+                return NotFound();
+                
+            return Ok((_performances.GetItem(id).Speeches));
+        }
+       
         /// <summary>
         /// Get performance by id
         /// </summary>
@@ -36,10 +50,10 @@ namespace Dubbing.Controllers
         [ProducesResponseType(404)]
         public ActionResult<Performance> GetById(int id)
         {
-            if (!performances.GetAllItems().Any(x => x.Id == id))
+            if (!_performances.GetAllItems().Any(x => x.Id == id))
                 return NotFound();
 
-            return performances.GetItem(id);
+            return _performances.GetItem(id);
         }
         /// <summary>
         /// Creates a new performance
@@ -53,7 +67,7 @@ namespace Dubbing.Controllers
         [ProducesResponseType(400)]
         public ActionResult<Performance> Create(Performance performance)
         {
-            performances.Create(performance);
+            _performances.Create(performance);
             return CreatedAtAction(nameof(GetById), new { id = performance.Id }, performance);
         }
         /// <summary>
@@ -69,10 +83,10 @@ namespace Dubbing.Controllers
         [ProducesResponseType(404)]
         public ActionResult<Performance> Update(Performance performance)
         {
-            if (!performances.GetAllItems().Any(x => x.Id == performance.Id))
+            if (!_performances.GetAllItems().Any(x => x.Id == performance.Id))
                 return NotFound();
             
-            performances.Update(performance);
+            _performances.Update(performance);
             return performance;
         }
         /// <summary>
@@ -86,13 +100,13 @@ namespace Dubbing.Controllers
         [ProducesResponseType(404)]
         public ActionResult<Performance> Delete(int id)
         {
-            var list = performances.GetAllItems();
+            var list = _performances.GetAllItems();
             var performance = list.FirstOrDefault(x => x.Id == id);
 
             if (performance == null)
                 return NotFound();
 
-            performances.Delete(performance);          
+            _performances.Delete(performance);          
             return performance;
         }
     }

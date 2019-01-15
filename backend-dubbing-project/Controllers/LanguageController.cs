@@ -7,9 +7,7 @@ using Microsoft.AspNetCore.Cors;
 using Dubbing.Util;
 
 namespace Dubbing.Controllers
-{
-    [Produces("application/json")]
-    
+{    
     [ApiController]
     [Route("api/[controller]")]
     public class LanguageController : ControllerBase
@@ -25,7 +23,7 @@ namespace Dubbing.Controllers
         {
             return languages.GetAllItems();
         }
-
+        
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
@@ -66,7 +64,7 @@ namespace Dubbing.Controllers
         [HttpPut]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Language>> Update(Language lenguage)
+        public ActionResult<Language> Update(Language lenguage)
         {
             if (!languages.GetAllItems().Any(x => x.Id == lenguage.Id))
                 return NotFound();

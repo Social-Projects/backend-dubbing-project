@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Dubbing.Models
 {
@@ -7,6 +9,9 @@ namespace Dubbing.Models
         [Required]
         public string Title { get; set; }
         public string Description { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<Speech> Speeches{ get; set; }
 
     }
 }

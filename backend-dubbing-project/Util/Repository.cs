@@ -6,43 +6,41 @@ namespace Dubbing.Util
 {
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
-        private DbContext context;
-        private DbSet<T> entities;
+        private DbContext _context;
+        private DbSet<T> _entities;
         public Repository(DbContext context)
         {
-            this.context = context;
-            this.entities = context.Set<T>();
+            this._context = context;
+            this._entities = context.Set<T>();
         }
 
         public IEnumerable<T> GetAllItems()
         {
-            return this.entities.AsEnumerable<T>();
+            return _entities.AsEnumerable<T>();
         }
 
         public T GetItem(int id)
         {
-            return this.entities.Find(id);
+            return _entities.Find(id);
         }
 
         public void Create(T entity)
         {
             entity.Id = default(int);
-            this.entities.Add(entity);
-            this.context.SaveChanges();
+            _entities.Add(entity);
+            _context.SaveChanges();
         }
 
         public void Update(T entity)
         {
-            T exist = this.entities.Find(entity.Id);
-            this.context.Entry(exist).CurrentValues.SetValues(entity);  
-  
-            this.context.SaveChanges();
+            T exist = _entities.Find(entity.Id);
+            _context.Entry(exist).CurrentValues.SetValues(entity);  
         }
 
         public void Delete(T entity)
         {
-            this.entities.Remove(entity);
-            this.context.SaveChanges();
+            _entities.Remove(entity);
+            _context.SaveChanges();
         }
     }
 }
