@@ -9,7 +9,7 @@ using Dubbing.Util;
 namespace Dubbing.Controllers
 {    
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/language")]
     public class LanguageController : ControllerBase
     {
         IRepository<Language> languages;
@@ -42,9 +42,8 @@ namespace Dubbing.Controllers
         {
             if (language == null)
                 return BadRequest();
-            //Language lang = new Language { Id=10, Name=languageName};
+                
             languages.Create(language);
-            //return CreatedAtAction(nameof(GetById), new { id = language.Id }, language);
             return Ok(language);
         }
 
