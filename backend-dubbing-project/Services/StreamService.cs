@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Services
@@ -41,9 +42,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Services
 
         public bool Play(int id)
         {
-            if (id >= 0 && id < Speeches.Count)
+            var item = Speeches.FirstOrDefault(x => x.Id == id);
+            if (item != null)
             {
-                _current = id;
+                _current = Speeches.IndexOf(item);
                 return true;
             }
             else

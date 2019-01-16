@@ -36,6 +36,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         [HttpGet("currentAudio")]
+        [ProducesResponseType(FAILSTATUSCODE)]
+        [ProducesResponseType(404)]
         public ActionResult<string> GetCurrentAudio([FromQuery] int langId)
         {
             if (_streamService.IsPaused)
@@ -49,7 +51,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             return audio.FileName;
         }
 
-        [HttpPost("nextSpeech")]
+        [HttpGet("nextSpeech")]
+        [ProducesResponseType(FAILSTATUSCODE)]
         public IActionResult PlayNext()
         {
             if (_streamService.PlayNext() == true)
@@ -58,7 +61,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
                 return StatusCode(FAILSTATUSCODE);
         }
 
-        [HttpPost("prevSpeech")]
+        [HttpGet("prevSpeech")]
+        [ProducesResponseType(FAILSTATUSCODE)]
+
         public IActionResult PlayPrevious()
         {
             if (_streamService.PlayPrevious() == true)
@@ -67,19 +72,20 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
                 return StatusCode(FAILSTATUSCODE);
         }
 
-        [HttpPost("pause")]
+        [HttpGet("pause")]
         public void Pause()
         {
             _streamService.Pause();
         }
 
-        [HttpPost("play")]
+        [HttpGet("play")]
         public void Play()
         {
             _streamService.Play();
         }
 
-        [HttpPost("play/{index}")]
+        [HttpGet("play/{index}")]
+        [ProducesResponseType(FAILSTATUSCODE)]
         public IActionResult Play(int index)
         {
             if (_streamService.Play(index) == true)
@@ -89,9 +95,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         [HttpGet("currentSpeechId")]
+        [ProducesResponseType(FAILSTATUSCODE)]
         public ActionResult<int> GetCurrentSpeechId()
         {
-            return _streamService.Speeches.IndexOf(_streamService.CurrentSpeech);
+            if (_streamService.IsPaused == false)
+                return _streamService.CurrentSpeech.Id;
+            else 
+                return StatusCode(FAILSTATUSCODE);
         }
     }
 }
