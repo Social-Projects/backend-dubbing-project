@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
 using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 
@@ -45,7 +46,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             if (!_speeches.GetAllItems().Any(x => x.Id == id))
                 return NotFound();
 
-            return Ok(_speeches.GetItem(id).Audios);
+            return Ok(_speeches.GetItem(id, source => source.Include(x => x.Audios)).Audios);
         }
 
         [HttpPost]

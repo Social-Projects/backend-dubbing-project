@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
 using SoftServe.ITAcademy.BackendDubbingProject.Services;
 using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
@@ -13,7 +14,6 @@ using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
 {
     [Route("api/streaming")]
-    [ApiController]
     public class StreamController : ControllerBase
     {
         private const int FAILSTATUSCODE = StatusCodes.Status406NotAcceptable;
@@ -31,7 +31,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpGet("load/{performanceId}")]
         public IActionResult LoadPerformance(int performanceId)
         {
-            _streamService.Load(_perfRepo.GetItem(performanceId, "Speeches", "Speeches.Audios").Speeches);
+            _streamService.Load(_perfRepo.GetItem(performanceId, source => source.Include(x => x.Speeches).ThenInclude(y => y.Audios)).Speeches);
             return Ok();
         }
 
@@ -63,7 +63,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
 
         [HttpGet("prevSpeech")]
         [ProducesResponseType(FAILSTATUSCODE)]
-
         public IActionResult PlayPrevious()
         {
             if (_streamService.PlayPrevious() == true)
