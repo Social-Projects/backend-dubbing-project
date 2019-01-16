@@ -100,7 +100,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         {
             if (_streamService.IsPaused == false)
                 return _streamService.CurrentSpeech.Id;
-            else 
+            else
                 return StatusCode(FAILSTATUSCODE);
         }
     }
