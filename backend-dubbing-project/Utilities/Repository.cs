@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
 
@@ -20,7 +22,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
         public IEnumerable<T> GetAllItems(params string[] includes)
         {
             IQueryable<T> query = _entities;
-            query.Include(includes[0]);
+
             foreach (var include in includes)
             {
                 query = query.Include(include);
