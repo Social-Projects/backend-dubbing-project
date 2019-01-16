@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SoftServe.ITAcademy.BackendDubbingProject.Models;
+using SoftServe.ITAcademy.BackendDubbingProject.Services;
 using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -36,9 +39,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject
             });
             var connection = Configuration.GetConnectionString("SqliteConntectionString");
 
-            services.AddDbContext<DubbingContext>(options => options.UseLazyLoadingProxies().UseSqlite(connection), ServiceLifetime.Singleton);
-            services.AddSingleton<DbContext, DubbingContext>();
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddDbContext<DubbingContext>(options => options.UseSqlite(connection), ServiceLifetime.Transient);
+            services.AddTransient<DbContext, DubbingContext>();
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddSingleton<IStreamService, StreamService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(
                 options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 

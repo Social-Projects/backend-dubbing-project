@@ -6,9 +6,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
     public interface IRepository<T>
         where T : class
     {
-        IEnumerable<T> GetAllItems();
+        IEnumerable<T> GetAllItems(params string[] includes);
 
-        T GetItem(int id);
+        T GetItem(int id, params string[] includes);
 
         void Create(T entity);
 

@@ -17,14 +17,28 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
             _entities = context.Set<T>();
         }
 
-        public IEnumerable<T> GetAllItems()
+        public IEnumerable<T> GetAllItems(params string[] includes)
         {
-            return _entities.AsEnumerable<T>();
+            IQueryable<T> query = _entities;
+            query.Include(includes[0]);
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return query.AsEnumerable();
         }
 
-        public T GetItem(int id)
+        public T GetItem(int id, params string[] includes)
         {
-            return _entities.Find(id);
+            IQueryable<T> query = _entities.Where(x => x.Id == id);
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return query.FirstOrDefault();
         }
 
         public void Create(T entity)
