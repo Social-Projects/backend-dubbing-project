@@ -39,11 +39,37 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Services
             IsPaused = false;
         }
 
+        public bool Play(int id)
+        {
+            if (id >= 0 && id < Speeches.Count)
+            {
+                _current = id;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public bool PlayNext()
         {
             if (Speeches.Count > (_current + 1))
             {
                 _current++;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool PlayPrevious()
+        {
+            if (_current > 0)
+            {
+                _current--;
                 return true;
             }
             else

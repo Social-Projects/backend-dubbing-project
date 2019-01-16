@@ -12,23 +12,20 @@ using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
 {
-    [Route("api/stream")]
+    [Route("api/streaming")]
     [ApiController]
     public class StreamController : ControllerBase
     {
-        private IHostingEnvironment _environment;
+        private const int FAILSTATUSCODE = StatusCodes.Status406NotAcceptable;
 
         private IRepository<Performance> _perfRepo;
 
         private IStreamService _streamService;
 
-        private bool _isPaused = true;
-
-        public StreamController(IStreamService streamService, IRepository<Performance> repository, IHostingEnvironment environment)
+        public StreamController(IStreamService streamService, IRepository<Performance> repository)
         {
             _perfRepo = repository;
             _streamService = streamService;
-            _environment = environment;
         }
 
         [HttpGet("load/{performanceId}")]
@@ -39,53 +36,62 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         [HttpGet("currentAudio")]
-        public ActionResult<FileResult> GetCurrentAudio([FromQuery] int langId)
+        public ActionResult<string> GetCurrentAudio([FromQuery] int langId)
         {
+            if (_streamService.IsPaused)
+                return StatusCode(FAILSTATUSCODE);
+
             var audio = _streamService.CurrentSpeech.Audios.FirstOrDefault(x => x.LanguageId == langId);
 
             if (audio == null)
                 return NotFound();
 
-            var path = _environment.WebRootPath;
-
-            using (var fileStream = new FileStream(Path.Combine(path, audio.FileName), FileMode.Open))
-            {
-                return new FileStreamResult(fileStream, "audio/mp3");
-            }
+            return audio.FileName;
         }
 
-        [HttpGet("currentFile")]
-        public ActionResult<string> GetCurrentFile([FromQuery] int langId)
-        {
-            var audio = _streamService.CurrentSpeech.Audios.FirstOrDefault(x => x.LanguageId == langId);
-
-            if (audio == null)
-                return NotFound();
-
-            var path = _environment.WebRootPath;
-
-            return Path.Combine(path, audio.FileName);
-        }
-
-        [HttpGet("playNext")]
+        [HttpPost("nextSpeech")]
         public IActionResult PlayNext()
         {
             if (_streamService.PlayNext() == true)
                 return Ok();
             else
-                return BadRequest();
+                return StatusCode(FAILSTATUSCODE);
         }
 
-        [HttpGet("pause")]
+        [HttpPost("prevSpeech")]
+        public IActionResult PlayPrevious()
+        {
+            if (_streamService.PlayPrevious() == true)
+                return Ok();
+            else
+                return StatusCode(FAILSTATUSCODE);
+        }
+
+        [HttpPost("pause")]
         public void Pause()
         {
             _streamService.Pause();
         }
 
-        [HttpGet("play")]
+        [HttpPost("play")]
         public void Play()
         {
             _streamService.Play();
+        }
+
+        [HttpPost("play/{index}")]
+        public IActionResult Play(int index)
+        {
+            if (_streamService.Play(index) == true)
+                return Ok();
+            else
+                return StatusCode(FAILSTATUSCODE);
+        }
+
+        [HttpGet("currentSpeechId")]
+        public ActionResult<int> GetCurrentSpeechId()
+        {
+            return _streamService.Speeches.IndexOf(_streamService.CurrentSpeech);
         }
     }
 }

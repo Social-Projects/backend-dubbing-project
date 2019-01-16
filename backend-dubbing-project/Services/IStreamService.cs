@@ -5,18 +5,22 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Services
 {
     public interface IStreamService
     {
-         List<Speech> Speeches { get; set; }
+        List<Speech> Speeches { get; set; }
 
-         Speech CurrentSpeech { get; }
+        Speech CurrentSpeech { get; }
 
-         void Load(IEnumerable<Speech> speeches);
+        void Load(IEnumerable<Speech> speeches);
 
-         bool IsPaused { get; set; }
+        bool IsPaused { get; set; }
 
-         bool PlayNext();
+        bool PlayNext();
 
-         void Play();
+        bool PlayPrevious();
 
-         void Pause();
+        void Play();
+
+        bool Play(int id);
+
+        void Pause();
     }
 }
