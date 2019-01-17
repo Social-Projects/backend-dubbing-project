@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
@@ -17,14 +20,28 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
             _entities = context.Set<T>();
         }
 
-        public IEnumerable<T> GetAllItems()
+        public IEnumerable<T> GetAllItems(Func<IQueryable<T>, IIncludableQueryable<T, object>> includes = null)
         {
-            return _entities.AsEnumerable<T>();
+            IQueryable<T> query = _entities;
+
+            if (includes != null)
+            {
+                query = includes(query);
+            }
+
+            return query.AsEnumerable();
         }
 
-        public T GetItem(int id)
+        public T GetItem(int id, Func<IQueryable<T>, IIncludableQueryable<T, object>> includes = null)
         {
-            return _entities.Find(id);
+            IQueryable<T> query = _entities.Where(x => x.Id == id);
+
+            if (includes != null)
+            {
+                query = includes(query);
+            }
+
+            return query.FirstOrDefault();
         }
 
         public void Create(T entity)

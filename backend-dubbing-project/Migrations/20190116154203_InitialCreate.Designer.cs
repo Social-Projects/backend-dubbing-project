@@ -8,8 +8,8 @@ using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 namespace SoftServe.ITAcademy.BackendDubbingProject.Migrations
 {
     [DbContext(typeof(DubbingContext))]
-    [Migration("20190115154026_BaseMigration")]
-    partial class BaseMigration
+    [Migration("20190116154203_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -54,6 +54,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Description");
 
                     b.Property<string>("Title")
                         .IsRequired();
