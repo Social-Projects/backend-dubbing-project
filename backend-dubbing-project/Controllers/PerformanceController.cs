@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
 using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 
@@ -41,7 +42,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             if (!_performances.GetAllItems().Any(x => x.Id == id))
                 return NotFound();
 
-            return Ok(_performances.GetItem(id).Speeches);
+            return Ok(_performances.GetItem(id, source => source.Include(x => x.Speeches)).Speeches);
         }
 
         /// <summary>

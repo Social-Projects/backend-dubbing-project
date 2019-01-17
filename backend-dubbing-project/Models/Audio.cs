@@ -8,6 +8,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Models
     public class Audio : BaseEntity
     {
         [NotMapped]
+        [JsonIgnore]
         public IFormFile AudioFile { get; set; }
 
         public string FileName { get; set; }

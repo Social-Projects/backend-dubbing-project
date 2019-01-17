@@ -16,6 +16,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
     public class AudioController : ControllerBase
     {
         private readonly IHostingEnvironment _hostingEnvironment;
+
         private IRepository<Audio> _audios;
 
         public AudioController(IHostingEnvironment hostingEnvironment, IRepository<Audio> audios)
@@ -28,7 +29,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// Uploads a file and saves it to a local storage
         /// </summary>
         [HttpPost("upload")]
-        public async Task<IActionResult> Upload([FromForm]Audio model)
+        public async Task<IActionResult> Upload([FromForm]AudioDTO model)
         {
             // Path to '~/wwwroot'
             var path = _hostingEnvironment.WebRootPath;
@@ -39,8 +40,15 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
                 await model.AudioFile.CopyToAsync(fileStream);
             }
 
-            model.FileName = model.AudioFile.FileName;
-            Create(model);
+            var audio = new Audio()
+            {
+                AudioFile = model.AudioFile,
+                FileName = model.AudioFile.FileName,
+                LanguageId = model.LanguageId,
+                SpeechId = model.SpeechId
+            };
+
+            Create(audio);
             return Ok();
         }
 

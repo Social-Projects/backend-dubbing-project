@@ -60,7 +60,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     FileName = table.Column<string>(nullable: true),
-                    Text = table.Column<string>(nullable: false),
                     LanguageId = table.Column<int>(nullable: false),
                     SpeechId = table.Column<int>(nullable: false)
                 },

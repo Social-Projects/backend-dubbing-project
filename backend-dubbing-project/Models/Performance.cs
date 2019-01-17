@@ -9,6 +9,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Models
         [Required]
         public string Title { get; set; }
 
+        public string Description { get; set; }
+
         [JsonIgnore]
         public virtual ICollection<Speech> Speeches { get; set; }
     }
