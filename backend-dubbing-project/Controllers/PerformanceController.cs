@@ -42,7 +42,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             if (!_performances.GetAllItems().Any(x => x.Id == id))
                 return NotFound();
 
-            return Ok(_performances.GetItem(id, source => source.Include(x => x.Speeches)).Speeches);
+            return Ok(_performances.GetItem(id, source => source.Include(x => x.Speeches).ThenInclude(y => y.Audios)).Speeches);
         }
 
         /// <summary>

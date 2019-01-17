@@ -20,6 +20,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("Duration");
+
                     b.Property<string>("FileName");
 
                     b.Property<int>("LanguageId");
