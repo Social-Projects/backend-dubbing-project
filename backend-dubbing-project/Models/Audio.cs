@@ -7,10 +7,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Models
 {
     public class Audio : BaseEntity
     {
-        [NotMapped]
-        [JsonIgnore]
-        public IFormFile AudioFile { get; set; }
-
         public string FileName { get; set; }
 
         public int LanguageId { get; set; }
@@ -22,5 +18,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Models
 
         [JsonIgnore]
         public virtual Speech Speech { get; set; }
+
+        [JsonIgnore]
+        public int Duration { get; set; }
     }
 }
