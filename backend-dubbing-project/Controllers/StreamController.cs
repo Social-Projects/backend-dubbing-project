@@ -40,9 +40,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(404)]
         public ActionResult<string> GetCurrentAudio([FromQuery] int langId)
         {
-            if (_streamService.IsPaused)
-                return StatusCode(FAILSTATUSCODE);
-
             var audio = _streamService.CurrentSpeech.Audios.FirstOrDefault(x => x.LanguageId == langId);
 
             if (audio == null)
