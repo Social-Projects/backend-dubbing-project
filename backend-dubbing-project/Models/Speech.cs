@@ -25,7 +25,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Models
         {
             get
             {
-                if (Audios != null)
+                if (Audios != null && Audios.Count > 0)
                     return Audios.Max(x => x.Duration);
                 else
                     return 0;

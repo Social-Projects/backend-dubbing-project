@@ -55,6 +55,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
         {
             T exist = _entities.Find(entity.Id);
             _context.Entry(exist).CurrentValues.SetValues(entity);
+            _context.SaveChanges();
         }
 
         public void Delete(T entity)

@@ -12,6 +12,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Services
         {
             Speeches = new List<Speech>();
             _current = 0;
+            IsPaused = true;
         }
 
         public List<Speech> Speeches { get; set; }
@@ -28,6 +29,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Services
             {
                 Speeches.Add(speech);
             }
+
+            IsPaused = true;
         }
 
         public void Pause()
@@ -46,6 +49,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Services
             if (item != null)
             {
                 _current = Speeches.IndexOf(item);
+                IsPaused = false;
                 return true;
             }
             else
@@ -59,6 +63,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Services
             if (Speeches.Count > (_current + 1))
             {
                 _current++;
+                IsPaused = false;
                 return true;
             }
             else
@@ -72,6 +77,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Services
             if (_current > 0)
             {
                 _current--;
+                IsPaused = false;
                 return true;
             }
             else
