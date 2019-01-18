@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
 using SoftServe.ITAcademy.BackendDubbingProject.Services;
 using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
@@ -71,6 +72,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "APIs V1");
+            });
+
+            app.UseFileServer(new FileServerOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "Audio Files")),
+                RequestPath = "/audio",
+                EnableDirectoryBrowsing = true
             });
 
             app.UseDefaultFiles();

@@ -32,8 +32,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         public async Task<IActionResult> Upload([FromForm]AudioDTO model)
         {
             // Path to '~/wwwroot'
-            var path = Path.Combine(_hostingEnvironment.WebRootPath, model.AudioFile.FileName);
+            // var path = Path.Combine(_hostingEnvironment.WebRootPath, model.AudioFile.FileName);
 
+            var path = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", model.AudioFile.FileName);
             // Example of saving file to local root '~/wwwroot'
             using (var fileStream = new FileStream(path, FileMode.Create))
             {
@@ -41,8 +42,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             }
 
             var tfile = TagLib.File.Create(path);
-            string title = tfile.Tag.Title;
-            TimeSpan duration = tfile.Properties.Duration;
+            var duration = tfile.Properties.Duration;
 
             var audio = new Audio()
             {

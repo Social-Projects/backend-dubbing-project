@@ -40,32 +40,35 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(404)]
         public ActionResult<string> GetCurrentAudio([FromQuery] int langId)
         {
+            langId = 1;
+
+            if (_streamService.IsPaused)
+                return StatusCode(FAILSTATUSCODE);
+
             var audio = _streamService.CurrentSpeech.Audios.FirstOrDefault(x => x.LanguageId == langId);
 
             if (audio == null)
                 return NotFound();
 
-            return audio.FileName;
+            return "audio/" + audio.FileName;
         }
 
         [HttpGet("nextSpeech")]
         [ProducesResponseType(FAILSTATUSCODE)]
         public IActionResult PlayNext()
         {
-            if (_streamService.PlayNext() == true)
+            if (_streamService.PlayNext())
                 return Ok();
-            else
-                return StatusCode(FAILSTATUSCODE);
+            return StatusCode(FAILSTATUSCODE);
         }
 
         [HttpGet("prevSpeech")]
         [ProducesResponseType(FAILSTATUSCODE)]
         public IActionResult PlayPrevious()
         {
-            if (_streamService.PlayPrevious() == true)
+            if (_streamService.PlayPrevious())
                 return Ok();
-            else
-                return StatusCode(FAILSTATUSCODE);
+            return StatusCode(FAILSTATUSCODE);
         }
 
         [HttpGet("pause")]
@@ -84,10 +87,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(FAILSTATUSCODE)]
         public IActionResult Play(int index)
         {
-            if (_streamService.Play(index) == true)
+            if (_streamService.Play(index))
                 return Ok();
-            else
-                return StatusCode(FAILSTATUSCODE);
+            return StatusCode(FAILSTATUSCODE);
         }
 
         [HttpGet("currentSpeechId")]
@@ -96,8 +98,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         {
             if (_streamService.IsPaused == false)
                 return _streamService.CurrentSpeech.Id;
-            else
-                return StatusCode(FAILSTATUSCODE);
+            return StatusCode(FAILSTATUSCODE);
         }
     }
 }
