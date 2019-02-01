@@ -62,12 +62,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpPut]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public ActionResult<Language> Update(Language lenguage)
+        public ActionResult<Language> Update(Language language)
         {
-            if (!_languages.GetAllItems().Any(x => x.Id == lenguage.Id))
+            if (!_languages.GetAllItems().Any(x => x.Id == language.Id))
                 return NotFound();
-            _languages.Update(lenguage);
-            return lenguage;
+            _languages.Update(language);
+            return language;
         }
     }
 }
