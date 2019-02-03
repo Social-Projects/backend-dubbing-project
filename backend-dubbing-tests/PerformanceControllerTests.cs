@@ -196,7 +196,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
         public void Update_InvalidObjectPassed_ShouldReturnBadRequest()
         {
             // Arrange
-            var performance = new Performance { Id = 1, Title = "Title 1", Description = "Description 1" };
+            var performance = new Performance { Id = 1, Description = "Description 1" };
             this._performanceController.ModelState.AddModelError("Title", "The Title property required");
 
             // Act

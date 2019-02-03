@@ -31,7 +31,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpGet("load/{performanceId}")]
         public IActionResult LoadPerformance(int performanceId)
         {
-            _streamService.Load(_perfRepo.GetItem(performanceId, source => source.Include(x => x.Speeches).ThenInclude(y => y.Audios)).Speeches);
+            var performance = _perfRepo.GetItem(performanceId, source => source.Include(x => x.Speeches).ThenInclude(y => y.Audios));
+            if (performance == null)
+                return NotFound();
+
+            _streamService.Load(performance.Speeches);
             return Ok();
         }
 
@@ -53,23 +57,23 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             return "audio/" + audio.FileName;
         }
 
-        [HttpGet("nextSpeech")]
-        [ProducesResponseType(FAILSTATUSCODE)]
-        public IActionResult PlayNext()
-        {
-            if (_streamService.PlayNext())
-                return Ok();
-            return StatusCode(FAILSTATUSCODE);
-        }
+        // [HttpGet("nextSpeech")]
+        // [ProducesResponseType(FAILSTATUSCODE)]
+        // public IActionResult PlayNext()
+        // {
+        //     if (_streamService.PlayNext())
+        //         return Ok();
+        //     return StatusCode(FAILSTATUSCODE);
+        // }
 
-        [HttpGet("prevSpeech")]
-        [ProducesResponseType(FAILSTATUSCODE)]
-        public IActionResult PlayPrevious()
-        {
-            if (_streamService.PlayPrevious())
-                return Ok();
-            return StatusCode(FAILSTATUSCODE);
-        }
+        // [HttpGet("prevSpeech")]
+        // [ProducesResponseType(FAILSTATUSCODE)]
+        // public IActionResult PlayPrevious()
+        // {
+        //     if (_streamService.PlayPrevious())
+        //         return Ok();
+        //     return StatusCode(FAILSTATUSCODE);
+        // }
 
         [HttpGet("pause")]
         public void Pause()
@@ -77,11 +81,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             _streamService.Pause();
         }
 
-        [HttpGet("play")]
-        public void Play()
-        {
-            _streamService.Play();
-        }
+        // [HttpGet("play")]
+        // public void Play()
+        // {
+        //     _streamService.Play();
+        // }
 
         [HttpGet("play/{index}")]
         [ProducesResponseType(FAILSTATUSCODE)]
@@ -92,13 +96,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             return StatusCode(FAILSTATUSCODE);
         }
 
-        [HttpGet("currentSpeechId")]
-        [ProducesResponseType(FAILSTATUSCODE)]
-        public ActionResult<int> GetCurrentSpeechId()
-        {
-            if (_streamService.IsPaused == false)
-                return _streamService.CurrentSpeech.Id;
-            return StatusCode(FAILSTATUSCODE);
-        }
+        // [HttpGet("currentSpeechId")]
+        // [ProducesResponseType(FAILSTATUSCODE)]
+        // public ActionResult<int> GetCurrentSpeechId()
+        // {
+        //     if (_streamService.IsPaused == false)
+        //         return _streamService.CurrentSpeech.Id;
+        //     return StatusCode(FAILSTATUSCODE);
+        // }
     }
 }

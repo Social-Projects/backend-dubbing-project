@@ -73,6 +73,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(400)]
         public ActionResult<Performance> Create(Performance performance)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
             _performances.Create(performance);
             return CreatedAtAction(nameof(GetById), new { id = performance.Id }, performance);
         }
@@ -90,6 +92,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(404)]
         public ActionResult<Performance> Update(Performance performance)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
             if (!_performances.GetAllItems().Any(x => x.Id == performance.Id))
                 return NotFound();
 
