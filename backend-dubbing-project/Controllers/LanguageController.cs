@@ -64,6 +64,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(404)]
         public ActionResult<Language> Update(Language language)
         {
+            if (language == null)
+                return BadRequest();
             if (!_languages.GetAllItems().Any(x => x.Id == language.Id))
                 return NotFound();
             _languages.Update(language);

@@ -9,176 +9,176 @@
     using SoftServe.ITAcademy.BackendDubbingProject.Models;
     using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 
+    [TestFixture]
     public class LanguageControllerTests
     {
-        private List<Language> testData;
-        private List<Language> nothingTestData;
+        private Mock<IRepository<Language>> languageRepository = null;
+        private LanguageController languageController = null;
+        private IEnumerable<Language> languageTestData = null;
+        private IEnumerable<Language> languageTestDataWithoutLanguages = null;
 
-        private List<Language> GetTestLanguages()
+        public LanguageControllerTests()
         {
-            List<Language> testLanguages = new List<Language>
+            this.languageTestData = new List<Language>
             {
             new Language { Id = 1, Name = "lang1" },
             new Language { Id = 2, Name = "lang2" },
             new Language { Id = 3, Name = "lang3" },
             };
 
-            return testLanguages;
-        }
-
-        private List<Language> GetNothingTestLanguages()
-        {
-            List<Language> testLanguages = new List<Language>
+            this.languageTestDataWithoutLanguages = new List<Language>
             {
             };
-
-            return testLanguages;
         }
 
         [SetUp]
         public void Setup()
         {
-            this.testData = this.GetTestLanguages();
-            this.nothingTestData = this.GetNothingTestLanguages();
+            this.languageRepository = new Mock<IRepository<Language>>();
+            this.languageController = new LanguageController(this.languageRepository.Object);
         }
 
         [Test]
-        public void GetLanguagesTest()
+        public void Get_WhenCalled_ReturnAllItems()
         {
-            var mock = new Mock<IRepository<Language>>();
-            mock.Setup(repo => repo.GetAllItems(null)).Returns(this.testData);
-            var controller = new LanguageController(mock.Object);
+            this.languageRepository.Setup(repo => repo.GetAllItems(null)).Returns(this.languageTestData);
 
-            IEnumerable<Language> result = controller.Get();
+            var result = this.languageController.Get();
 
-            Assert.AreEqual(this.testData, result);
+            Assert.That(result, Is.EquivalentTo(this.languageTestData));
         }
 
         [Test]
-        public void GetNothingLanguagesTest()
+        public void Get_WhenCalled_ReturnNoLanguages()
         {
-            var mock = new Mock<IRepository<Language>>();
-            mock.Setup(repo => repo.GetAllItems(null)).Returns(this.nothingTestData);
-            var controller = new LanguageController(mock.Object);
+            this.languageRepository.Setup(repo => repo.GetAllItems(null)).Returns(this.languageTestDataWithoutLanguages);
 
-            IEnumerable<Language> result = controller.Get();
+            var result = this.languageController.Get();
 
-            Assert.AreEqual(this.nothingTestData, result);
+            Assert.That(result, Is.EquivalentTo(this.languageTestDataWithoutLanguages));
         }
 
         [Test]
-        public void AddNewLanguageTest()
+        public void Get_WhenCalled_ReturnIEnumerableResult()
         {
-            var mock = new Mock<IRepository<Language>>();
-            mock.Setup(repo => repo.GetAllItems(null)).Returns(this.testData);
-            var controller = new LanguageController(mock.Object);
+            var result = this.languageController.Get();
 
-            var lang4 = new Language { Id = 0, Name = "lang4" };
-
-            controller.Create(lang4);
-            this.testData.Add(lang4);
-
-            Assert.AreEqual(controller.Get(), this.testData);
-
+            Assert.IsInstanceOf(typeof(IEnumerable<Language>), result);
         }
 
         [Test]
-        public void AddNewLanguageWithoutNameTest()
+        public void GetById_ValidId_ShouldReturnValidObject()
         {
-            var mock = new Mock<IRepository<Language>>();
-            mock.Setup(repo => repo.GetAllItems(null)).Returns(this.testData);
-            var controller = new LanguageController(mock.Object);
-
-            var lang4 = new Language { Id = 0, Name = "" };
-
-            controller.Create(lang4);
-            this.testData.Add(lang4);
-
-            Assert.AreEqual(controller.Get(), this.testData);
-        }
-
-        [Test]
-        public void AddTwoSameLanguageTest()
-        {
-            var mock = new Mock<IRepository<Language>>();
-            mock.Setup(repo => repo.GetAllItems(null)).Returns(this.testData);
-            var controller = new LanguageController(mock.Object);
-
-            var lang4 = new Language { Id = 0, Name = "lang4" };
-
-            controller.Create(lang4);
-            controller.Create(lang4);
-            this.testData.Add(lang4);
-            this.testData.Add(lang4);
-            Assert.AreEqual(controller.Get(), this.testData);
-        }
-
-        [Test]
-        public void RemoveExistingLanguageTest()
-        {
-            var mock = new Mock<IRepository<Language>>();
-            mock.Setup(repo => repo.GetAllItems(null)).Returns(this.testData);
-            var controller = new LanguageController(mock.Object);
-
             int id = 1;
-            controller.Delete(id);
-            var language = this.testData.FirstOrDefault(x => x.Id == id);
-            this.testData.Remove(language);
+            var expected = this.languageTestData.FirstOrDefault(p => p.Id == id);
 
-            Assert.AreEqual(controller.Get(), this.testData);
+            this.languageRepository.Setup(rep => rep.GetAllItems(null))
+                .Returns(this.languageTestData);
+            this.languageRepository.Setup(rep => rep.GetItem(id, null))
+                .Returns(expected);
+
+            var result = this.languageController.GetById(id);
+
+            Assert.AreEqual(expected, result.Value);
         }
 
         [Test]
-        public void RemoveNotExistingLanguageTest()
+        public void GetById_InvalidId_ShouldReturnNotFoundResult()
         {
-            var mock = new Mock<IRepository<Language>>();
-            mock.Setup(repo => repo.GetAllItems(null)).Returns(this.testData);
-            var controller = new LanguageController(mock.Object);
+            int id = 4;
+            this.languageRepository.Setup(rep => rep.GetAllItems(null))
+                .Returns(this.languageTestData);
 
-            int id = 8;
-            controller.Delete(id);
-            var language = this.testData.FirstOrDefault(x => x.Id == id);
-            this.testData.Remove(language);
+            var result = this.languageController.GetById(id);
 
-            Assert.AreEqual(controller.Get(), this.testData);
+            Assert.IsInstanceOf(typeof(NotFoundResult), result.Result);
         }
 
         [Test]
-        public void UpdateNotExistingLanguageTest()
+        public void Create_ValidObject_ShouldReturnValidObjectAndCreatedAtObjectResult()
         {
-            var mock = new Mock<IRepository<Language>>();
-            mock.Setup(repo => repo.GetAllItems(null)).Returns(this.testData);
-            var controller = new LanguageController(mock.Object);
+            var lang4 = new Language { Id = 0, Name = "lang4" };
 
+            var result = this.languageController.Create(lang4).Result as OkObjectResult;
+
+            Assert.AreEqual(lang4, result.Value);
+            Assert.IsInstanceOf(typeof(OkObjectResult), result);
+        }
+
+        [Test]
+        public void Create_NullObject_ShouldReturnBadRequest()
+        {
+            var result = this.languageController.Create(null);
+
+            Assert.IsInstanceOf(typeof(BadRequestResult), result.Result);
+        }
+
+        [Test]
+        public void Update_ValidObject_ShouldReturnUpdatedObject()
+        {
+            var lang4 = new Language { Id = 3, Name = "lang4" };
+            this.languageRepository.Setup(rep => rep.GetAllItems(null))
+                .Returns(this.languageTestData);
+
+            var result = this.languageController.Update(lang4);
+
+            Assert.AreEqual(lang4, result.Value);
+        }
+
+        [Test]
+        public void Update_NullObject_ShouldReturnBadRequest()
+        {
+            this.languageRepository.Setup(rep => rep.GetAllItems(null))
+                .Returns(this.languageTestData);
+
+            var result = this.languageController.Update(null);
+
+            Assert.IsInstanceOf(typeof(BadRequestResult), result.Result);
+        }
+
+        [Test]
+        public void Update_NotExistObject_ShouldReturnNotFound()
+        {
             var lang4 = new Language { Id = 4, Name = "lang4" };
+            this.languageRepository.Setup(rep => rep.GetAllItems(null))
+                .Returns(this.languageTestData);
 
-            var testDataCopy = new List<Language>(this.testData);
+            var result = this.languageController.Update(lang4);
 
-            controller.Update(lang4);
-
-            var language = testDataCopy.FirstOrDefault(x => x.Id == lang4.Id);
-            if (language != null)
-            {
-                testDataCopy.Remove(language);
-                testDataCopy.Add(lang4);
-            }
-            var a = controller.Get();
-
-            Assert.AreEqual(controller.Get(), testDataCopy);
+            Assert.IsInstanceOf(typeof(NotFoundResult), result.Result);
         }
 
-        /*
         [Test]
-        public void GetLanguagesById()
+        public void Delete_ValidId_ShouldReturnDeletedObject()
         {
-            var mock = new Mock<IRepository<Language>>();
-            mock.Setup(repo => repo.GetAllItems(null)).Returns(this.testData);
-            var controller = new LanguageController(mock.Object);
+            int id = 1;
+            var deletedLanguage = this.languageTestData.FirstOrDefault(per => per.Id == id);
 
-            ActionResult<Language> result = controller.GetById(8);
+            this.languageRepository.Setup(rep => rep.GetAllItems(null))
+                .Returns(this.languageTestData);
 
-            Assert.AreEqual(result.Result, this.testData[1]);
+            var result = this.languageController.Delete(id);
+
+            Assert.AreEqual(deletedLanguage, result.Value);
         }
-        */
+
+        [Test]
+        public void Delete_NotExistId_ShouldReturnNotFoundResult()
+        {
+            var id = 4;
+            this.languageRepository.Setup(rep => rep.GetAllItems(null))
+                .Returns(this.languageTestData);
+
+            var result = this.languageController.Delete(id);
+
+            Assert.IsInstanceOf(typeof(NotFoundResult), result.Result);
+        }
+
+        [TearDown]
+        public void FreeResources()
+        {
+            this.languageController = null;
+            this.languageRepository = null;
+        }
     }
 }
