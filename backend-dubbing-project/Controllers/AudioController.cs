@@ -103,6 +103,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(400)]
         public ActionResult<Audio> Create(Audio model)
         {
+            if (model == null)
+                return BadRequest();
             _audios.Create(model);
 
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
@@ -121,6 +123,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(404)]
         public ActionResult<Audio> Update(Audio model)
         {
+            if (model == null)
+            {
+                return BadRequest();
+            }
+
             if (!_audios.GetAllItems().Any(x => x.Id == model.Id))
                 return NotFound();
             _audios.Update(model);
