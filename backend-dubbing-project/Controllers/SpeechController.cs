@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Speech> GetById(int id)
         {
             if (!_speeches.GetAllItems().Any(x => x.Id == id))
@@ -40,7 +41,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         [HttpGet("{id}/audios")]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<Audio>> GetAudios(int id)
         {
             if (!_speeches.GetAllItems().Any(x => x.Id == id))
@@ -50,8 +51,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Speech> Create(Speech model)
         {
             _speeches.Create(model);
@@ -60,8 +61,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Speech> Update(Speech model)
         {
             if (!_speeches.GetAllItems().Any(x => x.Id == model.Id))
@@ -72,14 +73,34 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Speech> Delete(int id)
         {
-            var list = _speeches.GetAllItems();
+            var list = _speeches.GetAllItems(source => source.Include(x => x.Audios));
             var speech = list.FirstOrDefault(x => x.Id == id);
 
             if (speech == null)
                 return NotFound();
+
+            foreach (var audio in speech.Audios)
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\Audio Files\", audio.FileName);
+                try
+                {
+                    if (System.IO.File.Exists(path))
+                    {
+                        System.IO.File.Delete(path);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"File '{path}' not found!");
+                    }
+                }
+                catch (IOException ioExc)
+                {
+                    Console.WriteLine(ioExc);
+                }
+            }
 
             _speeches.Delete(speech);
             return speech;

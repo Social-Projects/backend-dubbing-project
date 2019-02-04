@@ -21,5 +21,15 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
         public DubbingContext()
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Performance>().HasMany(x => x.Speeches).WithOne(y => y.Performance)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Speech>().HasMany(x => x.Audios).WithOne(y => y.Speech)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Language>().HasMany(x => x.Audios).WithOne(y => y.Language)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }

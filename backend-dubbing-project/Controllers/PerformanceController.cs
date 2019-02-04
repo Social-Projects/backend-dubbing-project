@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
@@ -36,13 +39,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="200">Returns the array of audios of the performance with the following id</response>
         /// <response code="404">If the performance with the following id does not exist</response>
         [HttpGet("{id}/speeches")]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<Speech>> GetSpeeches(int id)
         {
             if (!_performances.GetAllItems().Any(x => x.Id == id))
                 return NotFound();
 
-            return Ok(_performances.GetItem(id, source => source.Include(x => x.Speeches).ThenInclude(y => y.Audios)).Speeches);
+            return Ok(_performances.GetItem(id, source => source.Include(x => x.Speeches).ThenInclude(y => y.Audios))
+                .Speeches);
         }
 
         /// <summary>
@@ -52,7 +56,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="200">Returns the performance with the following id.</response>
         /// <response code="404">If the performance with the following id does not exist.</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Performance> GetById(int id)
         {
             if (!_performances.GetAllItems().Any(x => x.Id == id))
@@ -69,8 +73,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="201">Returns the newly created performance.</response>
         /// <response code="400">If the performance is not valid.</response>
         [HttpPost]
-        [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Performance> Create(Performance performance)
         {
             _performances.Create(performance);
@@ -86,8 +90,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="400">If the performance is not valid.</response>
         /// <response code="404">If the performance with the following id does not exist.</response>
         [HttpPut]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Performance> Update(Performance performance)
         {
             if (!_performances.GetAllItems().Any(x => x.Id == performance.Id))
@@ -105,14 +109,38 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="200">Returns the deleted performance.</response>
         /// <response code="404">If the performance with the following id does not exist.</response>
         [HttpDelete("{id}")]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Performance> Delete(int id)
         {
-            var list = _performances.GetAllItems();
+            var list = _performances.GetAllItems(source => source.Include(x => x.Speeches)
+                .ThenInclude(y => y.Audios));
             var performance = list.FirstOrDefault(x => x.Id == id);
 
             if (performance == null)
                 return NotFound();
+
+            foreach (var speech in performance.Speeches)
+            {
+                foreach (var audio in speech.Audios)
+                {
+                    var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\Audio Files\", audio.FileName);
+                    try
+                    {
+                        if (System.IO.File.Exists(path))
+                        {
+                            System.IO.File.Delete(path);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"File '{path}' not found!");
+                        }
+                    }
+                    catch (IOException ioExc)
+                    {
+                        Console.WriteLine(ioExc);
+                    }
+                }
+            }
 
             _performances.Delete(performance);
             return performance;
