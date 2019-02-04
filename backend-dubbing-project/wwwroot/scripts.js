@@ -6,7 +6,7 @@ let currentBuffer;
 
 let currentAudioLink;
 
-const currentApi = 'api/streaming/currentAudio';
+const currentApi = 'api/streaming/currentAudio?langId=1';
 
 
 window.onload = sensForButtons;
