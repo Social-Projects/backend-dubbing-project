@@ -170,7 +170,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
         }
 
         [Test]
-        public void Play_ValidIdPassed_ShouldReturnOkResult()
+        public void Play_ValidIdPassed_ShouldReturnStatusCode200()
         {
             // Arrange
             const int speechIndex = 1;
@@ -181,7 +181,15 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
             var response = this._streamController.Play(speechIndex) as OkResult;
 
             // Assert
-            Assert.IsInstanceOf(typeof(OkResult), response);
+            Assert.AreEqual(StatusCodes.Status200OK, response.StatusCode);
+        }
+
+        [TearDown]
+        public void FreeResources()
+        {
+            this._streamController = null;
+            this._performanceRepositories = null;
+            this._streamService = null;
         }
     }
 }

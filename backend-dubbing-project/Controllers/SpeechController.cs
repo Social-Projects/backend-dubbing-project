@@ -54,6 +54,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(400)]
         public ActionResult<Speech> Create(Speech model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
             _speeches.Create(model);
 
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
@@ -64,6 +67,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(404)]
         public ActionResult<Speech> Update(Speech model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
             if (!_speeches.GetAllItems().Any(x => x.Id == model.Id))
                 return NotFound();
 

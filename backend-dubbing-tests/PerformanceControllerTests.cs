@@ -4,6 +4,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
     using System.Linq;
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Query;
     using Moq;
@@ -55,17 +56,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
             this._performanceController = new PerformanceController(this._performanceRepository.Object);
         }
 
-        // Test Get Method
-        [Test]
-        public void Get_WhenCalled_ReturnIEnumerableResult()
-        {
-            // Act
-            var response = this._performanceController.Get() as IEnumerable<Performance>;
-
-            // Assert
-            Assert.IsInstanceOf(typeof(IEnumerable<Performance>), response);
-        }
-
+        // Testing Get Method
         [Test]
         public void Get_WhenCalled_ReturnAllItems()
         {
@@ -77,34 +68,34 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
             var response = this._performanceController.Get();
 
             // Assert
-            Assert.AreEqual(3, response.Count());
+            Assert.AreEqual(this._performanceTestData.Count(), response.Count());
         }
 
-        // Test GetById method
+        // Testing GetById method
         [Test]
-        public void GetById_InvalidIdPassed_ShouldReturnNotFoundResult()
+        public void GetById_InvalidIdPassed_ShouldReturnStatusCode404()
         {
             // Arrange
             const int performanceId = 8;
             this._performanceRepository.Setup(rep => rep.GetAllItems(null))
-                .Returns(new List<Performance> { new Performance() });
+                .Returns(this._performanceTestData);
 
             // Act
-            var response = this._performanceController.GetById(performanceId);
+            var response = this._performanceController.GetById(performanceId).Result as NotFoundResult;
 
             // Assert
-            Assert.IsInstanceOf(typeof(NotFoundResult), response.Result);
+            Assert.AreEqual(StatusCodes.Status404NotFound, response.StatusCode);
         }
 
         [Test]
-        public void GetById_ValidIdPassed_ShouldReturnValidObjectAndOkObjectResult()
+        public void GetById_ValidIdPassed_ShouldReturnValidObject()
         {
             // Arrange
             const int performanceId = 1;
             var expected = this._performanceTestData.FirstOrDefault(p => p.Id == performanceId);
             
             this._performanceRepository.Setup(rep => rep.GetAllItems(null))
-                .Returns(new List<Performance>() { expected });
+                .Returns(this._performanceTestData);
             this._performanceRepository.Setup(rep => rep.GetItem(performanceId, null))
                 .Returns(expected);
 
@@ -115,31 +106,31 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
             Assert.AreEqual(expected, response.Value);
         }
 
-        // Test GetSpeeches method
+        // Testing GetSpeeches method
         [Test]
-        public void GetSpeeches_InvalidIdPassed_ShouldReturnNotFoundResult()
+        public void GetSpeeches_InvalidIdPassed_ShouldReturnStatusCode404()
         {  
             // Arrange
             const int performanceId = 8;
             this._performanceRepository.Setup(rep => rep.GetAllItems(null))
-                .Returns(new List<Performance> { new Performance() });
+                .Returns(this._performanceTestData);
 
             // Act
-            var response = this._performanceController.GetSpeeches(performanceId);
+            var response = this._performanceController.GetSpeeches(performanceId).Result as NotFoundResult;
 
             // Assert
-            Assert.IsInstanceOf(typeof(NotFoundResult), response.Result);
+            Assert.AreEqual(StatusCodes.Status404NotFound, response.StatusCode);
         }
 
         [Test]
-        public void GetSpeeches_ValidIdPassed_ShouldReturnValidSpeecheAndOkObjectResult()
+        public void GetSpeeches_ValidIdPassed_ShouldReturnValidSpeecheAndStatusCode200()
         {
             // Arrange
             const int performanceId = 1;
             var performance = this._performanceTestData.FirstOrDefault(p => p.Id == performanceId);
 
             this._performanceRepository.Setup(rep => rep.GetAllItems(null))
-                .Returns(new List<Performance> { performance });
+                .Returns(this._performanceTestData);
             this._performanceRepository
                 .Setup(rep => rep.GetItem(performanceId, It.IsAny<Func<IQueryable<Performance>, IIncludableQueryable<Performance, object>>>()).Speeches)
                 .Returns(performance.Speeches);
@@ -149,68 +140,58 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
             
             // Assert
             Assert.AreEqual(performance.Speeches, response.Value);
-            Assert.IsInstanceOf(typeof(OkObjectResult), response);
+            Assert.AreEqual(StatusCodes.Status200OK, response.StatusCode);
         }
 
-        // Test Create method
+        // Testing Create method
         [Test]
-        public void Create_PassedInvalidObject_ShouldReturnBadRequest()
+        public void Create_PassedInvalidObject_ShouldReturnStatusCode400()
         {
             // Arrange
-            var performance = new Performance()
-            {
-                Id = 1,
-                Description = "Description 1"
-            };
+            var performance = new Performance() { Id = 1, Description = "Description 1" };
             this._performanceController.ModelState.AddModelError("Description", "The Description property required");
 
             // Act
-            var response = this._performanceController.Create(performance);
+            var response = this._performanceController.Create(performance).Result as BadRequestResult;
             
             // Assert
-            Assert.IsInstanceOf(typeof(BadRequestResult), response.Result);
+            Assert.AreEqual(StatusCodes.Status400BadRequest, response.StatusCode);
         }
 
         [Test]
-        public void Create_PassedValidObject_ShouldReturnValidObjectAndCreatedAtObjectResult()
+        public void Create_PassedValidObject_ShouldReturnValidObjectAndStatusCode201()
         {
             // Arrange
-            var performance = new Performance
-            {
-                Id = 1,
-                Title = "Performance 1",
-                Description = "Description 1",
-                Speeches = null
-            };
+            var performance = this._performanceTestData.FirstOrDefault(p => p.Id == 1);
 
             // Act
             var response = this._performanceController.Create(performance).Result as CreatedAtActionResult;
 
             // Assert
             Assert.AreEqual(performance, response.Value);
-            Assert.IsInstanceOf(typeof(CreatedAtActionResult), response);
+            Assert.AreEqual(StatusCodes.Status201Created, response.StatusCode);
         }
 
-        // Test Update method
+        // Testing Update method
         [Test]
-        public void Update_InvalidObjectPassed_ShouldReturnBadRequest()
+        public void Update_InvalidObjectPassed_ShouldReturnStatusCode400()
         {
             // Arrange
             var performance = new Performance { Id = 1, Description = "Description 1" };
             this._performanceController.ModelState.AddModelError("Title", "The Title property required");
 
             // Act
-            var response = this._performanceController.Update(performance);
+            var response = this._performanceController.Update(performance).Result as BadRequestResult;
 
             // Assert
-            Assert.IsInstanceOf(typeof(BadRequestResult), response.Result);
+            Assert.AreEqual(StatusCodes.Status400BadRequest, response.StatusCode);
         }
 
         [Test]
         public void Update_ValidObjectPassed_ShouldReturnUpdatedObject()
         {
             // Arrange
-            var performance = new Performance { Id = 1, Title = "Title 1", Description = "Description 1" };
+            var performance = this._performanceTestData.FirstOrDefault(p => p.Id == 1);
             this._performanceRepository.Setup(rep => rep.GetAllItems(null))
                 .Returns(this._performanceTestData);
 
@@ -222,7 +203,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
         }
 
         [Test]
-        public void Update_NotExistingObjectPassed_ShouldReturnNotFoundResult()
+        public void Update_NotExistingObjectPassed_ShouldReturnStatusCode404()
         {
             // Arrange
             var performance = new Performance { Id = 8, Title = "Title 8", Description = "Description 8" };
@@ -230,15 +211,15 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
                 .Returns(this._performanceTestData);
 
             // Act
-            var response = this._performanceController.Update(performance);
+            var response = this._performanceController.Update(performance).Result as NotFoundResult;
 
             // Assert
-            Assert.IsInstanceOf(typeof(NotFoundResult), response.Result);
+            Assert.AreEqual(StatusCodes.Status404NotFound, response.StatusCode);
         }
 
-        // Test Delete method
+        // Testing Delete method
         [Test]
-        public void Delete_InvalidIdPassed_ShouldReturnNotFoundResult()
+        public void Delete_InvalidIdPassed_ShouldReturnStatusCode404()
         {
             // Arrange
             var performanceId = 8;
@@ -246,17 +227,17 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
                 .Returns(this._performanceTestData);
             
             // Act
-            var response = this._performanceController.Delete(performanceId);
+            var response = this._performanceController.Delete(performanceId).Result as NotFoundResult;
 
             // Assert
-            Assert.IsInstanceOf(typeof(NotFoundResult), response.Result);
+            Assert.AreEqual(StatusCodes.Status404NotFound, response.StatusCode);
         }
 
         [Test]
         public void Delete_ValidIdPassed_ShouldReturnDeletedObject()
         {
             // Arrange
-            var performanceId = 1;
+            const int performanceId = 1;
             var deletedPerformance = this._performanceTestData.FirstOrDefault(per => per.Id == performanceId);
 
             this._performanceRepository.Setup(rep => rep.GetAllItems(null))
