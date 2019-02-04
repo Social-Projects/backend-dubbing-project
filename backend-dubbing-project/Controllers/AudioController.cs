@@ -15,13 +15,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
     [ApiController]
     public class AudioController : ControllerBase
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
-
         private IRepository<Audio> _audios;
 
-        public AudioController(IHostingEnvironment hostingEnvironment, IRepository<Audio> audios)
+        public AudioController(IRepository<Audio> audios)
         {
-            _hostingEnvironment = hostingEnvironment;
             _audios = audios;
         }
 
@@ -31,28 +28,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> Upload([FromForm]AudioDTO model)
         {
-            // Path to '~/wwwroot'
-            // var path = Path.Combine(_hostingEnvironment.WebRootPath, model.AudioFile.FileName);
-
-            var path = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", model.AudioFile.FileName);
+            var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\Audio Files\", model.AudioFile.FileName);
             // Example of saving file to local root '~/wwwroot'
             using (var fileStream = new FileStream(path, FileMode.Create))
             {
                 await model.AudioFile.CopyToAsync(fileStream);
             }
 
-            var tfile = TagLib.File.Create(path);
-            var duration = tfile.Properties.Duration;
-
-            var audio = new Audio()
-            {
-                FileName = model.AudioFile.FileName,
-                LanguageId = model.LanguageId,
-                SpeechId = model.SpeechId,
-                Duration = Convert.ToInt32(duration.TotalSeconds)
-            };
-
-            Create(audio);
             return Ok();
         }
 
@@ -82,7 +64,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="200">Returns the audio with the following id</response>
         /// <response code="404">If the audio with the following id does not exist</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Audio> GetById(int id)
         {
             if (!_audios.GetAllItems().Any(x => x.Id == id))
@@ -99,12 +81,16 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="201">Returns the newly created audio</response>
         /// <response code="400">If the audio is not valid</response>
         [HttpPost]
-        [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Audio> Create(Audio model)
         {
             if (model == null)
                 return BadRequest();
+            var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\Audio Files", model.FileName);
+            var tfile = TagLib.File.Create(path);
+            var duration = tfile.Properties.Duration;
+            model.Duration = Convert.ToInt32(duration.TotalSeconds);
             _audios.Create(model);
 
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
@@ -119,8 +105,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="400">If the audio is not valid</response>
         /// <response code="404">If the audio with the following id does not exist</response>
         [HttpPut]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Audio> Update(Audio model)
         {
             if (model == null)
@@ -142,7 +128,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="200">Returns the deleted audio</response>
         /// <response code="404">If the audio with the following id does not exist</response>
         [HttpDelete("{id}")]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Audio> Delete(int id)
         {
             var list = _audios.GetAllItems();

@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Models
 {
@@ -11,5 +13,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Models
         {
             return (Id == (obj as Language).Id) && (Name == (obj as Language).Name);
         }
+
+        [JsonIgnore]
+        public virtual ICollection<Audio> Audios { get; set; }
     }
 }

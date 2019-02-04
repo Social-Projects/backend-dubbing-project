@@ -1,7 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
 using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 
@@ -25,8 +29,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Language> GetById(int id)
         {
             if (!_languages.GetAllItems().Any(x => x.Id == id))
@@ -36,32 +40,54 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Language> Create(Language language)
         {
             if (language == null)
                 return BadRequest();
+
             _languages.Create(language);
             return Ok(language);
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Language> Delete(int id)
         {
-            var list = _languages.GetAllItems();
+            var list = _languages.GetAllItems(source => source.Include(x => x.Audios));
             var language = list.FirstOrDefault(x => x.Id == id);
             if (language == null)
                 return NotFound();
+
+            foreach (var audio in language.Audios)
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\Audio Files\", audio.FileName);
+                try
+                {
+                    if (System.IO.File.Exists(path))
+                    {
+                        System.IO.File.Delete(path);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"File '{path}' not found!");
+                    }
+                }
+                catch (IOException ioExc)
+                {
+                    Console.WriteLine(ioExc);
+                }
+            }
+
             _languages.Delete(language);
             return language;
         }
 
         [HttpPut]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Language> Update(Language language)
         {
             if (language == null)

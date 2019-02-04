@@ -148,7 +148,7 @@
             Assert.IsInstanceOf(typeof(NotFoundResult), result.Result);
         }
 
-        [Test]
+        /*[Test]
         public void Delete_ValidId_ShouldReturnDeletedObject()
         {
             int id = 1;
@@ -160,7 +160,7 @@
             var result = this.languageController.Delete(id);
 
             Assert.AreEqual(deletedLanguage, result.Value);
-        }
+        }*/
 
         [Test]
         public void Delete_NotExistId_ShouldReturnNotFoundResult()
