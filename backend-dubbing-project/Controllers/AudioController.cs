@@ -85,6 +85,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Audio> Create(Audio model)
         {
+            if (model == null)
+                return BadRequest();
             var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\Audio Files", model.FileName);
             var tfile = TagLib.File.Create(path);
             var duration = tfile.Properties.Duration;
@@ -107,6 +109,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Audio> Update(Audio model)
         {
+            if (model == null)
+            {
+                return BadRequest();
+            }
+
             if (!_audios.GetAllItems().Any(x => x.Id == model.Id))
                 return NotFound();
             _audios.Update(model);

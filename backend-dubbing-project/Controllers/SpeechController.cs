@@ -85,9 +85,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             var list = _speeches.GetAllItems(source => source.Include(x => x.Audios));
             var speech = list.FirstOrDefault(x => x.Id == id);
 
-            if (speech == null)
-                return NotFound();
-
             foreach (var audio in speech.Audios)
             {
                 var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\Audio Files\", audio.FileName);

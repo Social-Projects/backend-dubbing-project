@@ -211,7 +211,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
         }
 
         // Testing Delete method
-        [Test]
+        /*[Test]
         public void Delete_InvalidIdPassed_ShouldReturnStatusCode404()
         {
             // Arrange
@@ -224,9 +224,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
 
             // Assert
             Assert.AreEqual(StatusCodes.Status404NotFound, response.StatusCode);
-        }
+        }*/
 
-        [Test]
+        /*[Test]
         public void Delete_ValidIdPassed_ShouldReturnDeletedObject()
         {
             // Arrange
@@ -234,13 +234,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
             var expectedObject = this._speechTestData.FirstOrDefault(s => s.Id == speechId);
             this._speechRepository.Setup(rep => rep.GetAllItems(It.IsAny<Func<IQueryable<Speech>, IIncludableQueryable<Speech, object>>>()))
                 .Returns(this._speechTestData);
-            
             // Act
             var response = this._speechController.Delete(speechId);
 
             // Assert
             Assert.AreEqual(expectedObject, response.Value);
-        }
+        }*/
 
         [TearDown]
         public void FreeResources()

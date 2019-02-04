@@ -297,7 +297,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
             Assert.AreEqual(StatusCodes.Status404NotFound, response.StatusCode);
         }
 
-        [Test]
+        /*[Test]
         public void Delete_ValidIdPassed_ShouldReturnDeletedObject()
         {
             // Arrange
@@ -312,7 +312,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
 
             // Assert
             Assert.AreEqual(deletedPerformance, response.Value);
-        }
+        }*/
 
         [TearDown]
         public void FreeResources()
