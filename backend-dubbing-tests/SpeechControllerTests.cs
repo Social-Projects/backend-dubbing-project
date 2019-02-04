@@ -232,7 +232,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
             // Arrange
             const int speechId = 1;
             var expectedObject = this._speechTestData.FirstOrDefault(s => s.Id == speechId);
-            this._speechRepository.Setup(rep => rep.GetAllItems(null))
+            this._speechRepository.Setup(rep => rep.GetAllItems(It.IsAny<Func<IQueryable<Speech>, IIncludableQueryable<Speech, object>>>()))
                 .Returns(this._speechTestData);
             // Act
             var response = this._speechController.Delete(speechId);
