@@ -26,25 +26,89 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
             this._performanceTestData = new List<Performance>
             {
                 new Performance { Id = 1, Title = "Performance 1", Description = "Description 1", 
-                                    Speeches = new List<Speech>
-                                    {
-                                        new Speech { Id = 1, Text = "Text 1", PerformanceId = 1, Audios = null },
-                                        new Speech { Id = 2, Text = "Text 2", PerformanceId = 1, Audios = null }
-                                    } 
+                    Speeches = new List<Speech>
+                    {
+                        new Speech
+                        {
+                            Id = 1,
+                            Text = "Text 1",
+                            PerformanceId = 1,
+                            Audios = new List<Audio>
+                            {
+                                new Audio { Id = 1, FileName = "audios/audio1.mp3", SpeechId = 1, LanguageId = 1 },
+                                new Audio { Id = 2, FileName = "audios/audio2.mp3", SpeechId = 1, LanguageId = 2 }
+                            }
+                        },
+                        new Speech
+                        {
+                            Id = 2,
+                            Text = "Text 2",
+                            PerformanceId = 1,
+                            Audios = new List<Audio>
+                            {
+                                new Audio { Id = 3, FileName = "audios/audio3.mp3", SpeechId = 2, LanguageId = 1 },
+                                new Audio { Id = 4, FileName = "audios/audio4.mp3", SpeechId = 2, LanguageId = 2 }
+                            }
+                        }
+                    } 
                 },
                 new Performance { Id = 2, Title = "Performance 2", Description = "Description 2",
-                                    Speeches = new List<Speech>
-                                    {
-                                        new Speech { Id = 3, Text = "Text 3", PerformanceId = 2, Audios = null },
-                                        new Speech { Id = 4, Text = "Text 4", PerformanceId = 2, Audios = null }
-                                    }
+                    Speeches = new List<Speech>
+                    {
+                        new Speech
+                        {
+                            Id = 3,
+                            Text = "Text 3",
+                            PerformanceId = 2,
+                            Audios = new List<Audio>
+                            {
+                                new Audio { Id = 5, FileName = "audios/audio5.mp3", SpeechId = 3, LanguageId = 1 },
+                                new Audio { Id = 6, FileName = "audios/audio6.mp3", SpeechId = 3, LanguageId = 2 }
+                            }
+                        },
+                        new Speech
+                        {
+                            Id = 4,
+                            Text = "Text 4",
+                            PerformanceId = 2,
+                            Audios = new List<Audio>
+                            {
+                                new Audio { Id = 7, FileName = "audios/audio7.mp3", SpeechId = 4, LanguageId = 1 },
+                                new Audio { Id = 8, FileName = "audios/audio8.mp3", SpeechId = 4, LanguageId = 2 }
+                            }
+                        }
+                    }
                 },
-                new Performance { Id = 3, Title = "Performance 3", Description = "Description 3",
-                                    Speeches = new List<Speech>
-                                    {
-                                        new Speech { Id = 5, Text = "Text 5", PerformanceId = 3, Audios = null },
-                                        new Speech { Id = 6, Text = "Text 6", PerformanceId = 3, Audios = null }
-                                    } 
+                new Performance 
+                { 
+                    Id = 3,
+                    Title = "Performance 3",
+                    Description = "Description 3",
+                    Speeches = new List<Speech>
+                    {
+                        new Speech
+                        { 
+                            Id = 5,
+                            Text = "Text 5",
+                            PerformanceId = 3,
+                            Audios = new List<Audio>
+                            {
+                                new Audio { Id = 9, FileName = "audios/audio9.mp3", SpeechId = 5, LanguageId = 1 },
+                                new Audio { Id = 10, FileName = "audios/audio10.mp3", SpeechId = 5, LanguageId = 2 }
+                            }
+                        },
+                        new Speech
+                        {
+                            Id = 6,
+                            Text = "Text 6",
+                            PerformanceId = 3,
+                            Audios = new List<Audio>
+                            {
+                                new Audio { Id = 11, FileName = "audios/audio11.mp3", SpeechId = 6, LanguageId = 1 },
+                                new Audio { Id = 12, FileName = "audios/audio12.mp3", SpeechId = 6, LanguageId = 2 }
+                            }
+                        }
+                    } 
                 }
             };
         }
@@ -240,7 +304,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProjectTests
             const int performanceId = 1;
             var deletedPerformance = this._performanceTestData.FirstOrDefault(per => per.Id == performanceId);
 
-            this._performanceRepository.Setup(rep => rep.GetAllItems(null))
+            this._performanceRepository.Setup(rep => rep.GetAllItems(It.IsAny<Func<IQueryable<Performance>, IIncludableQueryable<Performance, object>>>()))
                 .Returns(this._performanceTestData);
 
             // Act
