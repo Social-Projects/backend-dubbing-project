@@ -77,8 +77,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Performance> Create(Performance performance)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
             _performances.Create(performance);
             return CreatedAtAction(nameof(GetById), new { id = performance.Id }, performance);
         }
@@ -96,9 +94,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Performance> Update(Performance performance)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-
             if (!_performances.GetAllItems().Any(x => x.Id == performance.Id))
                 return NotFound();
 
@@ -128,7 +123,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             {
                 foreach (var audio in speech.Audios)
                 {
-                    var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\Audio Files\", audio.FileName);
+                    var path = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files\", audio.FileName);
                     try
                     {
                         if (System.IO.File.Exists(path))

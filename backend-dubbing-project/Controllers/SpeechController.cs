@@ -105,6 +105,26 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
                 }
             }
 
+            foreach (var audio in speech.Audios)
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files\", audio.FileName);
+                try
+                {
+                    if (System.IO.File.Exists(path))
+                    {
+                        System.IO.File.Delete(path);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"File '{path}' not found!");
+                    }
+                }
+                catch (IOException ioExc)
+                {
+                    Console.WriteLine(ioExc);
+                }
+            }
+
             _speeches.Delete(speech);
             return speech;
         }

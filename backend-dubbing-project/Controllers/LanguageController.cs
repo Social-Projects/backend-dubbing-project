@@ -63,7 +63,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
 
             foreach (var audio in language.Audios)
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\Audio Files\", audio.FileName);
+                var path = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files\", audio.FileName);
                 try
                 {
                     if (System.IO.File.Exists(path))
@@ -88,14 +88,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Language> Update(Language language)
+        public ActionResult<Language> Update(Language lenguage)
         {
-            if (language == null)
-                return BadRequest();
-            if (!_languages.GetAllItems().Any(x => x.Id == language.Id))
+            if (!_languages.GetAllItems().Any(x => x.Id == lenguage.Id))
                 return NotFound();
-            _languages.Update(language);
-            return language;
+            _languages.Update(lenguage);
+            return lenguage;
         }
     }
 }
