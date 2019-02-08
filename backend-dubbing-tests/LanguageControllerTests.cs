@@ -126,17 +126,6 @@
         }
 
         [Test]
-        public void Update_NullObject_ShouldReturnBadRequest()
-        {
-            this.languageRepository.Setup(rep => rep.GetAllItems(null))
-                .Returns(this.languageTestData);
-
-            var result = this.languageController.Update(null);
-
-            Assert.IsInstanceOf(typeof(BadRequestResult), result.Result);
-        }
-
-        [Test]
         public void Update_NotExistObject_ShouldReturnNotFound()
         {
             var lang4 = new Language { Id = 4, Name = "lang4" };

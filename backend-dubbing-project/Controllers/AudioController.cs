@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
 using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 
@@ -16,10 +17,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
     public class AudioController : ControllerBase
     {
         private IRepository<Audio> _audios;
+        private IRepository<Speech> _speeches;
 
-        public AudioController(IRepository<Audio> audios)
+        public AudioController(IRepository<Audio> audios, IRepository<Speech> speeches)
         {
             _audios = audios;
+            _speeches = speeches;
         }
 
         /// <summary>
@@ -28,7 +31,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> Upload([FromForm]AudioDTO model)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\Audio Files\", model.AudioFile.FileName);
+            var path = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files\", model.AudioFile.FileName);
             // Example of saving file to local root '~/wwwroot'
             using (var fileStream = new FileStream(path, FileMode.Create))
             {
@@ -36,15 +39,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             }
 
             return Ok();
-        }
-
-        /// <summary>
-        /// Removes a file from a local storage
-        /// </summary>
-        [HttpDelete("upload")]
-        public ActionResult DeleteFile(string filename)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -85,12 +79,15 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Audio> Create(Audio model)
         {
-            if (model == null)
-                return BadRequest();
-            var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\Audio Files", model.FileName);
-            var tfile = TagLib.File.Create(path);
+            var curSpeech = _speeches.GetItem(model.SpeechId);
+            string newFileName = $"{curSpeech.PerformanceId}_{model.SpeechId}_{model.LanguageId}.mp3";
+            var oldPath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", model.FileName);
+            var newPath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", newFileName);
+            System.IO.File.Move(oldPath, newPath);
+            var tfile = TagLib.File.Create(newPath);
             var duration = tfile.Properties.Duration;
             model.Duration = Convert.ToInt32(duration.TotalSeconds);
+            model.FileName = newFileName;
             _audios.Create(model);
 
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
@@ -109,35 +106,28 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Audio> Update(Audio model)
         {
-            if (model == null)
-            {
-                return BadRequest();
-            }
-
             if (!_audios.GetAllItems().Any(x => x.Id == model.Id))
                 return NotFound();
+
+            var audio = _audios.GetItem(model.Id, source => source.Include(x => x.Speech));
+
+            string newFileName = $"{audio.Speech.PerformanceId}_{model.SpeechId}_{model.LanguageId}.mp3";
+
+            if (newFileName == model.FileName)
+                return model;
+
+            var fileToRemovePath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", audio.FileName);
+            System.IO.File.Delete(fileToRemovePath);
+            var oldPath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", model.FileName);
+            var newPath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", newFileName);
+            System.IO.File.Move(oldPath, newPath);
+            var tfile = TagLib.File.Create(newPath);
+            var duration = tfile.Properties.Duration;
+            model.Duration = Convert.ToInt32(duration.TotalSeconds);
+            model.FileName = newFileName;
             _audios.Update(model);
+
             return model;
-        }
-
-        /// <summary>
-        /// Deletes the audio
-        /// </summary>
-        /// <param name="id">Audio id</param>
-        /// <returns>Deleted audio</returns>
-        /// <response code="200">Returns the deleted audio</response>
-        /// <response code="404">If the audio with the following id does not exist</response>
-        [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Audio> Delete(int id)
-        {
-            var list = _audios.GetAllItems();
-            var audio = list.FirstOrDefault(x => x.Id == id);
-
-            if (audio == null)
-                return NotFound();
-            _audios.Delete(audio);
-            return audio;
         }
     }
 }

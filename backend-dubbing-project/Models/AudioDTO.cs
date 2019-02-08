@@ -9,9 +9,5 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Models
     public class AudioDTO
     {
         public IFormFile AudioFile { get; set; }
-
-        public int LanguageId { get; set; }
-
-        public int SpeechId { get; set; }
     }
 }
