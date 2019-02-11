@@ -86,8 +86,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject
 
             app.UseStaticFiles();
 
-            app.UseHttpsRedirection();
-
             app.UseCors(_corsName);
 
             app.UseMvc();
