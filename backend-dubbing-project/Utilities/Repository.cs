@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
@@ -12,7 +12,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
         where T : BaseEntity
     {
         private readonly DbSet<T> _entities;
-        private DbContext _context;
+        private readonly DbContext _context;
 
         public Repository(DbContext context)
         {
@@ -20,7 +20,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
             _entities = context.Set<T>();
         }
 
-        public IEnumerable<T> GetAllItems(Func<IQueryable<T>, IIncludableQueryable<T, object>> includes = null)
+        public async Task<List<T>> GetAllItemsAsync(
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> includes = null)
         {
             IQueryable<T> query = _entities;
 
@@ -29,39 +30,46 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
                 query = includes(query);
             }
 
-            return query.AsEnumerable();
+            var allItems = await query.ToListAsync();
+
+            return allItems;
         }
 
-        public T GetItem(int id, Func<IQueryable<T>, IIncludableQueryable<T, object>> includes = null)
+        public async Task<T> GetItemAsync(int id, Func<IQueryable<T>, IIncludableQueryable<T, object>> includes = null)
         {
-            IQueryable<T> query = _entities.Where(x => x.Id == id);
+            var query = _entities.Where(x => x.Id == id);
 
             if (includes != null)
-            {
                 query = includes(query);
-            }
 
-            return query.FirstOrDefault();
+            var item = await query.FirstOrDefaultAsync();
+
+            return item;
         }
 
-        public void Create(T entity)
+        public async Task CreateAsync(T entity)
         {
-            entity.Id = default(int);
+            entity.Id = default;
+
             _entities.Add(entity);
-            _context.SaveChanges();
+
+            await _context.SaveChangesAsync();
         }
 
-        public void Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
-            T exist = _entities.Find(entity.Id);
+            var exist = await _entities.FindAsync(entity.Id);
+
             _context.Entry(exist).CurrentValues.SetValues(entity);
-            _context.SaveChanges();
+
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(T entity)
+        public async Task DeleteAsync(T entity)
         {
             _entities.Remove(entity);
-            _context.SaveChanges();
+
+            await _context.SaveChangesAsync();
         }
     }
 }

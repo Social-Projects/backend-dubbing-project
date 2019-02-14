@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +15,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
     [ApiController]
     public class SpeechController : ControllerBase
     {
-        private IRepository<Speech> _speeches;
+        private readonly IRepository<Speech> _speeches;
 
         public SpeechController(IRepository<Speech> speeches)
         {
@@ -25,40 +23,56 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Speech> Get()
+        public async Task<ActionResult<List<Speech>>> Get()
         {
-            return _speeches.GetAllItems();
+            var listOfSpeeches = await _speeches.GetAllItemsAsync();
+
+            return Ok(listOfSpeeches);
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Speech> GetById(int id)
+        public async Task<ActionResult<Speech>> GetById(int id)
         {
-            if (!_speeches.GetAllItems().Any(x => x.Id == id))
+            var listOfSpeeches = await _speeches.GetAllItemsAsync();
+
+            var doesNotExist = listOfSpeeches.All(x => x.Id != id);
+
+            if (doesNotExist)
                 return NotFound();
 
-            return _speeches.GetItem(id);
+            var speech = await _speeches.GetItemAsync(id);
+
+            return Ok(speech);
         }
 
         [HttpGet("{id}/audios")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<Audio>> GetAudios(int id)
+        public async Task<ActionResult<List<Audio>>> GetAudios(int id)
         {
-            if (!_speeches.GetAllItems().Any(x => x.Id == id))
+            var listOfSpeeches = await _speeches.GetAllItemsAsync();
+
+            var doesNotExist = listOfSpeeches.All(x => x.Id != id);
+
+            if (doesNotExist)
                 return NotFound();
 
-            return Ok(_speeches.GetItem(id, source => source.Include(x => x.Audios)).Audios);
+            var speech = await _speeches.GetItemAsync(id, source => source.Include(x => x.Audios));
+
+            var audios = speech.Audios;
+
+            return Ok(audios);
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Speech> Create(Speech model)
+        public async Task<ActionResult<Speech>> Create(Speech model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            _speeches.Create(model);
+            await _speeches.CreateAsync(model);
 
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
         }
@@ -66,23 +80,29 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Speech> Update(Speech model)
+        public async Task<ActionResult<Speech>> Update(Speech model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            if (!_speeches.GetAllItems().Any(x => x.Id == model.Id))
+            var listOfSpeeches = await _speeches.GetAllItemsAsync();
+
+            var doesNotExist = listOfSpeeches.All(x => x.Id != model.Id);
+
+            if (doesNotExist)
                 return NotFound();
 
-            _speeches.Update(model);
-            return model;
+            await _speeches.UpdateAsync(model);
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Speech> Delete(int id)
+        public async Task<ActionResult<Speech>> Delete(int id)
         {
-            var list = _speeches.GetAllItems(source => source.Include(x => x.Audios));
+            var list = await _speeches.GetAllItemsAsync(source => source.Include(x => x.Audios));
+
             var speech = list.FirstOrDefault(x => x.Id == id);
 
             foreach (var audio in speech.Audios)
@@ -125,8 +145,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
                 }
             }
 
-            _speeches.Delete(speech);
-            return speech;
+            await _speeches.DeleteAsync(speech);
+
+            return NoContent();
         }
     }
 }
