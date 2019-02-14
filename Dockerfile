@@ -6,7 +6,7 @@ FROM microsoft/dotnet:2.1-sdk AS build
 WORKDIR /src
 COPY ["backend-dubbing-project/backend-dubbing-project.csproj", "backend-dubbing-project/"]
 RUN dotnet restore "backend-dubbing-project/backend-dubbing-project.csproj"
-RUN dotnet ef database update
+RUN dotnet ef database update "backend-dubbing-project/backend-dubbing-project.csproj"
 COPY . .
 WORKDIR /src/backend-dubbing-project
 RUN dotnet build "backend-dubbing-project.csproj" -c Release -o /app
