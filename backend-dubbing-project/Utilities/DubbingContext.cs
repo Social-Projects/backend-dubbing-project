@@ -5,6 +5,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Utilities
 {
     public class DubbingContext : DbContext
     {
+        public DbSet<Admin> Admins { get; set; }
+
         public DbSet<Performance> Performances { get; set; }
 
         public DbSet<Audio> Audios { get; set; }
