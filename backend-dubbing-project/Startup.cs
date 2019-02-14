@@ -88,8 +88,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject
 
             app.UseStaticFiles();
 
-            app.UseHttpsRedirection();
-
             app.UseMvc();
         }
     }

@@ -4,6 +4,8 @@ let context;
 
 let currentAudioLink;
 
+let langId;
+
 const button = document.getElementById('connecting-button');
 
 const englishButton = document.getElementById('english-button');
@@ -32,6 +34,8 @@ function init() {
 
 function goToStreamingPart() {
     'use strict';
+
+    langId = '_1';
 
     languagePart.style.display = 'none';
     
@@ -136,7 +140,7 @@ function restartCurrentAudio() {
 }
 
 function playNewAudio(link) {
-    link = 'audio/' + link + '.mp3';
+    link = 'audio/' + link + langId +'.mp3';
     
     if (currentAudioLink !== undefined) {
         currentSource.stop();
