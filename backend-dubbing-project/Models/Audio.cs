@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Models
