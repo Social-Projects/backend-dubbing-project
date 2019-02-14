@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,8 +15,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
     [ApiController]
     public class AudioController : ControllerBase
     {
-        private IRepository<Audio> _audios;
-        private IRepository<Speech> _speeches;
+        private readonly IRepository<Audio> _audios;
+        private readonly IRepository<Speech> _speeches;
 
         public AudioController(IRepository<Audio> audios, IRepository<Speech> speeches)
         {
@@ -26,12 +25,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         /// <summary>
-        /// Uploads a file and saves it to a local storage
+        /// Uploads a file and saves it to a local storage.
         /// </summary>
         [HttpPost("upload")]
-        public async Task<IActionResult> Upload([FromForm]AudioDTO model)
+        public async Task<IActionResult> Upload([FromForm] AudioDTO model)
         {
             var path = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files\", model.AudioFile.FileName);
+
             // Example of saving file to local root '~/wwwroot'
             using (var fileStream = new FileStream(path, FileMode.Create))
             {
@@ -42,45 +42,50 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         }
 
         /// <summary>
-        /// Get all audios
+        /// Get all audios.
         /// </summary>
-        /// <returns>Array of audios</returns>
+        /// <returns>Array of audios.</returns>
         [HttpGet]
-        public IEnumerable<Audio> Get()
+        public async Task<ActionResult<List<Audio>>> Get()
         {
-            return _audios.GetAllItems();
+            var listOfAllAudios = await _audios.GetAllItemsAsync();
+
+            return Ok(listOfAllAudios);
         }
 
         /// <summary>
-        /// Get audios by id
+        /// Get audios by id.
         /// </summary>
-        /// <returns>Audio with the following id</returns>
-        /// <response code="200">Returns the audio with the following id</response>
-        /// <response code="404">If the audio with the following id does not exist</response>
+        /// <returns>Audio with the following id.</returns>
+        /// <response code="200">Returns the audio with the following id.</response>
+        /// <response code="404">If the audio with the following id does not exist.</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Audio> GetById(int id)
+        public async Task<ActionResult<Audio>> GetById(int id)
         {
-            if (!_audios.GetAllItems().Any(x => x.Id == id))
+            var listOfAllAudios = await _audios.GetAllItemsAsync();
+
+            var doesNotExist = listOfAllAudios.All(x => x.Id != id);
+
+            if (doesNotExist)
                 return NotFound();
 
-            return _audios.GetItem(id);
+            var audio = await _audios.GetItemAsync(id);
+
+            return Ok(audio);
         }
 
         /// <summary>
-        /// Creates a new audio
+        /// Creates a new audio.
         /// </summary>
         /// <param name="model"></param>
-        /// <returns>A newly created audio</returns>
-        /// <response code="201">Returns the newly created audio</response>
-        /// <response code="400">If the audio is not valid</response>
+        /// <returns>A newly created audio.</returns>
+        /// <response code="201">Returns the newly created audio.</response>
+        /// <response code="400">If the audio is not valid.</response>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Audio> Create(Audio model)
+        public async Task<ActionResult> Create(Audio model)
         {
-            var curSpeech = _speeches.GetItem(model.SpeechId);
-            string newFileName = $"{curSpeech.PerformanceId}_{model.SpeechId}_{model.LanguageId}.mp3";
+            var curSpeech = await _speeches.GetItemAsync(model.SpeechId);
+            var newFileName = $"{curSpeech.PerformanceId}_{model.SpeechId}_{model.LanguageId}.mp3";
             var oldPath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", model.FileName);
             var newPath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", newFileName);
             System.IO.File.Move(oldPath, newPath);
@@ -88,33 +93,36 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             var duration = tfile.Properties.Duration;
             model.Duration = Convert.ToInt32(duration.TotalSeconds);
             model.FileName = newFileName;
-            _audios.Create(model);
+
+            await _audios.CreateAsync(model);
 
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
         }
 
         /// <summary>
-        /// Updates the audio
+        /// Updates the audio.
         /// </summary>
         /// <param name="model"></param>
-        /// <returns>An updated audio</returns>
-        /// <response code="200">Returns the updated audio</response>
-        /// <response code="400">If the audio is not valid</response>
-        /// <response code="404">If the audio with the following id does not exist</response>
+        /// <returns>An updated audio.</returns>
+        /// <response code="200">Returns the updated audio.</response>
+        /// <response code="400">If the audio is not valid.</response>
+        /// <response code="404">If the audio with the following id does not exist.</response>
         [HttpPut]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Audio> Update(Audio model)
+        public async Task<ActionResult> Update(Audio model)
         {
-            if (!_audios.GetAllItems().Any(x => x.Id == model.Id))
+            var listOfAllAudios = await _audios.GetAllItemsAsync();
+
+            var doesNotExist = listOfAllAudios.All(x => x.Id != model.Id);
+
+            if (doesNotExist)
                 return NotFound();
 
-            var audio = _audios.GetItem(model.Id, source => source.Include(x => x.Speech));
+            var audio = await _audios.GetItemAsync(model.Id, source => source.Include(x => x.Speech));
 
-            string newFileName = $"{audio.Speech.PerformanceId}_{model.SpeechId}_{model.LanguageId}.mp3";
+            var newFileName = $"{audio.Speech.PerformanceId}_{model.SpeechId}_{model.LanguageId}.mp3";
 
             if (newFileName == model.FileName)
-                return model;
+                return NoContent();
 
             var fileToRemovePath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", audio.FileName);
             System.IO.File.Delete(fileToRemovePath);
@@ -125,9 +133,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             var duration = tfile.Properties.Duration;
             model.Duration = Convert.ToInt32(duration.TotalSeconds);
             model.FileName = newFileName;
-            _audios.Update(model);
 
-            return model;
+            await _audios.UpdateAsync(model);
+
+            return NoContent();
         }
     }
 }

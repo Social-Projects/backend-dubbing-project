@@ -15,7 +15,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
     [Route("api/performance")]
     public class PerformanceController : ControllerBase
     {
-        private IRepository<Performance> _performances;
+        private readonly IRepository<Performance> _performances;
 
         public PerformanceController(IRepository<Performance> performances)
         {
@@ -27,26 +27,36 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// </summary>
         /// <returns>Array of performances.</returns>
         [HttpGet]
-        public IEnumerable<Performance> Get()
+        public async Task<ActionResult<List<Performance>>> Get()
         {
-            return _performances.GetAllItems();
+            var listOfAllPerformances = await _performances.GetAllItemsAsync();
+
+            return Ok(listOfAllPerformances);
         }
 
         /// <summary>
-        /// Get all the perforamce's speeches
+        /// Get all the performance's speeches.
         /// </summary>
-        /// <returns>Array of audio</returns>
-        /// <response code="200">Returns the array of audios of the performance with the following id</response>
-        /// <response code="404">If the performance with the following id does not exist</response>
+        /// <returns>Array of audio.</returns>
+        /// <response code="200">Returns the array of audios of the performance with the following id.</response>
+        /// <response code="404">If the performance with the following id does not exist.</response>
         [HttpGet("{id}/speeches")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<Speech>> GetSpeeches(int id)
+        public async Task<ActionResult<ICollection<Speech>>> GetSpeeches(int id)
         {
-            if (!_performances.GetAllItems().Any(x => x.Id == id))
+            var listOfAllPerformances = await _performances.GetAllItemsAsync();
+
+            var doesNotExist = listOfAllPerformances.All(x => x.Id != id);
+
+            if (doesNotExist)
                 return NotFound();
 
-            return Ok(_performances.GetItem(id, source => source.Include(x => x.Speeches).ThenInclude(y => y.Audios))
-                .Speeches);
+            var performance = await _performances.GetItemAsync(
+                id,
+                source => source.Include(x => x.Speeches).ThenInclude(y => y.Audios));
+
+            var speeches = performance.Speeches;
+
+            return Ok(speeches);
         }
 
         /// <summary>
@@ -56,13 +66,18 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="200">Returns the performance with the following id.</response>
         /// <response code="404">If the performance with the following id does not exist.</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Performance> GetById(int id)
+        public async Task<ActionResult<Performance>> GetById(int id)
         {
-            if (!_performances.GetAllItems().Any(x => x.Id == id))
+            var listOfAllPerformances = await _performances.GetAllItemsAsync();
+
+            var doesNotExist = listOfAllPerformances.All(x => x.Id != id);
+
+            if (doesNotExist)
                 return NotFound();
 
-            return _performances.GetItem(id);
+            var performance = await _performances.GetItemAsync(id);
+
+            return performance;
         }
 
         /// <summary>
@@ -73,11 +88,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="201">Returns the newly created performance.</response>
         /// <response code="400">If the performance is not valid.</response>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Performance> Create(Performance performance)
+        public async Task<ActionResult<Performance>> Create(Performance performance)
         {
-            _performances.Create(performance);
+            await _performances.CreateAsync(performance);
+
             return CreatedAtAction(nameof(GetById), new { id = performance.Id }, performance);
         }
 
@@ -90,15 +104,18 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="400">If the performance is not valid.</response>
         /// <response code="404">If the performance with the following id does not exist.</response>
         [HttpPut]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Performance> Update(Performance performance)
+        public async Task<ActionResult<Performance>> Update(Performance performance)
         {
-            if (!_performances.GetAllItems().Any(x => x.Id == performance.Id))
+            var listOfAllPerformances = await _performances.GetAllItemsAsync();
+
+            var doesNotExist = listOfAllPerformances.All(x => x.Id != performance.Id);
+
+            if (doesNotExist)
                 return NotFound();
 
-            _performances.Update(performance);
-            return performance;
+            await _performances.UpdateAsync(performance);
+
+            return NoContent();
         }
 
         /// <summary>
@@ -109,11 +126,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         /// <response code="200">Returns the deleted performance.</response>
         /// <response code="404">If the performance with the following id does not exist.</response>
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Performance> Delete(int id)
+        public async Task<ActionResult<Performance>> Delete(int id)
         {
-            var list = _performances.GetAllItems(source => source.Include(x => x.Speeches)
-                .ThenInclude(y => y.Audios));
+            var list = await _performances
+                .GetAllItemsAsync(source => source.Include(x => x.Speeches)
+                    .ThenInclude(y => y.Audios));
+
             var performance = list.FirstOrDefault(x => x.Id == id);
 
             if (performance == null)
@@ -142,8 +160,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
                 }
             }
 
-            _performances.Delete(performance);
-            return performance;
+            await _performances.DeleteAsync(performance);
+
+            return NoContent();
         }
     }
 }
