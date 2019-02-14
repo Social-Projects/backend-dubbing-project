@@ -8,8 +8,7 @@ COPY ["backend-dubbing-project/backend-dubbing-project.csproj", "backend-dubbing
 RUN dotnet restore "backend-dubbing-project/backend-dubbing-project.csproj"
 COPY . .
 WORKDIR /src/backend-dubbing-project
-RUN dotnet ef migrations add InitialCreate 
-RUN dotnet ef database update 
+RUN dotnet ef database update InitialCreate
 RUN dotnet build "backend-dubbing-project.csproj" -c Release -o /app
 
 FROM build AS publish
