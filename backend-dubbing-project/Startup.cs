@@ -77,7 +77,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject
             app.UseFileServer(new FileServerOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Directory.GetCurrentDirectory(), "Audio Files")),
+                    Path.Combine(Directory.GetCurrentDirectory(), "AudioFiles")),
                 RequestPath = "/audio",
                 EnableDirectoryBrowsing = true
             });

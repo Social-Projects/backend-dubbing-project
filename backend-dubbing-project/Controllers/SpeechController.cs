@@ -107,7 +107,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
 
             foreach (var audio in speech.Audios)
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\Audio Files\", audio.FileName);
+                var path = Path.Combine(Directory.GetCurrentDirectory() + $@"\AudioFiles\", audio.FileName);
                 try
                 {
                     if (System.IO.File.Exists(path))
@@ -127,7 +127,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
 
             foreach (var audio in speech.Audios)
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files\", audio.FileName);
+                var path = Path.Combine(Directory.GetCurrentDirectory() + @"\AudioFiles\", audio.FileName);
                 try
                 {
                     if (System.IO.File.Exists(path))

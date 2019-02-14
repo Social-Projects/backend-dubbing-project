@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Audio Files" />
+      <Folder Include="AudioFiles" />
       <Folder Include="Services" />
     </ItemGroup>
 

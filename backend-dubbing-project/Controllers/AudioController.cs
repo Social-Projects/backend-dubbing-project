@@ -30,7 +30,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> Upload([FromForm] AudioDTO model)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files\", model.AudioFile.FileName);
+            var path = Path.Combine(Directory.GetCurrentDirectory() + @"\AudioFiles\", model.AudioFile.FileName);
 
             // Example of saving file to local root '~/wwwroot'
             using (var fileStream = new FileStream(path, FileMode.Create))
@@ -86,8 +86,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         {
             var curSpeech = await _speeches.GetItemAsync(model.SpeechId);
             var newFileName = $"{curSpeech.PerformanceId}_{model.SpeechId}_{model.LanguageId}.mp3";
-            var oldPath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", model.FileName);
-            var newPath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", newFileName);
+            var oldPath = Path.Combine(Directory.GetCurrentDirectory() + @"\AudioFiles", model.FileName);
+            var newPath = Path.Combine(Directory.GetCurrentDirectory() + @"\AudioFiles", newFileName);
             System.IO.File.Move(oldPath, newPath);
             var tfile = TagLib.File.Create(newPath);
             var duration = tfile.Properties.Duration;
@@ -124,10 +124,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
             if (newFileName == model.FileName)
                 return NoContent();
 
-            var fileToRemovePath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", audio.FileName);
+            var fileToRemovePath = Path.Combine(Directory.GetCurrentDirectory() + @"\AudioFiles", audio.FileName);
             System.IO.File.Delete(fileToRemovePath);
-            var oldPath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", model.FileName);
-            var newPath = Path.Combine(Directory.GetCurrentDirectory() + @"\Audio Files", newFileName);
+            var oldPath = Path.Combine(Directory.GetCurrentDirectory() + @"\AudioFiles", model.FileName);
+            var newPath = Path.Combine(Directory.GetCurrentDirectory() + @"\AudioFiles", newFileName);
             System.IO.File.Move(oldPath, newPath);
             var tfile = TagLib.File.Create(newPath);
             var duration = tfile.Properties.Duration;
