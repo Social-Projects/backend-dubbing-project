@@ -1,13 +1,10 @@
-﻿using System.Threading.Tasks;
-
-namespace SoftServe.ITAcademy.BackendDubbingProjectTests
+﻿namespace SoftServe.ITAcademy.BackendDubbingProjectTests
 {
     using System.Collections.Generic;
     using System.Linq;
     using BackendDubbingProject.Controllers;
     using BackendDubbingProject.Models;
     using BackendDubbingProject.Utilities;
-    using Microsoft.AspNetCore.Mvc;
     using Moq;
     using NUnit.Framework;
 
