@@ -8,7 +8,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Hubs
     {
         public async Task SendMessage(string message)
         {
-            string answer;
+            string answer = "Some error!";
 
             switch (message)
             {
@@ -25,23 +25,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Hubs
                     answer = message;
                     break;
                 default:
-                    answer = IdValidation(message);
+                    answer = message;
                     break;
             }
 
             await Clients.Others.SendAsync("ReceiveMessage", answer);
-        }
-
-        private static string IdValidation(string id)
-        {
-            var number = char.Parse(id);
-
-            var idIsValid = char.IsNumber(number);
-
-            if (idIsValid)
-                return id;
-
-            throw new ArgumentException();
         }
     }
 }
