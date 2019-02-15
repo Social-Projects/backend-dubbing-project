@@ -12,6 +12,7 @@ RUN dotnet ef database update InitialCreate
 RUN dotnet build "backend-dubbing-project.csproj" -c Release -o /app
 
 FROM build AS publish
+RUN dotnet ef database update InitialCreate
 RUN dotnet publish "backend-dubbing-project.csproj" -c Release -o /app
 
 FROM base AS final
