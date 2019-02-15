@@ -6,6 +6,7 @@ FROM microsoft/dotnet:2.1-sdk AS build
 WORKDIR /src
 COPY ["backend-dubbing-project/backend-dubbing-project.csproj", "backend-dubbing-project/"]
 RUN dotnet restore "backend-dubbing-project/backend-dubbing-project.csproj"
+RUN dotnet ef database update InitialCreate
 COPY . .
 WORKDIR /src/backend-dubbing-project
 RUN dotnet ef database update InitialCreate
@@ -17,7 +18,6 @@ RUN dotnet publish "backend-dubbing-project.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
-RUN dotnet ef database update InitialCreate
 RUN mkdir AudioFiles
 COPY ./backend-dubbing-project/AudioFiles ./AudioFiles
 COPY --from=publish /app .
