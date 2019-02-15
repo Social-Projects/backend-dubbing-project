@@ -19,4 +19,5 @@ WORKDIR /app
 RUN mkdir AudioFiles
 COPY ./backend-dubbing-project/AudioFiles ./AudioFiles
 COPY --from=publish /app .
+COPY --from=build /src/backend-dubbing-projecttree/dubbing.db .
 ENTRYPOINT ["dotnet", "backend-dubbing-project.dll"]
