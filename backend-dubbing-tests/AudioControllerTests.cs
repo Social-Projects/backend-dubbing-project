@@ -59,7 +59,7 @@
         {
             audioRepository = new Mock<IRepository<Audio>>();
             speechRepository = new Mock<IRepository<Speech>>();
-            audioController = new AudioController(audioRepository.Object, speechRepository.Object);
+//            audioController = new AudioController(audioRepository.Object, speechRepository.Object);
         }
 
 

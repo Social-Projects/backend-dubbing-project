@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
+using SoftServe.ITAcademy.BackendDubbingProject.Services;
 using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
@@ -15,17 +16,22 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
     [Route("api/language")]
     public class LanguageController : ControllerBase
     {
-        private readonly IRepository<Language> _languages;
+        private readonly LanguageService _languageService;
 
-        public LanguageController(IRepository<Language> languages)
+        public LanguageController(LanguageService languageService)
         {
-            _languages = languages;
+            _languageService = languageService;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Language>>> Get()
         {
-            var listOfAllLanguages = await _languages.GetAllItemsAsync();
+            var listOfAllLanguages = await _languageService.GetAllLanguages();
+
+            var listIsEmpty = listOfAllLanguages.Count == 0;
+
+            if (listIsEmpty)
+                return NotFound();
 
             return Ok(listOfAllLanguages);
         }
@@ -35,14 +41,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Language>> GetById(int id)
         {
-            var listOfAllLanguages = await _languages.GetAllItemsAsync();
+            var language = await _languageService.GetById(id);
 
-            var doesNotExist = listOfAllLanguages.All(x => x.Id != id);
-
-            if (doesNotExist)
+            if (language == null)
                 return NotFound();
-
-            var language = await _languages.GetItemAsync(id);
 
             return Ok(language);
         }
@@ -50,14 +52,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Language>> Create(Language language)
+        public async Task<ActionResult<Language>> Create(Language model)
         {
-            if (language == null)
+            if (model == null)
                 return BadRequest();
 
-            await _languages.CreateAsync(language);
+            await _languageService.Create(model);
 
-            return CreatedAtAction(nameof(GetById), new { id = language.Id }, language);
+            return CreatedAtAction(nameof(GetById), new {id = model.Id}, model);
         }
 
         [HttpDelete("{id}")]
@@ -65,34 +67,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Language>> Delete(int id)
         {
-            var list = await _languages.GetAllItemsAsync(source => source.Include(x => x.Audios));
-
-            var language = list.FirstOrDefault(x => x.Id == id);
-
-            if (language == null)
-                return NotFound();
-
-            foreach (var audio in language.Audios)
-            {
-                var path = Path.Combine(Directory.GetCurrentDirectory() + @"\AudioFiles\", audio.FileName);
-                try
-                {
-                    if (System.IO.File.Exists(path))
-                    {
-                        System.IO.File.Delete(path);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"File '{path}' not found!");
-                    }
-                }
-                catch (IOException ioExc)
-                {
-                    Console.WriteLine(ioExc);
-                }
-            }
-
-            await _languages.DeleteAsync(language);
+            await _languageService.Delete(id);
 
             return NoContent();
         }
@@ -100,16 +75,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Language>> Update(Language language)
+        public async Task<ActionResult<Language>> Update(Language model)
         {
-            var listOfAllLanguages = await _languages.GetAllItemsAsync();
-
-            var doesNotExist = listOfAllLanguages.All(x => x.Id != language.Id);
-
-            if (doesNotExist)
-                return NotFound();
-
-            await _languages.UpdateAsync(language);
+            await _languageService.Update(model);
 
             return NoContent();
         }

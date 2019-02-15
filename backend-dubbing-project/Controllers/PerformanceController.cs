@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoftServe.ITAcademy.BackendDubbingProject.Models;
+using SoftServe.ITAcademy.BackendDubbingProject.Services;
 using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
@@ -14,11 +15,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
     [Route("api/performance")]
     public class PerformanceController : ControllerBase
     {
-        private readonly IRepository<Performance> _performances;
+        private readonly IPerformanceService _performanceService;
 
-        public PerformanceController(IRepository<Performance> performances)
+        public PerformanceController(IPerformanceService performanceService)
         {
-            _performances = performances;
+            _performanceService = performanceService;
         }
 
         /// <summary>
@@ -28,7 +29,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Performance>>> Get()
         {
-            var listOfAllPerformances = await _performances.GetAllItemsAsync();
+            var listOfAllPerformances = await _performanceService.GetAllPerformances();
+
+            var listIsEmpty = listOfAllPerformances.Count == 0;
+
+            if (listIsEmpty)
+                return NotFound();
 
             return Ok(listOfAllPerformances);
         }
@@ -42,20 +48,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpGet("{id}/speeches")]
         public async Task<ActionResult<ICollection<Speech>>> GetSpeeches(int id)
         {
-            var listOfAllPerformances = await _performances.GetAllItemsAsync();
+            var listOfSpeeches = await _performanceService.GetSpeeches(id);
 
-            var doesNotExist = listOfAllPerformances.All(x => x.Id != id);
+            var listIsEmpty = listOfSpeeches.Count == 0;
 
-            if (doesNotExist)
+            if (listIsEmpty)
                 return NotFound();
 
-            var performance = await _performances.GetItemAsync(
-                id,
-                source => source.Include(x => x.Speeches).ThenInclude(y => y.Audios));
-
-            var speeches = performance.Speeches;
-
-            return Ok(speeches);
+            return Ok(listOfSpeeches);
         }
 
         /// <summary>
@@ -67,52 +67,44 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Performance>> GetById(int id)
         {
-            var listOfAllPerformances = await _performances.GetAllItemsAsync();
+            var performance = await _performanceService.GetPerformanceById(id);
 
-            var doesNotExist = listOfAllPerformances.All(x => x.Id != id);
-
-            if (doesNotExist)
+            if (performance == null)
                 return NotFound();
 
-            var performance = await _performances.GetItemAsync(id);
-
-            return performance;
+            return Ok(performance);
         }
 
         /// <summary>
         /// Creates a new performance.
         /// </summary>
-        /// <param name="performance"></param>
+        /// <param name="model"></param>
         /// <returns>A newly created performance.</returns>
         /// <response code="201">Returns the newly created performance.</response>
         /// <response code="400">If the performance is not valid.</response>
         [HttpPost]
-        public async Task<ActionResult<Performance>> Create(Performance performance)
+        public async Task<ActionResult<Performance>> Create(Performance model)
         {
-            await _performances.CreateAsync(performance);
+            await _performanceService.CreatePerformance(model);
 
-            return CreatedAtAction(nameof(GetById), new { id = performance.Id }, performance);
+            return CreatedAtAction(nameof(GetById), new {id = model.Id}, model);
         }
 
         /// <summary>
         /// Updates the performance.
         /// </summary>
-        /// <param name="performance"></param>
+        /// <param name="model"></param>
         /// <returns>An updated performance.</returns>
         /// <response code="200">Returns the updated performance.</response>
         /// <response code="400">If the performance is not valid.</response>
         /// <response code="404">If the performance with the following id does not exist.</response>
         [HttpPut]
-        public async Task<ActionResult<Performance>> Update(Performance performance)
+        public async Task<ActionResult<Performance>> Update(Performance model)
         {
-            var listOfAllPerformances = await _performances.GetAllItemsAsync();
+            var performance = await _performanceService.UpdatePerformance(model);
 
-            var doesNotExist = listOfAllPerformances.All(x => x.Id != performance.Id);
-
-            if (doesNotExist)
+            if (performance == null)
                 return NotFound();
-
-            await _performances.UpdateAsync(performance);
 
             return NoContent();
         }
@@ -127,39 +119,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Performance>> Delete(int id)
         {
-            var list = await _performances
-                .GetAllItemsAsync(source => source.Include(x => x.Speeches)
-                    .ThenInclude(y => y.Audios));
-
-            var performance = list.FirstOrDefault(x => x.Id == id);
-
-            if (performance == null)
-                return NotFound();
-
-            foreach (var speech in performance.Speeches)
-            {
-                foreach (var audio in speech.Audios)
-                {
-                    var path = Path.Combine(Directory.GetCurrentDirectory() + @"\AudioFiles\", audio.FileName);
-                    try
-                    {
-                        if (System.IO.File.Exists(path))
-                        {
-                            System.IO.File.Delete(path);
-                        }
-                        else
-                        {
-                            Console.WriteLine($"File '{path}' not found!");
-                        }
-                    }
-                    catch (IOException ioExc)
-                    {
-                        Console.WriteLine(ioExc);
-                    }
-                }
-            }
-
-            await _performances.DeleteAsync(performance);
+            await _performanceService.DeletePerformance(id);
 
             return NoContent();
         }
