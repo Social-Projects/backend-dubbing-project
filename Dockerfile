@@ -17,6 +17,7 @@ RUN dotnet publish "backend-dubbing-project.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
+RUN dotnet ef database update InitialCreate
 RUN mkdir AudioFiles
 COPY ./backend-dubbing-project/AudioFiles ./AudioFiles
 COPY --from=publish /app .
