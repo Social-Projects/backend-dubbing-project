@@ -31,5 +31,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Models
                     return 0;
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            return (Id == (obj as Speech).Id) && (Text == (obj as Speech).Text);
+        }
     }
 }

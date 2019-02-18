@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
@@ -9,8 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using SoftServe.ITAcademy.BackendDubbingProject.Models;
-using SoftServe.ITAcademy.BackendDubbingProject.Services;
+using SoftServe.ITAcademy.BackendDubbingProject.Hubs;
 using SoftServe.ITAcademy.BackendDubbingProject.Utilities;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -31,21 +29,24 @@ namespace SoftServe.ITAcademy.BackendDubbingProject
         {
             services.AddCors(options =>
             {
-                    options.AddPolicy(
-                        _corsName,
-                        builder =>
-                    {
-                        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                    });
+                options.AddPolicy(
+                    _corsName,
+                    builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials(); });
             });
+
             var connection = Configuration.GetConnectionString("SqliteConntectionString");
 
             services.AddDbContext<DubbingContext>(options => options.UseSqlite(connection), ServiceLifetime.Transient);
+
             services.AddTransient<DbContext, DubbingContext>();
+
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
-            services.AddSingleton<IStreamService, StreamService>();
+
+            services.AddSignalR();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(
-                options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                options => options.SerializerSettings.ReferenceLoopHandling =
+                    Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddSwaggerGen(c =>
             {
@@ -69,10 +70,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject
 
             app.UseSwagger();
 
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "APIs V1");
-            });
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "APIs V1"));
+
+            app.UseCors(_corsName);
 
             app.UseFileServer(new FileServerOptions
             {
@@ -82,13 +82,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject
                 EnableDirectoryBrowsing = true
             });
 
+            app.UseSignalR(options => options.MapHub<StreamHub>("/StreamHub"));
+
             app.UseDefaultFiles();
 
             app.UseStaticFiles();
-
-            app.UseHttpsRedirection();
-
-            app.UseCors(_corsName);
 
             app.UseMvc();
         }

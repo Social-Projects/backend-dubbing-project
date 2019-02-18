@@ -2,44 +2,109 @@
     box-sizing: border-box;
 }
 
-body{
-    text-align: center;
-    background-color: #0e1621;
-    height: 200px;
+html,
+body {
+    height: 100%;
+    font-family: Arial, serif;
 }
 
-#header {
-    position: -webkit-sticky;
-    position: sticky;
-    z-index: 999;
-    top: 0;
-    left: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 50px;
+body {
+    margin: 0;
+    background-color: #0e1621;
+}
+
+header {
     background-color: #17212b;
-    padding: 20px;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+}
+
+main {
+    text-align: center;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+footer {
+    height: 10%;
+    display: flex;
+    justify-content: center;
 }
 
 .header-logo {
-    height: 50px;
-    width: 70px;
-    margin-left: 0px;
+    height: 100%;
+    width: auto;
+}
+
+.footer-pic {
+    height: 100%;
+    width: auto;
 }
 
 button {
     text-align: center;
-    margin-top: 80px;
-    font-weight: 700;
     font-size: 25px;
     color: white;
-    padding: .8em 1em calc(.8em + 3px);
+    padding: 0.8em 1em;
     transition: 0.2s;
     width: 65%;
-    height: 80px;
     border-radius: 40px;
-    background-color: green;
+    background-color: #cf1225;
     border: 0;
+}
+
+.language-button {
+    background-color: #083d81;
+}
+
+img {
+    width: auto;
+    height: 100%;
+}
+
+a {
+    height: 10%;
+}
+
+.headers {
+    color: white;
+}
+
+#language-selection-part {
+    
+    flex: 1 0 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    display: none;
+}
+
+#streaming-part {
+    
+    flex: 1 0 100%;
+    flex-direction: column;
+    align-items: center;
+    display: none;
+    justify-content: space-evenly;
+}
+
+#link-part {
+    flex: 1 0 100%;
+    flex-direction: column;
+    align-items: center;
+    display: none;
+    justify-content: space-evenly;
+}
+
+@media screen and (orientation: landscape) {
+    a {
+        flex-direction: row;
+    }
+
+    button {
+        width: 35%;
+    }
 }
