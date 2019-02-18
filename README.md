@@ -1,4 +1,4 @@
-#Lviv Regional Puppet Theater
+# Lviv Regional Puppet Theater
 
 ## Backend technology stack:
 - .NET Core 2.2
@@ -8,13 +8,13 @@
 - Unit tests: xUnit
 - GitLab CI
 
-##How to setup:  
+## How to setup:  
 ```
 dotnet restore
 dotnet ef migrations add InitialCreate
 dotnet ef database update
 dotnet run
 ```
-##API documentation:
+## API documentation:
 http://localhost:5000/swagger
 
