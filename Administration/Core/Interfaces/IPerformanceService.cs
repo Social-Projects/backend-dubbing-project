@@ -2,6 +2,5 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 {
     public interface IPerformanceService
     {
-        
     }
 }
