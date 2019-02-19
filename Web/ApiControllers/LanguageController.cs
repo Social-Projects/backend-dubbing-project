@@ -19,6 +19,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             _languageService = languageService;
         }
 
+        
+        /// <summary>
+        /// Get all languags.
+        /// </summary>
+        /// <returns>Array of languages.</returns>
         [HttpGet]
         public async Task<ActionResult<List<Language>>> Get()
         {
@@ -30,9 +35,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             return Ok(listOfAllLanguages);
         }
 
+        /// <summary>
+        /// Get language by id.
+        /// </summary>
+        /// <returns>Language with the following id.</returns>
+        /// <response code="200">Returns the language with the following id.</response>
+        /// <response code="404">If the language with the following id does not exist.</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Language>> GetById(int id)
         {
             var language = await _languageService.GetById(id);
@@ -43,9 +52,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             return Ok(language);
         }
 
+        /// <summary>
+        /// Creates a new language.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>A newly created language.</returns>
+        /// <response code="201">Returns the newly created language.</response>
+        /// <response code="400">If the language is not valid.</response>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Language>> Create(Language model)
         {
             if (model == null)
@@ -56,9 +70,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
         }
 
+        /// <summary>
+        /// Updates the language.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>No Content</returns>
+        /// <response code="200">Returns No Content.</response>
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Language>> Delete(int id)
         {
             await _languageService.Delete(id);
@@ -66,9 +84,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Deletes the language.
+        /// </summary>
+        /// <param name="id">Language id.</param>
+        /// <returns>No Content.</returns>
+        /// <response code="200">Returns No Content.</response>
         [HttpPut]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Language>> Update(Language model)
         {
             await _languageService.Update(model);
