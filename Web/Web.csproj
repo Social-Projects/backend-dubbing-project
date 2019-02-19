@@ -19,10 +19,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="AudioFiles" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Administration\Core\Core.csproj" />
       <ProjectReference Include="..\Administration\Infrastructure\Infrastructure.csproj" />
       <ProjectReference Include="..\Administration\UnitTests\UnitTests.csproj" />
