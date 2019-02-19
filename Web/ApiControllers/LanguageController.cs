@@ -19,7 +19,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             _languageService = languageService;
         }
 
-        
         /// <summary>
         /// Get all languags.
         /// </summary>
