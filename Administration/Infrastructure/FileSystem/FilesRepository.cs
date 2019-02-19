@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.IO;
+using System.Threading.Tasks;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 
@@ -8,23 +8,18 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
 {
     public class FilesRepository : IFileRepository
     {
-        private const string _audiosFolder = "Audio Files";
-        private readonly string _audioFilesFolderPath = Path.Combine(Directory.GetCurrentDirectory(), _audiosFolder);
-
-        public async Task UploadAsync(Audio audio)
+        public async Task UploadAsync(Audio audio, string path)
         {
-            string path = Path.Combine(_audioFilesFolderPath, audio.FileName);
-
             await File.WriteAllBytesAsync(path, audio.AudioFile);
         }
 
-        public void Delete(IEnumerable<Audio> audios)
+        public void Delete(IEnumerable<Audio> audios, string folderPath)
         {
-            foreach(Audio audio in audios)
+            foreach (Audio audio in audios)
             {
-                string path = Path.Combine(_audioFilesFolderPath, audio.FileName);
+                string audioPath = Path.Combine(folderPath, audio.FileName);
 
-                File.Delete(path);
+                File.Delete(audioPath);
             }
         }
     }

@@ -6,8 +6,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 {
     public interface IFileRepository
     {
-        Task UploadAsync(Audio audio);
+        Task UploadAsync(Audio audio, string path);
 
-        void Delete(IEnumerable<Audio> audios);
+        void Delete(IEnumerable<Audio> audios, string path);
     }
 }
