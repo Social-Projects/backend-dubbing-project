@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database;
 using SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -42,7 +45,18 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 
             const string connection = "Data Source=dubbing.db";
 
-            services.AddDbContext<DbContext>(options => options.UseSqlite(connection, b => b.MigrationsAssembly("Web")));
+            services.AddDbContext<DbContext>(options =>
+                options.UseSqlite(connection, b => b.MigrationsAssembly("Web")));
+
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            services.AddScoped<IAudioService, AudioService>();
+
+            services.AddScoped<ILanguageService, LanguageService>();
+
+            services.AddScoped<IPerformanceService, PerformanceService>();
+
+            services.AddScoped<ISpeechService, SpeechService>();
 
             services.AddSignalR();
 
