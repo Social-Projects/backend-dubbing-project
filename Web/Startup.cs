@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using Core.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database;
 using SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs;
 using Swashbuckle.AspNetCore.Swagger;

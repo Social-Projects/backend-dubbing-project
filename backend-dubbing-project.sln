@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Administr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "Administration\UnitTests\UnitTests.csproj", "{CEB26DDF-9FF5-4C27-BF3A-BE4F6ED863A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Streaming\Core\Core.csproj", "{9C571898-CA97-4FCF-9E5B-B7D60FA9ACD7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hubs", "Streaming\Hubs\Hubs.csproj", "{9C571898-CA97-4FCF-9E5B-B7D60FA9ACD7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Streaming", "Streaming", "{944A2425-9618-4A9A-A4EE-B40192FAD66B}"
 EndProject
