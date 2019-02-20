@@ -64,10 +64,58 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             return mappedSpeeches.ToList();
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult<Performance>> Create(PerformanceViewModel performance)
-        //{
+        [HttpPost]
+        public async Task<ActionResult<PerformanceViewModel>> Create(PerformanceViewModel performance)
+        {
+            if (ModelState.IsValid)
+            {
+                var originPerformance = _mapper.Map<PerformanceViewModel, Performance>(performance);
+                await _performanceService.CreateAsync(originPerformance);
 
-        //}
+                performance.Id = originPerformance.Id;
+
+                return CreatedAtAction(nameof(GetById), new { id = originPerformance.Id }, performance);
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<PerformanceViewModel>> Update(PerformanceViewModel performance, int id)
+        {
+            if (ModelState.IsValid && performance.Id == id)
+            {
+                var originPerformance = _mapper.Map<PerformanceViewModel, Performance>(performance);
+
+                var updatedPerformance = await _performanceService.UpdateAsync(originPerformance);
+
+                if (updatedPerformance == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    var mappedPerformance = _mapper.Map<Performance, PerformanceViewModel>(updatedPerformance);
+                    return mappedPerformance;
+                }
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var deletedPerformance = await _performanceService.DeleteAsync(id);
+
+            if (deletedPerformance == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok();
+            }
+        }
     }
 }

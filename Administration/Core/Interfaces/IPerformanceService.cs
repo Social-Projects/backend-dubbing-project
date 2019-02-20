@@ -16,6 +16,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 
         Task<Performance> UpdateAsync(Performance performance);
 
-        Task<Performance> DeleteAsync(Performance performance);
+        Task<Performance> DeleteAsync(int id);
     }
 }

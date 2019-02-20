@@ -10,13 +10,16 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
     {
         private readonly IRepository<Performance> _performanceRepository;
         private readonly IRepository<Speech> _speechRepository;
+        private readonly IRepository<Audio> _audioRepository;
 
         public PerformanceService(
             IRepository<Performance> performanceRepository,
-            IRepository<Speech> speechRepository)
+            IRepository<Speech> speechRepository,
+            IRepository<Audio> audioRepository)
         {
             _performanceRepository = performanceRepository;
             _speechRepository = speechRepository;
+            _audioRepository = audioRepository;
         }
 
         public async Task<IEnumerable<Performance>> GetAllAsync()
@@ -34,7 +37,15 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             }
             else
             {
-                return await _speechRepository.List(s => s.PerformanceId == id);
+                var speeches = await _speechRepository.List(s => s.PerformanceId == id);
+
+                foreach (var speech in speeches)
+                {
+                    var audios = await _audioRepository.List(a => a.SpeechId == speech.Id);
+                    speech.Duration = audios.Max(a => a.Duration);
+                }
+
+                return speeches;
             }
         }
 
@@ -63,9 +74,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             }
         }
 
-        public async Task<Performance> DeleteAsync(Performance performance)
+        public async Task<Performance> DeleteAsync(int id)
         {
-            var performances = await _performanceRepository.List(p => p.Id == performance.Id);
+            var performances = await _performanceRepository.List(p => p.Id == id);
 
             if (performances.Count() == 0)
             {
@@ -73,8 +84,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             }
             else
             {
-                await _performanceRepository.DeleteAsync(performance);
-                return performance;
+                await _performanceRepository.DeleteAsync(performances.First());
+                return performances.First();
             }
         }
     }

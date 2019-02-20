@@ -9,20 +9,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
         public string Text { get; set; }
 
         [NotMapped]
-        public int Duration
-        {
-            get
-            {
-                if (Audio != null && Audio.Count != 0)
-                {
-                    return Audio.Max(a => a.Duration);
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
+        public int Duration { get; set; }
 
         public int PerformanceId { get; set; }
 
