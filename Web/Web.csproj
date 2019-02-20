@@ -22,8 +22,4 @@
         <ProjectReference Include="..\Streaming\Hubs\Hubs.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="wwwroot\" />
-    </ItemGroup>
-
 </Project>
