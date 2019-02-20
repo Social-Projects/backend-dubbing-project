@@ -44,7 +44,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
 
         public async Task UpdateAsync(T entity)
         {
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            var existedEntity = _dbContext.Set<T>().Find(entity.Id);
+            _dbContext.Entry(existedEntity).CurrentValues.SetValues(entity);
+
             await _dbContext.SaveChangesAsync();
         }
 

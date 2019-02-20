@@ -42,7 +42,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
                 foreach (var speech in speeches)
                 {
                     var audios = await _audioRepository.List(a => a.SpeechId == speech.Id);
-                    speech.Duration = audios.Max(a => a.Duration);
+                    if (audios.Count() != 0)
+                        speech.Duration = audios.Max(a => a.Duration);
                 }
 
                 return speeches;
