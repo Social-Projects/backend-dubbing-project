@@ -115,7 +115,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <response code="400">If the passed performance is not valid.</response>
         /// <response code="404">If the passed performance has not been founded.</response>
         [HttpPut("{id}")]
-        public async Task<ActionResult<PerformanceViewModel>> Update(PerformanceViewModel performance, int id)
+        public async Task<ActionResult> Update(PerformanceViewModel performance, int id)
         {
             if (ModelState.IsValid && performance.Id == id)
             {

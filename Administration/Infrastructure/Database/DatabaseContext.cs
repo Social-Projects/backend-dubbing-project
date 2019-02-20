@@ -13,14 +13,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
 
         public DbSet<Speech> Speeches { get; set; }
 
-        public DubbingContext(DbContextOptions<DbContext> options)
+        public DubbingContext(DbContextOptions<DubbingContext> options)
             : base(options)
         {
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite("Data Source=dubbing.db");
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlite("Data Source=dubbing.db");
+        //}
     }
 }

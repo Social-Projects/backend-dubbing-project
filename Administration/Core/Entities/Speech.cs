@@ -17,11 +17,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 
         public ICollection<Audio> Audio { get; set; }
 
-        public Speech(string text, Performance performance, ICollection<Audio> audio)
-        {
-            Text = text;
-            Performance = performance;
-            Audio = audio;
-        }
+        //public Speech(string text, Performance performance, ICollection<Audio> audio)
+        //{
+        //    Text = text;
+        //    Performance = performance;
+        //    Audio = audio;
+        //}
     }
 }

@@ -8,8 +8,7 @@ namespace Web.Utilities
     {
         public MappingProfile()
         {
-            CreateMap<Performance, PerformanceViewModel>()
-                .ForMember("Speeches", conf => conf.Ignore());
+            CreateMap<Performance, PerformanceViewModel>();
             CreateMap<PerformanceViewModel, Performance>();
 
             CreateMap<Speech, SpeechViewModel>();
