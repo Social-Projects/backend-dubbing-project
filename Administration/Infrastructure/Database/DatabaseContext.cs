@@ -3,7 +3,7 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database
 {
-    public partial class DubbingContext : DbContext
+    public partial class DatabaseContext : DbContext
     {
         public DbSet<Performance> Performances { get; set; }
 
@@ -13,14 +13,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
 
         public DbSet<Speech> Speeches { get; set; }
 
-        public DubbingContext(DbContextOptions<DbContext> options)
+        public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         {
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite("Data Source=dubbing.db");
         }
     }
 }

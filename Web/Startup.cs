@@ -43,11 +43,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
                     });
             });
 
-            const string connection = "Data Source=dubbing.db";
-
-            services.AddDbContext<DbContext>(options =>
-                options.UseSqlite(connection, b => b.MigrationsAssembly("Web")));
-
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             services.AddScoped<IAudioService, AudioService>();
@@ -57,6 +52,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
             services.AddScoped<IPerformanceService, PerformanceService>();
 
             services.AddScoped<ISpeechService, SpeechService>();
+
+            services.AddScoped<DbContext, DatabaseContext>();
+
+            const string connection = "Data Source=dubbing.db";
+
+            services.AddDbContext<DatabaseContext>(options =>
+                options.UseSqlite(connection, b => b.MigrationsAssembly("Infrastructure")));
 
             services.AddSignalR();
 

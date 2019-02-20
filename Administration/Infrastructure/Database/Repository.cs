@@ -12,9 +12,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
     public class Repository<T> : IRepository<T>
         where T : BaseEntity
     {
-        private readonly DubbingContext _dbContext;
+        private readonly DatabaseContext _dbContext;
 
-        public Repository(DubbingContext dbContext)
+        public Repository(DatabaseContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -44,7 +44,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
 
         public async Task UpdateAsync(T entity)
         {
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            //_dbContext.Entry(entity).State = EntityState.Modified;
+            var exist = await _dbContext.Set<T>().FindAsync(entity.Id);
+
+            _dbContext.Entry(exist).CurrentValues.SetValues(entity);
             await _dbContext.SaveChangesAsync();
         }
 

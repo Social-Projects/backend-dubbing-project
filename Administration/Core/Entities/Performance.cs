@@ -10,11 +10,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 
         public ICollection<Speech> Speeches { get; set; }
 
-        public Performance(string title, string description, ICollection<Speech> speeches)
-        {
-            Title = title;
-            Description = description;
-            Speeches = speeches;
-        }
+        //public Performance(string title, string description, ICollection<Speech> speeches)
+        //{
+        //    Title = title;
+        //    Description = description;
+        //    Speeches = speeches;
+        //}
     }
 }

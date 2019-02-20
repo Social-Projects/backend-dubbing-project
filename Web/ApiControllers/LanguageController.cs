@@ -78,7 +78,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Language>> Delete(int id)
         {
-            await _languageService.Delete(id);
+            var lang = await _languageService.Delete(id);
+            if (lang == null)
+                return NotFound();
 
             return NoContent();
         }
@@ -92,7 +94,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpPut]
         public async Task<ActionResult<Language>> Update(Language model)
         {
-            await _languageService.Update(model);
+            var lang = await _languageService.Update(model);
+            if (lang == null)
+                return NotFound();
 
             return NoContent();
         }
