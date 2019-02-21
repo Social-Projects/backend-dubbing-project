@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 {
@@ -6,7 +8,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
     {
         public string Text { get; set; }
 
+        [NotMapped]
         public int Duration { get; set; }
+
+        public int PerformanceId { get; set; }
 
         public Performance Performance { get; set; }
 
