@@ -53,11 +53,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 
             services.AddScoped<ISpeechService, SpeechService>();
 
-            services.AddScoped<DbContext, DatabaseContext>();
+            services.AddScoped<DbContext, DubbingContext>();
 
             const string connection = "Data Source=dubbing.db";
 
-            services.AddDbContext<DatabaseContext>(options =>
+            services.AddDbContext<DubbingContext>(options =>
                 options.UseSqlite(connection, b => b.MigrationsAssembly("Infrastructure")));
 
             services.AddSignalR();

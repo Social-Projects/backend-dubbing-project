@@ -72,9 +72,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <summary>
         /// Updates the language.
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="id"></param>
         /// <returns>No Content</returns>
         /// <response code="200">Returns No Content.</response>
+        /// <response code="404">If the language not founded</response>
         [HttpDelete("{id}")]
         public async Task<ActionResult<Language>> Delete(int id)
         {
@@ -88,9 +89,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <summary>
         /// Deletes the language.
         /// </summary>
-        /// <param name="id">Language id.</param>
+        /// <param name="model">Language id.</param>
         /// <returns>No Content.</returns>
         /// <response code="200">Returns No Content.</response>
+        /// <response code="404">If the language not founded</response>
         [HttpPut]
         public async Task<ActionResult<Language>> Update(Language model)
         {

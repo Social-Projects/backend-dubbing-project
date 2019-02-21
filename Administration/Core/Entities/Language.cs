@@ -7,9 +7,5 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
         public string Name { get; set; }
 
         public ICollection<Audio> Audios { get; set; }
-        //public Language(string name)
-        //{
-        //    Name = name;
-        //}
     }
 }

@@ -12,9 +12,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
     public class Repository<T> : IRepository<T>
         where T : BaseEntity
     {
-        private readonly DatabaseContext _dbContext;
+        private readonly DubbingContext _dbContext;
 
-        public Repository(DatabaseContext dbContext)
+        public Repository(DubbingContext dbContext)
         {
             _dbContext = dbContext;
         }

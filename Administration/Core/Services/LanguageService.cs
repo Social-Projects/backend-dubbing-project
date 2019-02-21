@@ -69,26 +69,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 
             var audioListWithLangId = audioList.Where(x => x.Language.Id == id);
 
-            foreach (var audio in audioListWithLangId)
-            {
-                var path = Path.Combine(Directory.GetCurrentDirectory() + @"\AudioFiles\", audio.FileName);
-                try
-                {
-                    if (File.Exists(path))
-                    {
-                        File.Delete(path);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"File '{path}' not found!");
-                    }
-                }
-                catch (IOException ioExc)
-                {
-                    Console.WriteLine(ioExc);
-                }
-            }
-
             await _languageRepository.DeleteAsync(language);
 
             return language;

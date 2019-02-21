@@ -3,7 +3,7 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database
 {
-    public partial class DatabaseContext
+    public partial class DubbingContext
     {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

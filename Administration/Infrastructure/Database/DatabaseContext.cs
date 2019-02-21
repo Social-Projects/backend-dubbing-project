@@ -3,7 +3,7 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database
 {
-    public partial class DatabaseContext : DbContext
+    public partial class DubbingContext : DbContext
     {
         public DbSet<Performance> Performances { get; set; }
 
@@ -13,7 +13,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
 
         public DbSet<Speech> Speeches { get; set; }
 
-        public DatabaseContext(DbContextOptions<DatabaseContext> options)
+        public DubbingContext(DbContextOptions<DubbingContext> options)
             : base(options)
         {
         }
