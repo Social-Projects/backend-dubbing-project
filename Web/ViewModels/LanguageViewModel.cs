@@ -8,7 +8,6 @@ namespace Web.ViewModels
 {
     public class LanguageViewModel
     {
-        [Required]
         public int Id { get; set; }
 
         [Required]

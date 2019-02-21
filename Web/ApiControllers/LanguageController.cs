@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
+using Web.ViewModels;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 {
@@ -27,14 +28,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// </summary>
         /// <returns>Array of languages.</returns>
         [HttpGet]
-        public async Task<ActionResult<List<Language>>> Get()
+        public async Task<ActionResult<List<LanguageViewModel>>> Get()
         {
             var listOfAllLanguages = await _languageService.GetAllLanguages();
 
-            if (listOfAllLanguages.Count() == 0)
-                return NotFound();
+            var mappedLanguages = _mapper.Map<IEnumerable<Language>, IEnumerable<LanguageViewModel>>(listOfAllLanguages);
 
-            return Ok(listOfAllLanguages);
+            return mappedLanguages.ToList();
         }
 
         /// <summary>
@@ -44,14 +44,16 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <response code="200">Returns the language with the following id.</response>
         /// <response code="404">If the language with the following id does not exist.</response>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Language>> GetById(int id)
+        public async Task<ActionResult<LanguageViewModel>> GetById(int id)
         {
             var language = await _languageService.GetById(id);
 
             if (language == null)
                 return NotFound();
 
-            return Ok(language);
+            var mappedLanguage = _mapper.Map<Language, LanguageViewModel>(language);
+
+            return mappedLanguage;
         }
 
         /// <summary>
@@ -62,14 +64,20 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <response code="201">Returns the newly created language.</response>
         /// <response code="400">If the language is not valid.</response>
         [HttpPost]
-        public async Task<ActionResult<Language>> Create(Language model)
+        public async Task<ActionResult<LanguageViewModel>> Create(LanguageViewModel viewModel)
         {
-            if (model == null)
-                return BadRequest();
+            if (ModelState.IsValid)
+            {
+                var model = _mapper.Map<LanguageViewModel, Language>(viewModel);
 
-            await _languageService.Create(model);
+                await _languageService.Create(model);
 
-            return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
+                var mappedModel = _mapper.Map<Language, LanguageViewModel>(model);
+
+                return CreatedAtAction(nameof(GetById), new { id = mappedModel.Id }, mappedModel);
+            }
+
+            return BadRequest();
         }
 
         /// <summary>
@@ -80,7 +88,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <response code="200">Returns No Content.</response>
         /// <response code="404">If the language not founded</response>
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Language>> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             var lang = await _languageService.Delete(id);
             if (lang == null)
@@ -97,13 +105,20 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <response code="200">Returns No Content.</response>
         /// <response code="404">If the language not founded</response>
         [HttpPut]
-        public async Task<ActionResult<Language>> Update(Language model)
+        public async Task<ActionResult> Update(LanguageViewModel viewModel)
         {
-            var lang = await _languageService.Update(model);
-            if (lang == null)
-                return NotFound();
+            if (ModelState.IsValid)
+            {
+                var model = _mapper.Map<LanguageViewModel, Language>(viewModel);
+                var lang = await _languageService.Update(model);
 
-            return NoContent();
+                if (lang == null)
+                    return NotFound();
+                else
+                    return NoContent();
+            }
+
+            return BadRequest(ModelState);
         }
     }
 }

@@ -10,8 +10,10 @@ namespace Web.Utilities
         {
             CreateMap<Performance, PerformanceViewModel>();
             CreateMap<PerformanceViewModel, Performance>();
-
             CreateMap<Speech, SpeechViewModel>();
+            CreateMap<Language, LanguageViewModel>();
+            CreateMap<LanguageViewModel, Language>();
+
         }
     }
 }
