@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database;
 using SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs;
 using Swashbuckle.AspNetCore.Swagger;
+using Web.Utilities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 {
@@ -45,8 +47,15 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 
             const string connection = "Data Source=dubbing.db";
 
-            services.AddDbContext<DbContext>(options =>
-                options.UseSqlite(connection, b => b.MigrationsAssembly("Web")));
+            services.AddDbContext<DubbingContext>(o => o.UseSqlite(connection));
+
+            var mappingConfiguration = new MapperConfiguration(conf =>
+            {
+                conf.AddProfile<MappingProfile>();
+            });
+            IMapper mapper = mappingConfiguration.CreateMapper();
+
+            services.AddSingleton(mapper);
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 

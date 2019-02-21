@@ -6,16 +6,20 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 
         public int Duration { get; set; }
 
+        public int SpeechId { get; set; }
+
         public Speech Speech { get; set; }
+
+        public int LanguageId { get; set; }
 
         public Language Language { get; set; }
 
-        public Audio(string fileName, Language language, Speech speech, int duration)
-        {
-            FileName = fileName;
-            Duration = duration;
-            Speech = speech;
-            Language = language;
-        }
+        //public Audio(string fileName, Language language, Speech speech, int duration)
+        //{
+        //    FileName = fileName;
+        //    Duration = duration;
+        //    Speech = speech;
+        //    Language = language;
+        //}
     }
 }

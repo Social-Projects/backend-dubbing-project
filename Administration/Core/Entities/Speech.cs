@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 {
@@ -6,18 +8,20 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
     {
         public string Text { get; set; }
 
+        [NotMapped]
         public int Duration { get; set; }
+
+        public int PerformanceId { get; set; }
 
         public Performance Performance { get; set; }
 
         public ICollection<Audio> Audio { get; set; }
 
-        public Speech(string text, Performance performance, int duration, ICollection<Audio> audio)
-        {
-            Text = text;
-            Duration = duration;
-            Performance = performance;
-            Audio = audio;
-        }
+        //public Speech(string text, Performance performance, ICollection<Audio> audio)
+        //{
+        //    Text = text;
+        //    Performance = performance;
+        //    Audio = audio;
+        //}
     }
 }
