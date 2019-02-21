@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
@@ -13,10 +14,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
     public class LanguageController : Controller
     {
         private readonly ILanguageService _languageService;
+        private readonly IMapper _mapper;
 
-        public LanguageController(ILanguageService languageService)
+        public LanguageController(ILanguageService languageService, IMapper mapper)
         {
             _languageService = languageService;
+            _mapper = mapper;
         }
 
         /// <summary>
