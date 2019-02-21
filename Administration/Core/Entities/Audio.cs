@@ -9,4 +9,5 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
         public Speech Speech { get; set; }
 
         public Language Language { get; set; }
+    }
 }
