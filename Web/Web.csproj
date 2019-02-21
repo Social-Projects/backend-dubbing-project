@@ -9,15 +9,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.App"/>
-        <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All"/>
-        <PackageReference Include="StyleCop.Analyzers" Version="1.0.2"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1"/>
+        <PackageReference Include="AutoMapper" Version="8.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Administration\Infrastructure\Infrastructure.csproj"/>
-        <ProjectReference Include="..\Streaming\Hubs\Hubs.csproj"/>
+        <ProjectReference Include="..\Administration\Infrastructure\Infrastructure.csproj" />
+        <ProjectReference Include="..\Streaming\Hubs\Hubs.csproj" />
     </ItemGroup>
 
 </Project>
