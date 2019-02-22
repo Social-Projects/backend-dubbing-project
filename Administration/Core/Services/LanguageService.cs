@@ -14,10 +14,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 
         private IRepository<Audio> _audioRepository;
 
-        public LanguageService(IRepository<Language> languageRepository, IRepository<Audio> audioRepository)
+        private readonly IAudioService _audioService;
+
+        public LanguageService(IRepository<Language> languageRepository, IRepository<Audio> audioRepository, IAudioService audioService)
         {
             _languageRepository = languageRepository;
             _audioRepository = audioRepository;
+            _audioService = audioService;
         }
 
         public async Task<IEnumerable<Language>> GetAllLanguagesAsync()
@@ -51,10 +54,16 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 
         public async Task<Language> DeleteAsync(int id)
         {
-            if (_languageRepository.GetById(id) == null)
+            var langById = await _languageRepository.GetById(id);
+
+            if (langById == null)
                 return null;
 
-            var langById = await _languageRepository.GetById(id);
+            foreach (var audio in langById.Audios)
+            {
+                await _audioService.DeleteAsync(audio);
+            }
+
             await _languageRepository.DeleteAsync(langById);
 
             return langById;
