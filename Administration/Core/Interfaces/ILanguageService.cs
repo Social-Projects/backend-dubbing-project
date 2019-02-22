@@ -6,14 +6,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 {
     public interface ILanguageService
     {
-        Task<IEnumerable<Language>> GetAllLanguages();
+        Task<IEnumerable<Language>> GetAllLanguagesAsync();
 
-        Task<Language> GetById(int id);
+        Task<Language> GetByIdAsync(int id);
 
-        Task Create(Language language);
+        Task CreateAsync(Language language);
 
-        Task<Language> Update(Language language);
+        Task<Language> UpdateAsync(Language language);
 
-        Task<Language> Delete(int id);
+        Task<Language> DeleteAsync(int id);
     }
 }

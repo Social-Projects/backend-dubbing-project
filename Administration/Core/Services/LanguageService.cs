@@ -20,35 +20,28 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             _audioRepository = audioRepository;
         }
 
-        public async Task<IEnumerable<Language>> GetAllLanguages()
+        public async Task<IEnumerable<Language>> GetAllLanguagesAsync()
         {
             var listOfAllLanguages = await _languageRepository.ListAllAsync();
 
             return listOfAllLanguages;
         }
 
-        public async Task<Language> GetById(int id)
+        public async Task<Language> GetByIdAsync(int id)
         {
-            var listOfAllLanguages = await _languageRepository.ListAllAsync();
-
-            if (!listOfAllLanguages.Any(x => x.Id == id))
-                return null;
-
             var language = await _languageRepository.GetById(id);
 
             return language;
         }
 
-        public async Task Create(Language language)
+        public async Task CreateAsync(Language language)
         {
             await _languageRepository.AddAsync(language);
         }
 
-        public async Task<Language> Update(Language language)
+        public async Task<Language> UpdateAsync(Language language)
         {
-            var listOfAllLanguages = await _languageRepository.ListAllAsync();
-
-            if (!listOfAllLanguages.Any(x => x.Id == language.Id))
+            if (_languageRepository.GetById(language.Id) == null)
                 return null;
 
             await _languageRepository.UpdateAsync(language);
@@ -56,22 +49,15 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             return language;
         }
 
-        public async Task<Language> Delete(int id)
+        public async Task<Language> DeleteAsync(int id)
         {
-            var list = await _languageRepository.ListAllAsync();
-
-            var language = list.FirstOrDefault(x => x.Id == id);
-
-            if (language == null)
+            if (_languageRepository.GetById(id) == null)
                 return null;
 
-            var audioList = await _audioRepository.ListAllAsync();
+            var langById = await _languageRepository.GetById(id);
+            await _languageRepository.DeleteAsync(langById);
 
-            var audioListWithLangId = audioList.Where(x => x.Language.Id == id);
-
-            await _languageRepository.DeleteAsync(language);
-
-            return language;
+            return langById;
         }
     }
 }

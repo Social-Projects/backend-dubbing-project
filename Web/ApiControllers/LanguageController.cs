@@ -30,7 +30,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet]
         public async Task<ActionResult<List<LanguageViewModel>>> Get()
         {
-            var listOfAllLanguages = await _languageService.GetAllLanguages();
+            var listOfAllLanguages = await _languageService.GetAllLanguagesAsync();
 
             var mappedLanguages = _mapper.Map<IEnumerable<Language>, IEnumerable<LanguageViewModel>>(listOfAllLanguages);
 
@@ -46,7 +46,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<LanguageViewModel>> GetById(int id)
         {
-            var language = await _languageService.GetById(id);
+            var language = await _languageService.GetByIdAsync(id);
 
             if (language == null)
                 return NotFound();
@@ -70,7 +70,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             {
                 var model = _mapper.Map<LanguageViewModel, Language>(viewModel);
 
-                await _languageService.Create(model);
+                await _languageService.CreateAsync(model);
 
                 var mappedModel = _mapper.Map<Language, LanguageViewModel>(model);
 
@@ -90,7 +90,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var lang = await _languageService.Delete(id);
+            var lang = await _languageService.DeleteAsync(id);
             if (lang == null)
                 return NotFound();
 
@@ -110,7 +110,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             if (ModelState.IsValid)
             {
                 var model = _mapper.Map<LanguageViewModel, Language>(viewModel);
-                var lang = await _languageService.Update(model);
+                var lang = await _languageService.UpdateAsync(model);
 
                 if (lang == null)
                     return NotFound();
