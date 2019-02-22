@@ -14,6 +14,7 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database;
 using SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs;
 using Swashbuckle.AspNetCore.Swagger;
+using Web.Middlewares;
 using Web.Utilities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web
@@ -114,6 +115,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
             app.UseDefaultFiles();
 
             app.UseStaticFiles();
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseMvc();
         }
