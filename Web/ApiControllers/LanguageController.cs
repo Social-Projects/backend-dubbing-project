@@ -59,7 +59,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <summary>
         /// Creates a new language.
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="viewModel"></param>
         /// <returns>A newly created language.</returns>
         /// <response code="201">Returns the newly created language.</response>
         /// <response code="400">If the language is not valid.</response>
@@ -100,7 +100,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <summary>
         /// Deletes the language.
         /// </summary>
-        /// <param name="model">Language id.</param>
+        /// <param name="viewModel">Language id.</param>
         /// <returns>No Content.</returns>
         /// <response code="200">Returns No Content.</response>
         /// <response code="404">If the language not founded</response>

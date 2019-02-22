@@ -10,16 +10,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 {
     public class LanguageService : ILanguageService
     {
-        private IRepository<Language> _languageRepository;
-
-        private IRepository<Audio> _audioRepository;
+        private readonly IRepository<Language> _languageRepository;
 
         private readonly IAudioService _audioService;
 
-        public LanguageService(IRepository<Language> languageRepository, IRepository<Audio> audioRepository, IAudioService audioService)
+        public LanguageService(IRepository<Language> languageRepository, IAudioService audioService)
         {
             _languageRepository = languageRepository;
-            _audioRepository = audioRepository;
             _audioService = audioService;
         }
 
@@ -59,7 +56,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             if (langById == null)
                 return null;
 
-            foreach (var audio in langById.Audios)
+            var audios = await _audioService.ListAllAsync(x => x.Id == id);
+
+            foreach (var audio in audios)
             {
                 await _audioService.DeleteAsync(audio);
             }
