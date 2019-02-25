@@ -70,7 +70,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             }
             else
             {
-                await _performanceRepository.UpdateAsync(performance);
+                await _performanceRepository.UpdateAsync(performances.First(), performance);
                 return performance;
             }
         }
