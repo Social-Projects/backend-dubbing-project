@@ -21,38 +21,51 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
 
         public async Task<T> GetById(int id)
         {
-            return await _dbContext.Set<T>().FindAsync(id);
+            return await _dbContext
+                .Set<T>()
+                .FindAsync(id);
         }
 
         public async Task<IEnumerable<T>> ListAllAsync()
         {
-            return await _dbContext.Set<T>().ToListAsync();
+            return await _dbContext
+                .Set<T>()
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<T>> List(Expression<Func<T, bool>> predicate)
         {
-            return await _dbContext.Set<T>()
+            return await _dbContext
+                .Set<T>()
                 .Where(predicate)
                 .ToListAsync();
         }
 
         public async Task AddAsync(T entity)
         {
-            _dbContext.Set<T>().Add(entity);
+            _dbContext
+                .Set<T>()
+                .Add(entity);
+
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task UpdateAsync(T oldEntity, T newEntity)
         {
-            var existedEntity = _dbContext.Set<T>().Find(entity.Id);
-            _dbContext.Entry(existedEntity).CurrentValues.SetValues(entity);
+            _dbContext
+                .Entry(oldEntity)
+                .CurrentValues
+                .SetValues(newEntity);
 
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(T entity)
         {
-            _dbContext.Set<T>().Remove(entity);
+            _dbContext
+                .Set<T>()
+                .Remove(entity);
+
             await _dbContext.SaveChangesAsync();
         }
     }

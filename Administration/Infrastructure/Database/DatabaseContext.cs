@@ -18,9 +18,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
         {
         }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlite("Data Source=dubbing.db");
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite("Data Source=dubbing.db");
+        }
     }
 }

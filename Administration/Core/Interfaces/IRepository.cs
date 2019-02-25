@@ -17,7 +17,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 
         Task AddAsync(T entity);
 
-        Task UpdateAsync(T entity);
+        Task UpdateAsync(T oldEntity, T newEntity);
 
         Task DeleteAsync(T entity);
     }
