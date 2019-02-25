@@ -16,5 +16,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
         public Performance Performance { get; set; }
 
         public ICollection<Audio> Audio { get; set; }
+
+        public int Order { get; set; }
     }
 }
