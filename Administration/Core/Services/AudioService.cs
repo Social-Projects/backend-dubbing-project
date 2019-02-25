@@ -12,12 +12,15 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
     {
         private readonly IRepository<Audio> _audioRepository;
         private readonly IFileRepository _fileRepository;
-        private readonly string _audioFilesFolderPath = Path.GetFullPath("../../Web/AudioFiles");
+        private readonly IRepository<Speech> _speechRepository;
 
-        public AudioService(IRepository<Audio> audioRepository, IFileRepository fileRepository)
+        private readonly string _audioFilesFolderPath = Path.GetFullPath("../Web/AudioFiles/");
+
+        public AudioService(IRepository<Audio> audioRepository, IFileRepository fileRepository, IRepository<Speech> speechRepository)
         {
             _audioRepository = audioRepository;
             _fileRepository = fileRepository;
+            _speechRepository = speechRepository;
         }
 
         public async Task<Audio> GetById(int id)
@@ -65,9 +68,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 
         private async Task<Audio> ChangeNameAndDuration(Audio entity)
         {
-            string newFileName = $"{entity.Speech.Performance.Id}_{entity.Speech.Id}_{entity.Language.Id}.mp3";
-            string oldPath = Path.Combine(_audioFilesFolderPath, entity.FileName);
-            string newPath = Path.Combine(_audioFilesFolderPath, newFileName);
+            var speech = await _speechRepository.GetById(entity.SpeechId);
+
+            string newFileName = $"{speech.PerformanceId}_{entity.SpeechId}_{entity.LanguageId}.mp3";
+            string oldPath = Path.Combine(_audioFilesFolderPath, entity.FileName + ".mp3");
+            string newPath = Path.Combine(_audioFilesFolderPath, newFileName + ".mp3");
             File.Move(oldPath, newPath);
 
             var file = TagLib.File.Create(newPath);

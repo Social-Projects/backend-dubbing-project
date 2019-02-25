@@ -18,6 +18,5 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 
         [NotMapped]
         public byte[] AudioFile { get; set; }
-
     }
 }

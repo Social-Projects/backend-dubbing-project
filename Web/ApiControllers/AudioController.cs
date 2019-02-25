@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
+using Web.ViewModels;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 {
@@ -11,10 +14,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
     public class AudioController : ControllerBase
     {
         private readonly IAudioService _audioService;
+        private readonly IMapper _mapper;
 
-        public AudioController(IAudioService audioService)
+        public AudioController(IAudioService audioService, IMapper mapper)
         {
             _audioService = audioService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -27,9 +32,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         {
             IEnumerable<Audio> audios = await _audioService.ListAllAsync();
 
-            // mapping audios
+            var mappedAudios = _mapper.Map<IEnumerable<Audio>, IEnumerable<AudioFileViewModel>>(audios);
 
-            return Ok(audios);
+            return Ok(mappedAudios);
         }
 
         /// <summary>
@@ -46,9 +51,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             if (audio == null)
                 return NotFound();
 
-            // mapping audio
+            var mappedAudio = _mapper.Map<Audio, AudioFileViewModel>(audio);
 
-            return Ok(audio);
+            return Ok(mappedAudio);
         }
 
         /// <summary>
@@ -58,13 +63,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <returns>A newly created audio</returns>>
         /// <response code="204"></response>
         [HttpPost]
-        public async Task<ActionResult> Create(Audio model)
+        public async Task<ActionResult> Create(AudioViewModel model)
         {
-            // Write audio from IFormFile to byte array
+            Audio audio = _mapper.Map<AudioViewModel, Audio>(model);
 
-            await _audioService.AddAsync(model);
-
-            // Mapping object
+            await _audioService.AddAsync(audio);
 
             return NoContent();
         }
@@ -74,29 +77,39 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// </summary>
         /// <param name="model"></param>
         /// <response code="201"></response>
-        [HttpPost]
-        public async Task<ActionResult> Upload([FromForm] Audio model)
+        [HttpPost("upload")]
+        public async Task<ActionResult> Upload([FromForm] AudioFileViewModel model)
         {
-            // Write audio from IFormFile to byte array
+            Audio audio = _mapper.Map<AudioFileViewModel, Audio>(model);
 
-            await _audioService.UploadAsync(model);
+            using (var memStream = new MemoryStream())
+            {
+                model.File.CopyTo(memStream);
 
-            // Mapping object
+                audio.AudioFile = memStream.ToArray();
 
-            return Ok();
+                audio.FileName = model.File.FileName;
+            }
+
+            await _audioService.UploadAsync(audio);
+
+            var mappedAudio = _mapper.Map<Audio, AudioFileViewModel>(audio);
+
+            return Ok(mappedAudio);
         }
 
-        /// <summary></summary>
-        /// <param name="id"></param>
+        /// <summary>
+        /// Update an audio
+        /// </summary>
         /// <param name="model"></param>
         /// <response code="204"></response>
         /// <response code="400"></response>
         [HttpPut]
-        public async Task<ActionResult> Update(Audio model)
+        public async Task<ActionResult> Update(AudioViewModel model)
         {
-            await _audioService.UpdateAsync(model);
+            Audio audio = _mapper.Map<AudioViewModel, Audio>(model);
 
-            // Mapping object
+            await _audioService.UpdateAsync(audio);
 
             // And we should return 200, or change logic on frontend
 

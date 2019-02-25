@@ -59,6 +59,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
+            services.AddScoped<IFileRepository, FilesRepository>();
+
             services.AddScoped<IAudioService, AudioService>();
 
             services.AddScoped<ILanguageService, LanguageService>();
