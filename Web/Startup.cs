@@ -47,13 +47,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 
             const string connection = "Data Source=dubbing.db";
 
-            services.AddDbContext<DubbingContext>(o => o.UseSqlite(connection));
+            services.AddDbContext<DubbingContext>(options =>
+                options.UseSqlite(connection, b => b.MigrationsAssembly("Web")));
 
-            var mappingConfiguration = new MapperConfiguration(conf =>
-            {
-                conf.AddProfile<MappingProfile>();
-            });
-            IMapper mapper = mappingConfiguration.CreateMapper();
+            var mappingConfiguration = new MapperConfiguration(conf => { conf.AddProfile<MappingProfile>(); });
+
+            var mapper = mappingConfiguration.CreateMapper();
 
             services.AddSingleton(mapper);
 

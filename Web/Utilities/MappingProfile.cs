@@ -12,6 +12,7 @@ namespace Web.Utilities
             CreateMap<PerformanceViewModel, Performance>();
 
             CreateMap<Speech, SpeechViewModel>();
+            CreateMap<SpeechViewModel, Speech>();
         }
     }
 }
