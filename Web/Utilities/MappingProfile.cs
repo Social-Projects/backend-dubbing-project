@@ -12,6 +12,12 @@ namespace Web.Utilities
             CreateMap<PerformanceViewModel, Performance>();
 
             CreateMap<Speech, SpeechViewModel>();
+
+            CreateMap<Audio, AudioFileViewModel>();
+            CreateMap<AudioFileViewModel, Audio>()
+                .ForMember("FileName", cnf => cnf.MapFrom(m => m.File.FileName));
+            CreateMap<Audio, AudioViewModel>();
+            CreateMap<AudioViewModel, Audio>();
         }
     }
 }
