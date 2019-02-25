@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using Infrastructure.Logging;
@@ -13,7 +13,6 @@ namespace Web.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
-        private const string FileLogName = "log.txt";
 
         public LoggingMiddleware(RequestDelegate request, FileLogger logger)
         {
@@ -31,11 +30,13 @@ namespace Web.Middlewares
                 {
                     context.Response.Body = responseBodyMemory;
 
-                    // Read URL and Body from Request
+                    // Reading URL and Body from Request
+                    var currentDate = DateTime.Now;
                     var loggingRequest = new LoggingRequest
                     {
                         Method = context.Request.Method,
-                        Url = context.Request.Scheme + "://" + context.Request.Host.Value + context.Request.Path + context.Request.QueryString.Value
+                        Url = context.Request.Scheme + "://" + context.Request.Host.Value + context.Request.Path + context.Request.QueryString.Value,
+                        DateTime = currentDate.ToShortDateString() + ' ' + currentDate.ToLongTimeString()
                     };
 
                     context.Request.EnableRewind();
@@ -47,7 +48,7 @@ namespace Web.Middlewares
 
                     await _next(context);
 
-                    // Read Status code and Body from Response
+                    // Reading Status code and Body from Response
                     var loggingResponse = new LoggingResponse
                     {
                         StatusCode = context.Response.StatusCode
@@ -60,7 +61,15 @@ namespace Web.Middlewares
                     var loggingObject = new LoggingObject { Request = loggingRequest, Response = loggingResponse };
                     var loggingObjectEncoded = JsonConvert.SerializeObject(loggingObject);
 
-                    _logger.Log(LogLevel.Information, loggingObjectEncoded);
+                    // Writing all info to file
+                    if (loggingObject.Response.StatusCode == StatusCodes.Status500InternalServerError)
+                    {
+                        _logger.Log(LogLevel.Error, loggingObjectEncoded);
+                    }
+                    else
+                    {
+                        _logger.Log(LogLevel.Information, loggingObjectEncoded);
+                    }
 
                     responseBodyMemory.Position = 0;
                     await responseBodyMemory.CopyToAsync(originalResponseBody);

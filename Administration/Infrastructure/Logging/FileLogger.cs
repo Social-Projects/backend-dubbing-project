@@ -9,12 +9,16 @@ namespace Infrastructure.Logging
 {
     public class FileLogger : ILogger
     {
-        private readonly string _path;
+        private readonly string _fileInfoPath;
+        private readonly string _fileErrorPath;
+        private readonly string _fileLogsFolder;
         private readonly object _locker = new object();
 
-        public FileLogger(string path)
+        public FileLogger(string fileInfoName, string fileErrorName, string fileLogsFolder)
         {
-            _path = path;
+            _fileLogsFolder = fileLogsFolder;
+            _fileInfoPath = Path.Combine(_fileLogsFolder, fileInfoName);
+            _fileErrorPath = Path.Combine(_fileLogsFolder, fileErrorName);
         }
 
         public IDisposable BeginScope<TState>(TState state)
@@ -24,7 +28,7 @@ namespace Infrastructure.Logging
 
         public bool IsEnabled(LogLevel logLevel)
         {
-            return logLevel == LogLevel.Information;
+            return logLevel == LogLevel.Information || logLevel == LogLevel.Error;
         }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
@@ -33,14 +37,27 @@ namespace Infrastructure.Logging
             {
                 lock (_locker)
                 {
-                    if (!File.Exists(_path))
+                    // Choosing path depending on LogLevel
+                    string path = " ";
+                    if (logLevel == LogLevel.Error)
                     {
-                        using (File.Create(_path))
+                        path = _fileErrorPath;
+                    }
+                    else
+                    {
+                        path = _fileInfoPath;
+                    }
+
+                    // Checking if file exist
+                    if (!File.Exists(path))
+                    {
+                        using (File.Create(path))
                         {
                         }
                     }
 
-                    var stringLogs = File.ReadAllText(_path);
+                    // Reading old records from file and pushing new record
+                    var stringLogs = File.ReadAllText(path);
                     var regex = new Regex(@"]$", RegexOptions.IgnoreCase);
 
                     if (!string.IsNullOrEmpty(stringLogs))
@@ -52,7 +69,8 @@ namespace Infrastructure.Logging
                         stringLogs = "[" + formatter(state, exception) + "]";
                     }
 
-                    File.WriteAllText(_path, stringLogs);
+                    // Writing new records to file
+                    File.WriteAllText(path, stringLogs);
                 }
             }
         }

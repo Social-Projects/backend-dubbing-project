@@ -6,6 +6,8 @@
 bin
 obj
 Migrations
+Web/LogFiles/*
+!Web/LogFiles/.gitkeep
 
 #SQLite database file
 *.db

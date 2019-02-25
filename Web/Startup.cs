@@ -24,12 +24,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
     public class Startup
     {
         private const string CorsName = "AllowAllOrigins";
-        private readonly string _fileLoggingName;
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            _fileLoggingName = Configuration["Logging:Path"];
         }
 
         public IConfiguration Configuration { get; }
@@ -62,7 +60,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 
             services.AddSingleton(mapper);
 
-            services.AddSingleton(p => new FileLogger(_fileLoggingName));
+            services.AddSingleton(p => new FileLogger(
+                Configuration["Logging:Path:Informations"],
+                Configuration["Logging:Path:Errors"],
+                Configuration["Logging:Path:Folder"]));
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 

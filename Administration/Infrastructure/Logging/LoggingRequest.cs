@@ -6,6 +6,8 @@
 
         public string Url { get; set; }
 
+        public string DateTime { get; set; }
+
         public dynamic Body { get; set; }
     }
 }
