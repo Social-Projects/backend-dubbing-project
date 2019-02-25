@@ -35,7 +35,6 @@ namespace Web.Middlewares
 
             var response = new
             {
-                context.Request.Path,
                 Error = exception.Message,
                 exception.StackTrace
             };

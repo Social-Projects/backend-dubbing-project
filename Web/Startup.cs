@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using AutoMapper;
+using Infrastructure.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database;
@@ -22,6 +24,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
     public class Startup
     {
         private const string CorsName = "AllowAllOrigins";
+        private const string FileLoggingName = "log.json";
 
         public Startup(IConfiguration configuration)
         {
@@ -57,6 +60,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
             IMapper mapper = mappingConfiguration.CreateMapper();
 
             services.AddSingleton(mapper);
+
+            services.AddSingleton(p => new FileLogger(FileLoggingName));
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
@@ -115,6 +120,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
             app.UseDefaultFiles();
 
             app.UseStaticFiles();
+
+            app.UseMiddleware<LoggingMiddleware>();
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
