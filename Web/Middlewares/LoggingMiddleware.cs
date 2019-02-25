@@ -31,6 +31,7 @@ namespace Web.Middlewares
                 {
                     context.Response.Body = responseBodyMemory;
 
+                    // Read URL and Body from Request
                     var loggingRequest = new LoggingRequest
                     {
                         Method = context.Request.Method,
@@ -46,6 +47,7 @@ namespace Web.Middlewares
 
                     await _next(context);
 
+                    // Read Status code and Body from Response
                     var loggingResponse = new LoggingResponse
                     {
                         StatusCode = context.Response.StatusCode
