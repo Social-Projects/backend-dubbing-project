@@ -45,7 +45,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
                             .AllowCredentials();
                     });
             });
-
             const string connection = "Data Source=dubbing.db";
 
             services.AddDbContext<DubbingContext>(o => o.UseSqlite(connection));
@@ -69,6 +68,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
             services.AddScoped<IPerformanceService, PerformanceService>();
 
             services.AddScoped<ISpeechService, SpeechService>();
+
+            services.AddScoped<DbContext, DubbingContext>();
+
+            services.AddScoped<IFileRepository, FilesRepository>();
 
             services.AddSignalR();
 

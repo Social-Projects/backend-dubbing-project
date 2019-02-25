@@ -16,12 +16,5 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
         public Performance Performance { get; set; }
 
         public ICollection<Audio> Audio { get; set; }
-
-        //public Speech(string text, Performance performance, ICollection<Audio> audio)
-        //{
-        //    Text = text;
-        //    Performance = performance;
-        //    Audio = audio;
-        //}
     }
 }

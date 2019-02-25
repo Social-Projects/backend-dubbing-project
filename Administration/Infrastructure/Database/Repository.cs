@@ -46,7 +46,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
         {
             var existedEntity = _dbContext.Set<T>().Find(entity.Id);
             _dbContext.Entry(existedEntity).CurrentValues.SetValues(entity);
-
             await _dbContext.SaveChangesAsync();
         }
 
