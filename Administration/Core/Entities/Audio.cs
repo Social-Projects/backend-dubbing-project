@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 {
     public class Audio : BaseEntity
@@ -13,5 +15,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
         public int LanguageId { get; set; }
 
         public Language Language { get; set; }
+
+        [NotMapped]
+        public byte[] AudioFile { get; set; }
     }
 }

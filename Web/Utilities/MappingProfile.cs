@@ -13,6 +13,15 @@ namespace Web.Utilities
 
             CreateMap<Speech, SpeechViewModel>();
             CreateMap<SpeechViewModel, Speech>();
+
+            CreateMap<Language, LanguageViewModel>();
+            CreateMap<LanguageViewModel, Language>();
+
+            CreateMap<Audio, AudioFileViewModel>();
+            CreateMap<AudioFileViewModel, Audio>()
+                .ForMember("FileName", cnf => cnf.MapFrom(m => m.File.FileName));
+            CreateMap<Audio, AudioViewModel>();
+            CreateMap<AudioViewModel, Audio>();
         }
     }
 }

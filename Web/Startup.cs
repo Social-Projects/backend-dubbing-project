@@ -12,6 +12,7 @@ using Microsoft.Extensions.FileProviders;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.FileSystem;
 using SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs;
 using Swashbuckle.AspNetCore.Swagger;
 using Web.Utilities;
@@ -44,7 +45,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
                             .AllowCredentials();
                     });
             });
-
             const string connection = "Data Source=dubbing.db";
 
             services.AddDbContext<DubbingContext>(options =>
@@ -58,6 +58,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
+            services.AddScoped<IFileRepository, FilesRepository>();
+
             services.AddScoped<IAudioService, AudioService>();
 
             services.AddScoped<ILanguageService, LanguageService>();
@@ -65,6 +67,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
             services.AddScoped<IPerformanceService, PerformanceService>();
 
             services.AddScoped<ISpeechService, SpeechService>();
+
+            services.AddScoped<DbContext, DubbingContext>();
+
+            services.AddScoped<IFileRepository, FilesRepository>();
 
             services.AddSignalR();
 
