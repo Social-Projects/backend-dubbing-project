@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
@@ -16,9 +17,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             Repository = repository;
         }
 
-        public virtual async Task<IEnumerable<T>> GetAll()
+        public virtual async Task<List<T>> GetAll()
         {
             return await Repository.ListAllAsync();
+        }
+
+        public virtual async Task<List<T>> GetAllByCondition(Expression<Func<T, bool>> predicate)
+        {
+            return await Repository.List(predicate);
         }
 
         public virtual async Task<T> GetById(int id)
