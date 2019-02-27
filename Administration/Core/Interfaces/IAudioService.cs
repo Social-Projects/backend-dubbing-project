@@ -8,20 +8,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 {
     public interface IAudioService
     {
+        Task<List<Audio>> GetAll();
+
         Task<Audio> GetById(int id);
 
-        Task<IEnumerable<Audio>> ListAllAsync();
-
-        Task<IEnumerable<Audio>> ListAllAsync(Expression<Func<Audio, bool>> predicate);
+        Task Create(Audio entity);
 
         Task UploadAsync(Audio entity);
 
-        Task AddAsync(Audio entity);
-
-        Task UpdateAsync(Audio entity);
-
-        Task DeleteAsync(Audio entity);
-
-        //Task DeleteAllFromSpeech();
+        Task Update(int id, Audio newEntity);
     }
 }

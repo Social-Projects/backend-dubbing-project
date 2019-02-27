@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
@@ -6,16 +8,16 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 {
     public interface IPerformanceService
     {
-        Task<IEnumerable<Performance>> GetAllAsync();
+        Task<Performance> GetById(int id);
 
-        Task<IEnumerable<Speech>> GetSpeechesAsync(int id);
+        Task<List<Speech>> GetChildrenById(int id);
 
-        Task<Performance> GetByIdAsync(int id);
+        Task<List<Performance>> GetAll();
 
-        Task CreateAsync(Performance performance);
+        Task Create(Performance entity);
 
-        Task<Performance> UpdateAsync(Performance performance);
+        Task Update(int id, Performance newEntity);
 
-        Task<Performance> DeleteAsync(int id);
+        Task Delete(int id);
     }
 }

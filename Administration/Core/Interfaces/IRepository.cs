@@ -11,9 +11,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
     {
         Task<T> GetById(int id);
 
-        Task<IEnumerable<T>> ListAllAsync();
+        Task<T> GetByIdWithChildren(int id, string kek);
 
-        Task<IEnumerable<T>> List(Expression<Func<T, bool>> predicate);
+        Task<List<T>> ListAllAsync();
+
+        Task<List<T>> List(Expression<Func<T, bool>> predicate);
 
         Task AddAsync(T entity);
 
