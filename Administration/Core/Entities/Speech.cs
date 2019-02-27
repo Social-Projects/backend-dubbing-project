@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 {
     public class Speech : BaseEntity
     {
+        public int Order { get; set; }
+
         public string Text { get; set; }
 
         [NotMapped]
@@ -15,6 +16,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 
         public Performance Performance { get; set; }
 
-        public ICollection<Audio> Audio { get; set; }
+        public ICollection<Audio> Audios { get; set; }
     }
 }
