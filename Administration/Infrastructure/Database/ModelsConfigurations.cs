@@ -20,6 +20,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .Property(p => p.Title)
                 .IsRequired();
 
+            modelBuilder.Entity<Performance>()
+                .Property(p => p.Description)
+                .IsRequired();
+
             modelBuilder
                 .Entity<Speech>()
                 .HasMany(s => s.Audios)

@@ -11,5 +11,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs
         [Required]
         [StringLength(64)]
         public string Title { get; set; }
+
+        [Required]
+        [StringLength(256)]
+        public string Description { get; set; }
     }
 }
