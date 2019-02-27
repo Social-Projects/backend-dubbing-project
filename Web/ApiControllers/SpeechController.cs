@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,13 +6,13 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
-using Web.ViewModels;
+using SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SpeechController : Controller
+    public class SpeechController : ControllerBase
     {
         private readonly ISpeechService _speechService;
         private readonly IMapper _mapper;
@@ -22,109 +23,90 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             _mapper = mapper;
         }
 
-        /// <summary>
-        /// Controller method for getting a list of all speeches.
-        /// </summary>
+        /// <summary>Controller method for getting a list of all speeches.</summary>
         /// <returns>List of all speeches.</returns>
         /// <response code="200">Is returned when the list has at least one speech.</response>
         /// <response code="404">Is returned when the list of speeches is empty.</response>
-        [HttpGet("all")]
-        public async Task<ActionResult<List<Speech>>> GetAll()
+        [HttpGet]
+        public async Task<ActionResult<List<SpeechDTO>>> GetAll()
         {
-            var listOfAllSpeeches = await _speechService.GetAll();
+            var listOfSpeeches = await _speechService.GetAll();
 
-            if (!listOfAllSpeeches.Any())
+            if (!listOfSpeeches.Any())
                 return NotFound();
 
-            return Ok(listOfAllSpeeches);
+            var listOfSpeechesDTOs = _mapper.Map<List<Speech>, List<SpeechDTO>>(listOfSpeeches);
+
+            return Ok(listOfSpeechesDTOs);
         }
 
-//        /// <summary>
-//        /// Controller method for getting a list of all speeches.
-//        /// </summary>
-//        /// <returns>List of all speeches.</returns>
-//        /// <response code="200">Is returned when the list has at least one speech.</response>
-//        /// <response code="404">Is returned when the list of speeches is empty.</response>
-//        [HttpGet("all/performance/{id}")]
-//        public async Task<ActionResult<List<Speech>>> GetAllByPerformanceId(int id)
-//        {
-//            var listOfAllSpeeches = await _speechService.GetAllSpeechesByPerformanceId(id);
-//
-//            if (!listOfAllSpeeches.Any())
-//                return NotFound();
-//
-//            return Ok(listOfAllSpeeches);
-//        }
-
-        /// <summary>
-        /// Controller method for getting a speech by id.
-        /// </summary>
+        /// <summary>Controller method for getting a speech by id.</summary>
         /// <param name="id">Id of speech that need to receive.</param>
-        /// <returns>Speech.</returns>
+        /// <returns>The speech with the following id.</returns>
         /// <response code="200">Is returned when speech does exist.</response>
         /// <response code="404">Is returned when speech with such Id doesn't exist.</response>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Speech>> GetById(int id)
+        public async Task<ActionResult<SpeechDTO>> GetById(int id)
         {
             var speech = await _speechService.GetById(id);
 
             if (speech == null)
                 return NotFound();
 
-            return Ok(speech);
+            var speechDTO = _mapper.Map<Speech, SpeechDTO>(speech);
+
+            return Ok(speechDTO);
         }
 
-        /// <summary>
-        /// Controller method for creating new speech.
-        /// </summary>
-        /// <param name="receivedSpeech">Speech model which needed to create.</param>
+        /// <summary>Controller method for creating new speech.</summary>
+        /// <param name="speechDTO">Speech model which needed to create.</param>
         /// <returns>Status code and speech.</returns>
         /// <response code="201">Is returned when speech is successfully created.</response>
         /// <response code="400">Is returned when invalid data is passed.</response>
         /// <response code="409">Is returned when speech with such parameters already exists.</response>
         [HttpPost]
-        public async Task<ActionResult<Speech>> CreateSpeech(SpeechViewModel receivedSpeech)
+        public async Task<ActionResult<SpeechDTO>> Create(SpeechDTO speechDTO)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var speech = _mapper.Map<SpeechViewModel, Speech>(receivedSpeech);
+            var speech = _mapper.Map<SpeechDTO, Speech>(speechDTO);
 
             await _speechService.Create(speech);
 
-            return CreatedAtAction(nameof(GetById), new {id = receivedSpeech.Id}, receivedSpeech);
+            return CreatedAtAction(nameof(GetById), new {id = speechDTO.Id}, speechDTO);
         }
 
-        /// <summary>
-        /// Controller method for updating an already existing speech with following id.
-        /// </summary>
+        /// <summary>Controller method for updating an already existing speech with following id.</summary>
         /// <param name="id">Id of the speech that is needed to be updated.</param>
-        /// <param name="receivedSpeech">The speech model that is needed to be created.</param>
-        /// <returns>Status code</returns>
+        /// <param name="speechVM">The speech model that is needed to be updated.</param>
+        /// <returns>Status code and optionally exception message.</returns>
         /// <response code="204">Is returned when speech is successfully updated.</response>
-        /// <response code="400">Is returned when speech with such Id is not found or invalid data is passed.</response>
+        /// <response code="400">Is returned when speech with or invalid data is passed.</response>
+        /// <response code="404">Is returned when speech with such Id is not founded</response>
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateSpeech(int id, SpeechViewModel receivedSpeech)
+        public async Task<ActionResult> Update(int id, SpeechDTO speechDTO)
         {
-            if (id != receivedSpeech.Id || !ModelState.IsValid)
-                return BadRequest();
+            if (speechDTO.Id != id)
+                BadRequest();
 
-            var speech = _mapper.Map<SpeechViewModel, Speech>(receivedSpeech);
+            var speech = _mapper.Map<SpeechDTO, Speech>(speechDTO);
 
-            await _speechService.Update(id, speech);
+            try
+            {
+                await _speechService.Update(id, speech);
+            }
+            catch (Exception exception)
+            {
+                return NotFound(exception.Message);
+            }
 
             return NoContent();
         }
 
-        /// <summary>
-        /// Controller method for deleting an already existing speech with following id.
-        /// </summary>
+        /// <summary>Controller method for deleting an already existing speech with following id.</summary>
         /// <param name="id">Id of the speech that needed to delete.</param>
         /// <returns>Status code</returns>
-        /// <response code="204">Is returned when speech is successfully updated.</response>
-        /// <response code="400">Is returned when speech id is not valid</response>
+        /// <response code="204">Is returned when speech is successfully deleted.</response>
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteSpeech(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             await _speechService.Delete(id);
 

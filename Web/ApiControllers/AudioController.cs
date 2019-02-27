@@ -1,15 +1,17 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
-using Web.ViewModels;
+using SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 {
-    [Route("api/audio")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AudioController : ControllerBase
     {
@@ -22,96 +24,108 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             _mapper = mapper;
         }
 
-        /// <summary>
-        /// Get all audios
-        /// </summary>
-        /// <returns>List of audios</returns>>
-        /// <response code="200">Returns the list of audios</response>
+        /// <summary>Controller method for getting a list of all audios.</summary>
+        /// <returns>List of all audios.</returns>
+        /// <response code="200">Is returned when the list has at least one audio.</response>
+        /// <response code="404">Is returned when the list of audios is empty.</response>
         [HttpGet]
-        public async Task<ActionResult<List<Audio>>> GetAll()
+        public async Task<ActionResult<List<AudioDTO>>> GetAll()
         {
-            IEnumerable<Audio> audios = await _audioService.ListAllAsync();
+            var listOfAudios = await _audioService.GetAll();
 
-            var mappedAudios = _mapper.Map<IEnumerable<Audio>, IEnumerable<AudioFileViewModel>>(audios);
+            if (!listOfAudios.Any())
+                return NotFound();
 
-            return Ok(mappedAudios);
+            var listOfAudiosDTOs = _mapper.Map<IEnumerable<Audio>, IEnumerable<AudioDTO>>(listOfAudios);
+
+            return Ok(listOfAudiosDTOs);
         }
 
-        /// <summary>
-        /// Get an audio by id
-        /// </summary>
-        /// <param name="id">Id of audio</param>
-        /// <returns>Audio with the following id</returns>
-        /// <response code="200">Returns the audio with the following id</response>
+        /// <summary>Controller method for getting a audio by id.</summary>
+        /// <param name="id">Id of audio that need to receive.</param>
+        /// <returns>The audio with the following id.</returns>
+        /// <response code="200">Is returned when audio does exist.</response>
+        /// <response code="404">Is returned when audio with such Id doesn't exist.</response>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Audio>> GetById(int id)
+        public async Task<ActionResult<AudioDTO>> GetById(int id)
         {
-            Audio audio = await _audioService.GetById(id);
+            var audio = await _audioService.GetById(id);
 
             if (audio == null)
                 return NotFound();
 
-            var mappedAudio = _mapper.Map<Audio, AudioFileViewModel>(audio);
+            var audioDTO = _mapper.Map<Audio, AudioDTO>(audio);
 
-            return Ok(mappedAudio);
+            return Ok(audioDTO);
         }
 
-        /// <summary>
-        /// Creates a new audio
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns>A newly created audio</returns>>
-        /// <response code="204"></response>
+        /// <summary>Controller method for creating new audio.</summary>
+        /// <param name="audioDTO">Audio model which needed to create.</param>
+        /// <returns>Status code and audio.</returns>
+        /// <response code="201">Is returned when audio is successfully created.</response>
+        /// <response code="400">Is returned when invalid data is passed.</response>
+        /// <response code="409">Is returned when audio with such parameters already exists.</response>
         [HttpPost]
-        public async Task<ActionResult> Create(AudioViewModel model)
+        public async Task<ActionResult<AudioDTO>> Create(AudioDTO audioDTO)
         {
-            Audio audio = _mapper.Map<AudioViewModel, Audio>(model);
+            var audio = _mapper.Map<AudioDTO, Audio>(audioDTO);
 
-            await _audioService.AddAsync(audio);
+            await _audioService.Create(audio);
 
-            return NoContent();
+            return CreatedAtAction(nameof(GetById), new {id = audioDTO.Id}, audioDTO);
         }
 
-        /// <summary>
-        /// Uploads a file and saves it to a local storage
-        /// </summary>
-        /// <param name="model"></param>
-        /// <response code="201"></response>
+        /// <summary>Controller method for uploading a file to server and saving it to a local storage.</summary>
+        /// <returns>Status code, URL of audio file and audio model.</returns>
+        /// <param name="audioFileVM">Audio file which needed to create.</param>
+        /// <response code="201">Is returned when audio is successfully uploaded.</response>
+        /// <response code="400">Is returned when invalid data is passed.</response>
         [HttpPost("upload")]
-        public async Task<ActionResult> Upload([FromForm] AudioFileViewModel model)
+        public async Task<ActionResult<AudioFileDTO>> Upload([FromForm] AudioFileDTO audioFileDTO)
         {
-            Audio audio = _mapper.Map<AudioFileViewModel, Audio>(model);
+            var audio = _mapper.Map<AudioFileDTO, Audio>(audioFileDTO);
 
             using (var memStream = new MemoryStream())
             {
-                model.File.CopyTo(memStream);
+                audioFileDTO.File.CopyTo(memStream);
 
                 audio.AudioFile = memStream.ToArray();
 
-                audio.FileName = model.File.FileName;
+                audio.FileName = audioFileDTO.File.FileName;
             }
 
             await _audioService.UploadAsync(audio);
 
-            var mappedAudio = _mapper.Map<Audio, AudioFileViewModel>(audio);
+            var audioDTO = _mapper.Map<Audio, AudioFileDTO>(audio);
 
-            return Ok(mappedAudio);
+            var urlOfAudioFile = HttpContext.Request.Host.Value + "/audio/" + audio.FileName;
+
+            return Created(urlOfAudioFile, audioDTO);
         }
 
-        /// <summary>
-        /// Update an audio
-        /// </summary>
-        /// <param name="model"></param>
-        /// <response code="204"></response>
-        /// <response code="400"></response>
+        /// <summary>Controller method for updating an already existing audio with following id.</summary>
+        /// <param name="id">Id of the audio that is needed to be updated.</param>
+        /// <param name="audioVM">The audio model to which is needed to be updated existing audio.</param>
+        /// <returns>Status code and optionally exception message.</returns>
+        /// <response code="204">Is returned when speech is successfully updated.</response>
+        /// <response code="400">Is returned when speech with or invalid data is passed.</response>
+        /// <response code="404">Is returned when speech with such Id is not founded</response>
         [HttpPut]
-        public async Task<ActionResult> Update(AudioViewModel model)
+        public async Task<ActionResult> Update(int id, AudioDTO audioDTO)
         {
-            Audio audio = _mapper.Map<AudioViewModel, Audio>(model);
+            if (audioDTO.Id != id)
+                BadRequest();
 
-            await _audioService.UpdateAsync(audio);
+            var audio = _mapper.Map<AudioDTO, Audio>(audioDTO);
 
-            // And we should return 200, or change logic on frontend
+            try
+            {
+                await _audioService.Update(id, audio);
+            }
+            catch (Exception exception)
+            {
+                return NotFound(exception.Message);
+            }
 
             return NoContent();
         }

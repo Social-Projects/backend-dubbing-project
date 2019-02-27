@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,16 +6,13 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
-using Web.ViewModels;
+using SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 {
-    /// <summary>
-    /// API for managing operations with performances.
-    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class PerformanceController : Controller
+    public class PerformanceController : ControllerBase
     {
         private readonly IPerformanceService _performanceService;
         private readonly IMapper _mapper;
@@ -25,137 +23,116 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             _mapper = mapper;
         }
 
-        /// <summary>
-        /// Get all performances.
-        /// </summary>
-        /// <returns>The list of all performances.</returns>
+        /// <summary>Controller method for getting a list of all performances.</summary>
+        /// <returns>List of all performances.</returns>
+        /// <response code="200">Is returned when the list has at least one performance.</response>
+        /// <response code="404">Is returned when the list of performances is empty.</response>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PerformanceViewModel>>> Get()
+        public async Task<ActionResult<List<PerformanceDTO>>> GetAll()
         {
-            var performances = await _performanceService.GetAllAsync();
-            var mappedPerformances = _mapper.Map<IEnumerable<Performance>, IEnumerable<PerformanceViewModel>>(performances);
+            var listOfPerformances = await _performanceService.GetAll();
 
-            return mappedPerformances.ToList();
+            if (!listOfPerformances.Any())
+                return NotFound();
+
+            var listOfPerformanceDTOs = _mapper.Map<List<Performance>, List<PerformanceDTO>>(listOfPerformances);
+
+            return Ok(listOfPerformanceDTOs);
         }
 
-        /// <summary>
-        /// Get performance by id.
-        /// </summary>
-        /// <param name="id">Performance id.</param>
+        /// <summary>Controller method for getting a performance by id.</summary>
+        /// <param name="id">Id of performance that need to receive.</param>
         /// <returns>The performance with the following id.</returns>
-        /// <response code="200">If the performance with following id was founded.</response>
-        /// <response code="404">If the performance is not existed with specified id.</response>
+        /// <response code="200">Is returned when performance does exist.</response>
+        /// <response code="404">Is returned when performance with such Id doesn't exist.</response>
         [HttpGet("{id}")]
-        public async Task<ActionResult<PerformanceViewModel>> GetById(int id)
+        public async Task<ActionResult<PerformanceDTO>> GetById(int id)
         {
-            var performance = await _performanceService.GetByIdAsync(id);
+            var performance = await _performanceService.GetById(id);
 
             if (performance == null)
-            {
                 return NotFound();
-            }
 
-            var mappedPerformance = _mapper.Map<Performance, PerformanceViewModel>(performance);
+            var performanceDTO = _mapper.Map<Performance, PerformanceDTO>(performance);
 
-            return mappedPerformance;
+            return Ok(performanceDTO);
         }
 
-        /// <summary>
-        /// Get speeches of the performance by id.
-        /// </summary>
-        /// <param name="id">Performance id, speeches of that is needed to be returned.</param>
-        /// <returns>The speeches of the performance with following id.</returns>
-        /// <response code="200">If the performance was founded with following id.</response>
-        /// <response code="404">If the performance is not existed with following id.</response>
+        /// <summary>Controller method for getting a speeches by id of performance.</summary>
+        /// <param name="id">Id of performance which speeches that need to receive.</param>
+        /// <returns>List of a speeches.</returns>
+        /// <response code="200">Is returned when speeches does exist.</response>
+        /// <response code="400">Is returned when performance with such Id doesn't exist.</response>
+        /// <response code="404">Is returned when speeches doesn't exist.</response>
         [HttpGet("{id}/speeches")]
-        public async Task<ActionResult<IEnumerable<SpeechViewModel>>> GetSpeeches(int id)
+        public async Task<ActionResult<List<SpeechDTO>>> GetByIdWithChildren(int id)
         {
-            var speeches = await _performanceService.GetSpeechesAsync(id);
+            var listOfSpeeches = await _performanceService.GetChildrenById(id);
 
-            if (speeches == null)
-            {
+            if (listOfSpeeches == null)
+                return BadRequest($"Performance with Id: {id} doesn't exist!");
+
+            if (!listOfSpeeches.Any())
                 return NotFound();
-            }
 
-            var mappedSpeeches = _mapper.Map<IEnumerable<Speech>, IEnumerable<SpeechViewModel>>(speeches);
+            var listOfSpeechDTOs = _mapper.Map<List<Speech>, List<SpeechDTO>>(listOfSpeeches);
 
-            return mappedSpeeches.ToList();
+            return Ok(listOfSpeechDTOs);
         }
 
-        /// <summary>
-        /// Create performance.
-        /// </summary>
-        /// <param name="performance">The performance that is needed to be created.</param>
-        /// <returns>The created performance.</returns>
-        /// <response code="201">If the performance was created successfully.</response>
-        /// <response code="400">If the passed performance is not valid.</response>
+        /// <summary>Controller method for creating new performance.</summary>
+        /// <param name="performanceDTO">Performance model which needed to create.</param>
+        /// <returns>Status code and performance.</returns>
+        /// <response code="201">Is returned when performance is successfully created.</response>
+        /// <response code="400">Is returned when invalid data is passed.</response>
+        /// <response code="409">Is returned when performance with such parameters already exists.</response>
         [HttpPost]
-        public async Task<ActionResult<PerformanceViewModel>> Create(PerformanceViewModel performance)
+        public async Task<ActionResult<PerformanceDTO>> Create(PerformanceDTO performanceDTO)
         {
-            if (ModelState.IsValid)
-            {
-                var originPerformance = _mapper.Map<PerformanceViewModel, Performance>(performance);
-                await _performanceService.CreateAsync(originPerformance);
+            var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
 
-                var mappedPerformance = _mapper.Map<Performance, PerformanceViewModel>(originPerformance);
+            await _performanceService.Create(performance);
 
-                return CreatedAtAction(nameof(GetById), new { id = mappedPerformance.Id }, mappedPerformance);
-            }
-
-            return BadRequest(ModelState);
+            return CreatedAtAction(nameof(GetById), new {id = performanceDTO.Id}, performanceDTO);
         }
 
-        /// <summary>
-        /// Update performance.
-        /// </summary>
-        /// <param name="performance">The performance that is needed to be updated.</param>
-        /// <param name="id">The performance id that is needed to be updated.</param>
-        /// <returns>The updated performance.</returns>
-        /// <response code="204">If the performance has been updated successfully.</response>
-        /// <response code="400">If the passed performance is not valid.</response>
-        /// <response code="404">If the passed performance has not been founded.</response>
+        /// <summary>Controller method for updating an already existing performance with following id.</summary>
+        /// <param name="id">Id of the performance that is needed to be updated.</param>
+        /// <param name="performanceDTO">The performance model that is needed to be created.</param>
+        /// <returns>Status code and optionally exception message.</returns>
+        /// <response code="204">Is returned when performance is successfully updated.</response>
+        /// <response code="400">Is returned when performance with or invalid data is passed.</response>
+        /// <response code="404">Is returned when performance with such Id is not founded</response>
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(PerformanceViewModel performance, int id)
+        public async Task<ActionResult> Update(int id, PerformanceDTO performanceDTO)
         {
-            if (ModelState.IsValid && performance.Id == id)
+            if (performanceDTO.Id != id)
+                BadRequest();
+
+            var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
+
+            try
             {
-                var originPerformance = _mapper.Map<PerformanceViewModel, Performance>(performance);
-
-                var updatedPerformance = await _performanceService.UpdateAsync(originPerformance);
-
-                if (updatedPerformance == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    return NoContent();
-                }
+                await _performanceService.Update(id, performance);
+            }
+            catch (Exception exception)
+            {
+                return NotFound(exception.Message);
             }
 
-            return BadRequest(ModelState);
+            return NoContent();
         }
 
-        /// <summary>
-        /// Delete performance by id.
-        /// </summary>
-        /// <param name="id">The performance id.</param>
-        /// <returns>No content.</returns>
-        /// <response code="204">If the performance was deleted successfully.</response>
-        /// <response code="404">If the performance with following id is not existed.</response>
+        /// <summary>Controller method for deleting an already existing performance with following id.</summary>
+        /// <param name="id">Id of the performance that needed to delete.</param>
+        /// <returns>Status code</returns>
+        /// <response code="204">Is returned when performance is successfully deleted.</response>
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var deletedPerformance = await _performanceService.DeleteAsync(id);
+            await _performanceService.Delete(id);
 
-            if (deletedPerformance == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return NoContent();
-            }
+            return NoContent();
         }
     }
 }
