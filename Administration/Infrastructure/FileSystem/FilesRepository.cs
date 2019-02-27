@@ -15,9 +15,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
 
         public void Delete(IEnumerable<Audio> audios, string folderPath)
         {
-            foreach (Audio audio in audios)
+            foreach (var audio in audios)
             {
-                string audioPath = Path.Combine(folderPath, audio.FileName);
+                var audioPath = Path.Combine(folderPath, audio.FileName);
 
                 File.Delete(audioPath);
             }

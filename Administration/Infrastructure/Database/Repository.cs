@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 
@@ -26,18 +27,26 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .FindAsync(id);
         }
 
-        public async Task<IEnumerable<T>> ListAllAsync()
+        public async Task<T> GetByIdWithChildren(int id, string childrenName)
+        {
+            return await _dbContext
+                .Set<T>()
+                .Include(childrenName)
+                .FirstOrDefaultAsync(e => e.Id == id);
+        }
+
+        public async Task<List<T>> ListAllAsync()
         {
             return await _dbContext
                 .Set<T>()
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> List(Expression<Func<T, bool>> predicate)
+        public async Task<List<T>> List(Expression<Func<T, bool>> predicate)
         {
             return await _dbContext
                 .Set<T>()
-                .Where(predicate)
+                .Include(predicate)
                 .ToListAsync();
         }
 
@@ -47,7 +56,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .Set<T>()
                 .Add(entity);
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext
+                .SaveChangesAsync();
         }
 
         public async Task UpdateAsync(T oldEntity, T newEntity)
@@ -57,7 +67,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .CurrentValues
                 .SetValues(newEntity);
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext
+                .SaveChangesAsync();
         }
 
         public async Task DeleteAsync(T entity)
@@ -66,7 +77,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .Set<T>()
                 .Remove(entity);
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext
+                .SaveChangesAsync();
         }
     }
 }

@@ -20,13 +20,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .Property(p => p.Title)
                 .IsRequired();
 
-            modelBuilder.Entity<Performance>()
-                .Property(p => p.Description)
-                .IsRequired();
-
             modelBuilder
                 .Entity<Speech>()
-                .HasMany(s => s.Audio)
+                .HasMany(s => s.Audios)
                 .WithOne(s => s.Speech)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
@@ -39,16 +35,16 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .IsRequired();
 
             modelBuilder.Entity<Language>()
+                .HasMany(l => l.Audios)
+                .WithOne(a => a.Language)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            modelBuilder.Entity<Language>()
                 .HasKey(l => l.Id);
 
             modelBuilder.Entity<Language>()
                 .Property(l => l.Name)
-                .IsRequired();
-
-            modelBuilder.Entity<Language>()
-                .HasMany(l => l.Audios)
-                .WithOne(a => a.Language)
-                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
         }
     }
