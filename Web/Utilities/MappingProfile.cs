@@ -1,27 +1,28 @@
 ﻿using AutoMapper;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
-using Web.ViewModels;
+using SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs;
 
-namespace Web.Utilities
+namespace SoftServe.ITAcademy.BackendDubbingProject.Web.Utilities
 {
     public class MappingProfile : Profile
     {
         public MappingProfile()
         {
-            CreateMap<Performance, PerformanceViewModel>();
-            CreateMap<PerformanceViewModel, Performance>();
+            CreateMap<Performance, PerformanceDTO>();
+            CreateMap<PerformanceDTO, Performance>();
 
-            CreateMap<Speech, SpeechViewModel>();
-            CreateMap<SpeechViewModel, Speech>();
+            CreateMap<Speech, SpeechDTO>();
+            CreateMap<SpeechDTO, Speech>();
 
-            CreateMap<Language, LanguageViewModel>();
-            CreateMap<LanguageViewModel, Language>();
+            CreateMap<Language, LanguageDTO>();
+            CreateMap<LanguageDTO, Language>();
 
-            CreateMap<Audio, AudioFileViewModel>();
-            CreateMap<AudioFileViewModel, Audio>()
+            CreateMap<Audio, AudioFileDTO>();
+            CreateMap<AudioFileDTO, Audio>()
                 .ForMember("FileName", cnf => cnf.MapFrom(m => m.File.FileName));
-            CreateMap<Audio, AudioViewModel>();
-            CreateMap<AudioViewModel, Audio>();
+
+            CreateMap<Audio, AudioDTO>();
+            CreateMap<AudioDTO, Audio>();
         }
     }
 }

@@ -14,8 +14,8 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.FileSystem;
 using SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs;
+using SoftServe.ITAcademy.BackendDubbingProject.Web.Utilities;
 using Swashbuckle.AspNetCore.Swagger;
-using Web.Utilities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 {
