@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
@@ -8,14 +6,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 {
     public interface ILanguageService
     {
-        Task<List<Language>> GetAll();
+        Task<List<Language>> GetAllAsync();
 
-        Task<Language> GetById(int id);
+        Task<Language> GetByIdAsync(int id);
 
-        Task Create(Language entity);
+        Task CreateAsync(Language entity);
 
-        Task Update(int id, Language newEntity);
+        Task UpdateAsync(int id, Language newEntity);
 
-        Task Delete(int id);
+        Task DeleteAsync(int id);
     }
 }

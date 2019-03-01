@@ -9,13 +9,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
     public interface IRepository<T>
         where T : BaseEntity
     {
-        Task<T> GetById(int id);
+        Task<T> GetByIdAsync(int id);
 
-        Task<T> GetByIdWithChildren(int id, string kek);
+        Task<T> GetByIdWithChildrenAsync(int id, string childrenName);
 
         Task<List<T>> ListAllAsync();
 
-        Task<List<T>> List(Expression<Func<T, bool>> predicate);
+        Task<List<T>> ListAsync(Expression<Func<T, bool>> predicate);
 
         Task AddAsync(T entity);
 

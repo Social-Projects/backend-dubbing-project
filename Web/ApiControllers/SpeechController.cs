@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -30,10 +28,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet]
         public async Task<ActionResult<List<SpeechDTO>>> GetAll()
         {
-            var listOfSpeeches = await _speechService.GetAll();
-
-            if (!listOfSpeeches.Any())
-                return NotFound();
+            var listOfSpeeches = await _speechService.GetAllAsync();
 
             var listOfSpeechesDTOs = _mapper.Map<List<Speech>, List<SpeechDTO>>(listOfSpeeches);
 
@@ -48,7 +43,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SpeechDTO>> GetById(int id)
         {
-            var speech = await _speechService.GetById(id);
+            var speech = await _speechService.GetByIdAsync(id);
 
             if (speech == null)
                 return NotFound();
@@ -69,14 +64,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         {
             var speech = _mapper.Map<SpeechDTO, Speech>(speechDTO);
 
-            await _speechService.Create(speech);
+            await _speechService.CreateAsync(speech);
 
             return CreatedAtAction(nameof(GetById), new {id = speechDTO.Id}, speechDTO);
         }
 
         /// <summary>Controller method for updating an already existing speech with following id.</summary>
         /// <param name="id">Id of the speech that is needed to be updated.</param>
-        /// <param name="speechVM">The speech model that is needed to be updated.</param>
+        /// <param name="speechDTO">The speech model that is needed to be updated.</param>
         /// <returns>Status code and optionally exception message.</returns>
         /// <response code="204">Is returned when speech is successfully updated.</response>
         /// <response code="400">Is returned when speech with or invalid data is passed.</response>
@@ -89,14 +84,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             var speech = _mapper.Map<SpeechDTO, Speech>(speechDTO);
 
-            try
-            {
-                await _speechService.Update(id, speech);
-            }
-            catch (Exception exception)
-            {
-                return NotFound(exception.Message);
-            }
+            await _speechService.UpdateAsync(id, speech);
 
             return NoContent();
         }
@@ -108,7 +96,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _speechService.Delete(id);
+            await _speechService.DeleteAsync(id);
 
             return NoContent();
         }

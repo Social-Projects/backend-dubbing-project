@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,9 +13,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
         {
         }
 
-        public async Task<List<Speech>> GetChildrenById(int id)
+        public async Task<List<Speech>> GetChildrenByIdAsync(int id)
         {
-            var performance = await Repository.GetByIdWithChildren(id, "Speeches");
+            var performance = await Repository.GetByIdWithChildrenAsync(id, "Speeches");
 
             return performance?.Speeches.ToList();
         }

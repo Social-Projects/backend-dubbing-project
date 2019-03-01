@@ -35,6 +35,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .HasKey(s => s.Id);
 
             modelBuilder.Entity<Speech>()
+                .Property(s => s.Order)
+                .IsRequired();
+
+            modelBuilder.Entity<Speech>()
                 .Property(s => s.Text)
                 .IsRequired();
 

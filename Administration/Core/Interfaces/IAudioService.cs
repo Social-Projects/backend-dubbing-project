@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
@@ -8,14 +6,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 {
     public interface IAudioService
     {
-        Task<List<Audio>> GetAll();
+        Task<List<Audio>> GetAllAsync();
 
-        Task<Audio> GetById(int id);
+        Task<Audio> GetByIdAsync(int id);
 
-        Task Create(Audio entity);
+        Task CreateAsync(Audio entity);
 
         Task UploadAsync(Audio entity);
 
-        Task Update(int id, Audio newEntity);
+        Task UpdateAsync(int id, Audio newEntity);
     }
 }

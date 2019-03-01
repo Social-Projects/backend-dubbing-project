@@ -12,34 +12,34 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
     {
         protected readonly IRepository<T> Repository;
 
-        protected GenericService(IRepository<T> repository)
+        public GenericService(IRepository<T> repository)
         {
             Repository = repository;
         }
 
-        public virtual async Task<List<T>> GetAll()
+        public virtual async Task<List<T>> GetAllAsync()
         {
             return await Repository.ListAllAsync();
         }
 
-        public virtual async Task<List<T>> GetAllByCondition(Expression<Func<T, bool>> predicate)
+        public virtual async Task<List<T>> GetAllByConditionAsync(Expression<Func<T, bool>> predicate)
         {
-            return await Repository.List(predicate);
+            return await Repository.ListAsync(predicate);
         }
 
-        public virtual async Task<T> GetById(int id)
+        public virtual async Task<T> GetByIdAsync(int id)
         {
-            return await Repository.GetById(id);
+            return await Repository.GetByIdAsync(id);
         }
 
-        public virtual async Task Create(T entity)
+        public virtual async Task CreateAsync(T entity)
         {
             await Repository.AddAsync(entity);
         }
 
-        public virtual async Task Update(int id, T newEntity)
+        public virtual async Task UpdateAsync(int id, T newEntity)
         {
-            var oldEntity = await Repository.GetById(id);
+            var oldEntity = await Repository.GetByIdAsync(id);
 
             if (oldEntity == null)
                 throw new Exception($"{typeof(T)} entity with ID: {id} doesn't exist.");
@@ -47,9 +47,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             await Repository.UpdateAsync(oldEntity, newEntity);
         }
 
-        public virtual async Task Delete(int id)
+        public virtual async Task DeleteAsync(int id)
         {
-            var entity = await Repository.GetById(id);
+            var entity = await Repository.GetByIdAsync(id);
 
             if (entity == null)
                 return;

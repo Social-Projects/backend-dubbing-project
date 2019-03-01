@@ -14,9 +14,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             _performanceRepository = performanceRepository;
         }
 
-        public override async Task Create(Speech entity)
+        public override async Task CreateAsync(Speech entity)
         {
-            var perf = await _performanceRepository.GetById(entity.PerformanceId);
+            var perf = await _performanceRepository.GetByIdAsync(entity.PerformanceId);
 
             entity.Performance = perf;
 

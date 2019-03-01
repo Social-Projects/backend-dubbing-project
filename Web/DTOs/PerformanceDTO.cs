@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs
 {

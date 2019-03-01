@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 
@@ -20,14 +18,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
             _dbContext = dbContext;
         }
 
-        public async Task<T> GetById(int id)
+        public async Task<T> GetByIdAsync(int id)
         {
             return await _dbContext
                 .Set<T>()
                 .FindAsync(id);
         }
 
-        public async Task<T> GetByIdWithChildren(int id, string childrenName)
+        public async Task<T> GetByIdWithChildrenAsync(int id, string childrenName)
         {
             return await _dbContext
                 .Set<T>()
@@ -42,7 +40,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .ToListAsync();
         }
 
-        public async Task<List<T>> List(Expression<Func<T, bool>> predicate)
+        public async Task<List<T>> ListAsync(Expression<Func<T, bool>> predicate)
         {
             return await _dbContext
                 .Set<T>()

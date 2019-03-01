@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,10 +29,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet]
         public async Task<ActionResult<List<PerformanceDTO>>> GetAll()
         {
-            var listOfPerformances = await _performanceService.GetAll();
-
-            if (!listOfPerformances.Any())
-                return NotFound();
+            var listOfPerformances = await _performanceService.GetAllAsync();
 
             var listOfPerformanceDTOs = _mapper.Map<List<Performance>, List<PerformanceDTO>>(listOfPerformances);
 
@@ -48,7 +44,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PerformanceDTO>> GetById(int id)
         {
-            var performance = await _performanceService.GetById(id);
+            var performance = await _performanceService.GetByIdAsync(id);
 
             if (performance == null)
                 return NotFound();
@@ -67,7 +63,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}/speeches")]
         public async Task<ActionResult<List<SpeechDTO>>> GetByIdWithChildren(int id)
         {
-            var listOfSpeeches = await _performanceService.GetChildrenById(id);
+            var listOfSpeeches = await _performanceService.GetChildrenByIdAsync(id);
 
             if (listOfSpeeches == null)
                 return BadRequest($"Performance with Id: {id} doesn't exist!");
@@ -91,7 +87,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         {
             var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
 
-            await _performanceService.Create(performance);
+            await _performanceService.CreateAsync(performance);
 
             return CreatedAtAction(nameof(GetById), new {id = performanceDTO.Id}, performanceDTO);
         }
@@ -111,14 +107,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
 
-            try
-            {
-                await _performanceService.Update(id, performance);
-            }
-            catch (Exception exception)
-            {
-                return NotFound(exception.Message);
-            }
+            await _performanceService.UpdateAsync(id, performance);
 
             return NoContent();
         }
@@ -130,7 +119,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _performanceService.Delete(id);
+            await _performanceService.DeleteAsync(id);
 
             return NoContent();
         }

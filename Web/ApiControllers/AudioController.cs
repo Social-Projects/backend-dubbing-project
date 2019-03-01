@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 using SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs;
@@ -31,10 +29,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet]
         public async Task<ActionResult<List<AudioDTO>>> GetAll()
         {
-            var listOfAudios = await _audioService.GetAll();
-
-            if (!listOfAudios.Any())
-                return NotFound();
+            var listOfAudios = await _audioService.GetAllAsync();
 
             var listOfAudiosDTOs = _mapper.Map<IEnumerable<Audio>, IEnumerable<AudioDTO>>(listOfAudios);
 
@@ -49,7 +44,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AudioDTO>> GetById(int id)
         {
-            var audio = await _audioService.GetById(id);
+            var audio = await _audioService.GetByIdAsync(id);
 
             if (audio == null)
                 return NotFound();
@@ -70,14 +65,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         {
             var audio = _mapper.Map<AudioDTO, Audio>(audioDTO);
 
-            await _audioService.Create(audio);
+            await _audioService.CreateAsync(audio);
 
             return CreatedAtAction(nameof(GetById), new {id = audioDTO.Id}, audioDTO);
         }
 
         /// <summary>Controller method for uploading a file to server and saving it to a local storage.</summary>
         /// <returns>Status code, URL of audio file and audio model.</returns>
-        /// <param name="audioFileVM">Audio file which needed to create.</param>
+        /// <param name="audioFileDTO">Audio file which needed to create.</param>
         /// <response code="201">Is returned when audio is successfully uploaded.</response>
         /// <response code="400">Is returned when invalid data is passed.</response>
         [HttpPost("upload")]
@@ -105,7 +100,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
         /// <summary>Controller method for updating an already existing audio with following id.</summary>
         /// <param name="id">Id of the audio that is needed to be updated.</param>
-        /// <param name="audioVM">The audio model to which is needed to be updated existing audio.</param>
+        /// <param name="audioDTO">The audio model to which is needed to be updated existing audio.</param>
         /// <returns>Status code and optionally exception message.</returns>
         /// <response code="204">Is returned when speech is successfully updated.</response>
         /// <response code="400">Is returned when speech with or invalid data is passed.</response>
@@ -118,14 +113,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             var audio = _mapper.Map<AudioDTO, Audio>(audioDTO);
 
-            try
-            {
-                await _audioService.Update(id, audio);
-            }
-            catch (Exception exception)
-            {
-                return NotFound(exception.Message);
-            }
+            await _audioService.UpdateAsync(id, audio);
 
             return NoContent();
         }

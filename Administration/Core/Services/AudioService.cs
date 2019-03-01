@@ -25,7 +25,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             _fileRepository = fileRepository;
         }
 
-        public override async Task Create(Audio entity)
+        public override async Task CreateAsync(Audio entity)
         {
             var audio = await ChangeNameAndDuration(entity);
 
@@ -39,7 +39,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             await _fileRepository.UploadAsync(entity, path);
         }
 
-        public override async Task Update(int id, Audio newEntity)
+        public override async Task UpdateAsync(int id, Audio newEntity)
         {
             var fileToRemovePath = Path.Combine(_audioFilesFolderPath, newEntity.FileName);
 
@@ -47,7 +47,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 
             newEntity = await ChangeNameAndDuration(newEntity);
 
-            var oldEntity = await Repository.GetById(id);
+            var oldEntity = await Repository.GetByIdAsync(id);
 
             if (oldEntity == null)
                 throw new Exception($"{typeof(Audio)} entity with ID: {id} doesn't exist.");
@@ -55,16 +55,16 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             await Repository.UpdateAsync(oldEntity, newEntity);
         }
 
-        public override async Task Delete(int id)
+        public override async Task DeleteAsync(int id)
         {
-            var audio = await Repository.GetById(id);
+            var audio = await Repository.GetByIdAsync(id);
 
             _fileRepository.Delete(audio.Speech.Audios, _audioFilesFolderPath);
         }
 
         private async Task<Audio> ChangeNameAndDuration(Audio entity)
         {
-            var speech = await _speechRepository.GetById(entity.SpeechId);
+            var speech = await _speechRepository.GetByIdAsync(entity.SpeechId);
 
             var newFileName = $"{speech.PerformanceId}_{entity.SpeechId}_{entity.LanguageId}.mp3";
             var oldPath = Path.Combine(_audioFilesFolderPath, entity.FileName + ".mp3");

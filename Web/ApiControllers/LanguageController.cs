@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -30,10 +28,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet]
         public async Task<ActionResult<List<LanguageDTO>>> GetAll()
         {
-            var listOfLanguages = await _languageService.GetAll();
-
-            if (!listOfLanguages.Any())
-                return NotFound();
+            var listOfLanguages = await _languageService.GetAllAsync();
 
             var listOfLanguageDTOs = _mapper.Map<List<Language>, List<LanguageDTO>>(listOfLanguages);
 
@@ -48,7 +43,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<LanguageDTO>> GetById(int id)
         {
-            var language = await _languageService.GetById(id);
+            var language = await _languageService.GetByIdAsync(id);
 
             if (language == null)
                 return NotFound();
@@ -69,7 +64,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         {
             var language = _mapper.Map<LanguageDTO, Language>(languageDTO);
 
-            await _languageService.Create(language);
+            await _languageService.CreateAsync(language);
 
             return CreatedAtAction(nameof(GetById), new {id = languageDTO.Id}, languageDTO);
         }
@@ -89,14 +84,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             var language = _mapper.Map<LanguageDTO, Language>(languageDTO);
 
-            try
-            {
-                await _languageService.Update(id, language);
-            }
-            catch (Exception exception)
-            {
-                return NotFound(exception.Message);
-            }
+            await _languageService.UpdateAsync(id, language);
 
             return NoContent();
         }
@@ -108,7 +96,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _languageService.Delete(id);
+            await _languageService.DeleteAsync(id);
 
             return NoContent();
         }
