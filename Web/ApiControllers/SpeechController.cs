@@ -53,6 +53,25 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             return Ok(speechDTO);
         }
 
+        /// <summary>Controller method for getting a speeches by id of performance.</summary>
+        /// <param name="id">Id of performance which speeches that need to receive.</param>
+        /// <returns>List of a speeches.</returns>
+        /// <response code="200">Is returned when speeches does exist.</response>
+        /// <response code="400">Is returned when performance with such Id doesn't exist.</response>
+        /// <response code="404">Is returned when speeches doesn't exist.</response>
+        [HttpGet("{id}/audios")]
+        public async Task<ActionResult<List<SpeechDTO>>> GetByIdWithChildren(int id)
+        {
+            var listOfAudios = await _speechService.GetChildrenByIdAsync(id);
+
+            if (listOfAudios == null)
+                return BadRequest($"Performance with Id: {id} doesn't exist!");
+
+            var listOfAudiosDTOs = _mapper.Map<List<Audio>, List<AudioDTO>>(listOfAudios);
+
+            return Ok(listOfAudiosDTOs);
+        }
+
         /// <summary>Controller method for creating new speech.</summary>
         /// <param name="speechDTO">Speech model which needed to create.</param>
         /// <returns>Status code and speech.</returns>

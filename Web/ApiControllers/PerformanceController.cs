@@ -68,9 +68,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             if (listOfSpeeches == null)
                 return BadRequest($"Performance with Id: {id} doesn't exist!");
 
-            if (!listOfSpeeches.Any())
-                return NotFound();
-
             var listOfSpeechDTOs = _mapper.Map<List<Speech>, List<SpeechDTO>>(listOfSpeeches);
 
             return Ok(listOfSpeechDTOs);

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
@@ -14,13 +16,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             _performanceRepository = performanceRepository;
         }
 
-        public override async Task CreateAsync(Speech entity)
+        public async Task<List<Audio>> GetChildrenByIdAsync(int id)
         {
-            var perf = await _performanceRepository.GetByIdAsync(entity.PerformanceId);
+            var speech = await Repository.GetByIdWithChildrenAsync(id, "Audios");
 
-            entity.Performance = perf;
-
-            await Repository.AddAsync(entity);
+            return speech?.Audios.ToList();
         }
     }
 }

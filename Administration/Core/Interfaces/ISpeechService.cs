@@ -10,6 +10,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 
         Task<Speech> GetByIdAsync(int id);
 
+        Task<List<Audio>> GetChildrenByIdAsync(int id);
+
         Task CreateAsync(Speech entity);
 
         Task UpdateAsync(int id, Speech newEntity);
