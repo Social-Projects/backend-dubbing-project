@@ -50,6 +50,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
 
         public async Task AddAsync(T entity)
         {
+            entity.Id = 0;
             _dbContext
                 .Set<T>()
                 .Add(entity);

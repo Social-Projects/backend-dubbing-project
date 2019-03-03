@@ -66,7 +66,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             await _languageService.CreateAsync(language);
 
-            return CreatedAtAction(nameof(GetById), new {id = languageDTO.Id}, languageDTO);
+            var newLangDTO = _mapper.Map<Language, LanguageDTO>(language);
+
+            return CreatedAtAction(nameof(GetById), new {id = newLangDTO.Id}, newLangDTO);
         }
 
         /// <summary>Controller method for updating an already existing language with following id.</summary>

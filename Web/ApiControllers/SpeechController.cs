@@ -85,7 +85,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             await _speechService.CreateAsync(speech);
 
-            return CreatedAtAction(nameof(GetById), new {id = speechDTO.Id}, speechDTO);
+            var newSpeechDTO = _mapper.Map<Speech, SpeechDTO>(speech);
+
+            return CreatedAtAction(nameof(GetById), new {id = newSpeechDTO.Id}, newSpeechDTO);
         }
 
         /// <summary>Controller method for updating an already existing speech with following id.</summary>

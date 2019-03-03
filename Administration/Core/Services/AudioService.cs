@@ -67,8 +67,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             var speech = await _speechRepository.GetByIdAsync(entity.SpeechId);
 
             var newFileName = $"{speech.PerformanceId}_{entity.SpeechId}_{entity.LanguageId}.mp3";
-            var oldPath = Path.Combine(_audioFilesFolderPath, entity.FileName + ".mp3");
-            var newPath = Path.Combine(_audioFilesFolderPath, newFileName + ".mp3");
+            var oldPath = Path.Combine(_audioFilesFolderPath, entity.FileName);
+            var newPath = Path.Combine(_audioFilesFolderPath, newFileName);
             File.Move(oldPath, newPath);
 
             var file = TagLib.File.Create(newPath);

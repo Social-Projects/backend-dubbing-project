@@ -82,11 +82,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpPost]
         public async Task<ActionResult<PerformanceDTO>> Create(PerformanceDTO performanceDTO)
         {
+            //performanceDTO.Id = 0;
             var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
 
             await _performanceService.CreateAsync(performance);
 
-            return CreatedAtAction(nameof(GetById), new {id = performanceDTO.Id}, performanceDTO);
+            var newPerfDTO = _mapper.Map<Performance, PerformanceDTO>(performance);
+
+            return CreatedAtAction(nameof(GetById), new {id = newPerfDTO.Id}, newPerfDTO);
         }
 
         /// <summary>Controller method for updating an already existing performance with following id.</summary>

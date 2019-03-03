@@ -67,7 +67,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             await _audioService.CreateAsync(audio);
 
-            return CreatedAtAction(nameof(GetById), new {id = audioDTO.Id}, audioDTO);
+            var newAudioDTO = _mapper.Map<Audio, AudioDTO>(audio);
+
+            return CreatedAtAction(nameof(GetById), new {id = newAudioDTO.Id}, newAudioDTO);
         }
 
         /// <summary>Controller method for uploading a file to server and saving it to a local storage.</summary>
