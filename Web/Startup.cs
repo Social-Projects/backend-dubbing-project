@@ -21,7 +21,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 {
     public class Startup
     {
-        private const string CorsName = "AllowAllOrigins";
+        private const string _corsName = "AllowAllOrigins";
 
         public Startup(IConfiguration configuration)
         {
@@ -35,11 +35,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
             services.AddCors(options =>
             {
                 options.AddPolicy(
-                    CorsName,
+                    _corsName,
                     builder =>
                     {
                         builder
-                            .AllowAnyOrigin()
+                            .WithOrigins("http://localhost:3000")
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowCredentials();
@@ -74,19 +74,19 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 
             services.AddSignalR();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info {Title = "APIs", Version = "v1"});
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
-            });
-
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "APIs", Version = "v1" });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -100,11 +100,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
                 app.UseHsts();
             }
 
-            app.UseCors(CorsName);
-
             app.UseSwagger();
 
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "APIs V1"));
+
+            app.UseCors(_corsName);
 
             app.UseFileServer(new FileServerOptions
             {

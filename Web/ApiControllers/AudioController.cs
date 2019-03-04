@@ -124,13 +124,17 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <summary>
         /// Unload audio from server
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="files"></param>
         /// <returns></returns>
-        [HttpDelete("{fileName}")]
-        public ActionResult Unload(string fileName)
+        [HttpDelete("unload")]
+        public ActionResult Unload([FromQuery] string[] files)
         {
             string fullPath = Path.GetFullPath("./AudioFiles/");
-            _fileRepository.Unload(fullPath + fileName);
+            foreach (var file in files)
+            {
+                _fileRepository.Unload(fullPath + file);
+            }
+
             return NoContent();
         }
     }
