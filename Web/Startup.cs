@@ -51,7 +51,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 
             const string connection = "Data Source=dubbing.db";
 
-            services.AddDbContext<DbContext>(options => options.UseSqlite(connection, b => b.MigrationsAssembly("Web")));
+            services.AddDbContext<DbContext>(options => options.UseSqlite(connection, b => b.MigrationsAssembly("Administration/Infrastructure")));
 
             services.AddSignalR();
 
