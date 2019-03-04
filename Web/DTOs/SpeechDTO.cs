@@ -14,6 +14,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs
         public string Text { get; set; }
 
         [Required]
+        public int Duration { get; set; }
+
+        [Required]
         public int PerformanceId { get; set; }
     }
 }

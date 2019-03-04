@@ -65,6 +65,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             var language = _mapper.Map<LanguageDTO, Language>(languageDTO);
 
             await _languageService.CreateAsync(language);
+            languageDTO.Id = language.Id;
 
             return CreatedAtAction(nameof(GetById), new {id = languageDTO.Id}, languageDTO);
         }

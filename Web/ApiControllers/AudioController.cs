@@ -15,11 +15,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
     {
         private readonly IAudioService _audioService;
         private readonly IMapper _mapper;
+        private readonly IFileRepository _fileRepository;
 
-        public AudioController(IAudioService audioService, IMapper mapper)
+        public AudioController(IAudioService audioService, IMapper mapper, IFileRepository fileRepository)
         {
             _audioService = audioService;
             _mapper = mapper;
+            _fileRepository = fileRepository;
         }
 
         /// <summary>Controller method for getting a list of all audios.</summary>
@@ -66,6 +68,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             var audio = _mapper.Map<AudioDTO, Audio>(audioDTO);
 
             await _audioService.CreateAsync(audio);
+            audioDTO.Id = audio.Id;
 
             return CreatedAtAction(nameof(GetById), new {id = audioDTO.Id}, audioDTO);
         }
@@ -105,7 +108,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <response code="204">Is returned when speech is successfully updated.</response>
         /// <response code="400">Is returned when speech with or invalid data is passed.</response>
         /// <response code="404">Is returned when speech with such Id is not founded</response>
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, AudioDTO audioDTO)
         {
             if (audioDTO.Id != id)
@@ -115,6 +118,19 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             await _audioService.UpdateAsync(id, audio);
 
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Unload audio from server
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        [HttpDelete("{fileName}")]
+        public ActionResult Unload(string fileName)
+        {
+            string fullPath = Path.GetFullPath("./AudioFiles/");
+            _fileRepository.Unload(fullPath + fileName);
             return NoContent();
         }
     }

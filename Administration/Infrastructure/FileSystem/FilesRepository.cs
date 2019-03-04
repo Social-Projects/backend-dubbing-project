@@ -13,6 +13,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
             await File.WriteAllBytesAsync(path, audio.AudioFile);
         }
 
+        public void Unload(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+
         public void Delete(IEnumerable<Audio> audios, string folderPath)
         {
             foreach (var audio in audios)

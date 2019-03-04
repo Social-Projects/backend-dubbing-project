@@ -84,6 +84,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             var speech = _mapper.Map<SpeechDTO, Speech>(speechDTO);
 
             await _speechService.CreateAsync(speech);
+            speechDTO.Id = speech.Id;
 
             return CreatedAtAction(nameof(GetById), new {id = speechDTO.Id}, speechDTO);
         }

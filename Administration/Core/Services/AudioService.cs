@@ -41,18 +41,20 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 
         public override async Task UpdateAsync(int id, Audio newEntity)
         {
-            var fileToRemovePath = Path.Combine(_audioFilesFolderPath, newEntity.FileName);
+            var oldEntity = await Repository.GetByIdAsync(newEntity.Id);
 
-            File.Delete(fileToRemovePath);
+            if (oldEntity.FileName != newEntity.FileName)
+            {
+                var fileToRemovePath = Path.Combine(_audioFilesFolderPath, oldEntity.FileName);
+                File.Delete(fileToRemovePath);
 
-            newEntity = await ChangeNameAndDuration(newEntity);
+                newEntity = await ChangeNameAndDuration(newEntity);
 
-            var oldEntity = await Repository.GetByIdAsync(id);
+                if (oldEntity == null)
+                    throw new Exception($"{typeof(Audio)} entity with ID: {id} doesn't exist.");
 
-            if (oldEntity == null)
-                throw new Exception($"{typeof(Audio)} entity with ID: {id} doesn't exist.");
-
-            await Repository.UpdateAsync(oldEntity, newEntity);
+                await Repository.UpdateAsync(oldEntity, newEntity);
+            }
         }
 
         public override async Task DeleteAsync(int id)
@@ -67,8 +69,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             var speech = await _speechRepository.GetByIdAsync(entity.SpeechId);
 
             var newFileName = $"{speech.PerformanceId}_{entity.SpeechId}_{entity.LanguageId}.mp3";
-            var oldPath = Path.Combine(_audioFilesFolderPath, entity.FileName + ".mp3");
-            var newPath = Path.Combine(_audioFilesFolderPath, newFileName + ".mp3");
+            var oldPath = Path.Combine(_audioFilesFolderPath, entity.FileName);
+            var newPath = Path.Combine(_audioFilesFolderPath, newFileName);
             File.Move(oldPath, newPath);
 
             var file = TagLib.File.Create(newPath);

@@ -85,6 +85,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
 
             await _performanceService.CreateAsync(performance);
+            performanceDTO.Id = performance.Id;
 
             return CreatedAtAction(nameof(GetById), new {id = performanceDTO.Id}, performanceDTO);
         }

@@ -8,6 +8,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
     {
         Task UploadAsync(Audio audio, string path);
 
+        void Unload(string path);
+
         void Delete(IEnumerable<Audio> audios, string path);
     }
 }
