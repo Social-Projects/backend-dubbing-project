@@ -34,6 +34,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 
         public virtual async Task CreateAsync(T entity)
         {
+            entity.Id = default(int);
             await Repository.AddAsync(entity);
         }
 
