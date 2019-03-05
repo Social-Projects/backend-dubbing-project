@@ -5,14 +5,11 @@ using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.FileSystem;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Configuration;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Configuration;
 using SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs;
 using SoftServe.ITAcademy.BackendDubbingProject.Web.Utilities;
 using Swashbuckle.AspNetCore.Swagger;
@@ -22,10 +19,17 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
     public class Startup
     {
         private const string CorsName = "AllowAllOrigins";
+        private readonly IAdministrationServiceCollection _administrationServiceCollection;
+        private readonly IInfrastructureServiceCollection _infrastructureServiceCollection;
 
-        public Startup(IConfiguration configuration)
+        public Startup(
+            IConfiguration configuration,
+            IAdministrationServiceCollection administrationServiceCollection,
+            IInfrastructureServiceCollection infrastructureServiceCollection)
         {
             Configuration = configuration;
+            _administrationServiceCollection = administrationServiceCollection;
+            _infrastructureServiceCollection = infrastructureServiceCollection;
         }
 
         public IConfiguration Configuration { get; }
@@ -45,10 +49,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
                             .AllowCredentials();
                     });
             });
-            const string connection = "Data Source=dubbing.db";
-
-            services.AddDbContext<DubbingContext>(options =>
-                options.UseSqlite(connection, b => b.MigrationsAssembly("Web")));
 
             var mappingConfiguration = new MapperConfiguration(conf => { conf.AddProfile<MappingProfile>(); });
 
@@ -56,21 +56,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 
             services.AddSingleton(mapper);
 
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            AddAdministrationServices(services);
 
-            services.AddScoped<IFileRepository, FilesRepository>();
-
-            services.AddScoped<IAudioService, AudioService>();
-
-            services.AddScoped<ILanguageService, LanguageService>();
-
-            services.AddScoped<IPerformanceService, PerformanceService>();
-
-            services.AddScoped<ISpeechService, SpeechService>();
-
-            services.AddScoped<DbContext, DubbingContext>();
-
-            services.AddScoped<IFileRepository, FilesRepository>();
+            AddInfrastructureServices(services);
 
             services.AddSignalR();
 
@@ -87,6 +75,16 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+        }
+
+        private void AddAdministrationServices(IServiceCollection services)
+        {
+            _administrationServiceCollection.RegisterDependencies(services);
+        }
+
+        private void AddInfrastructureServices(IServiceCollection services)
+        {
+            _infrastructureServiceCollection.RegisterDependencies(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
