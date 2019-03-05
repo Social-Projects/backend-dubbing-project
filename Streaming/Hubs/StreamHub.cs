@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs
 {
-    public class StreamHub : Hub
+    internal class StreamHub : Hub
     {
         public async Task SendMessage(string message)
         {
