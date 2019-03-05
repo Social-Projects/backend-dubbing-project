@@ -7,12 +7,12 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 {
-    public abstract class GenericService<T>
+    internal abstract class GenericService<T>
         where T : BaseEntity
     {
         protected readonly IRepository<T> Repository;
 
-        public GenericService(IRepository<T> repository)
+        protected GenericService(IRepository<T> repository)
         {
             Repository = repository;
         }

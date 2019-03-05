@@ -6,7 +6,7 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces
 {
-    public interface IRepository<T>
+    internal interface IRepository<T>
         where T : BaseEntity
     {
         Task<T> GetByIdAsync(int id);

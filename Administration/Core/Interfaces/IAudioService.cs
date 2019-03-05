@@ -4,7 +4,7 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces
 {
-    public interface IAudioService
+    internal interface IAudioService
     {
         Task<List<Audio>> GetAllAsync();
 

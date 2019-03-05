@@ -6,7 +6,7 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 {
-    public class PerformanceService : GenericService<Performance>, IPerformanceService
+    internal class PerformanceService : GenericService<Performance>, IPerformanceService
     {
         public PerformanceService(IRepository<Performance> repository)
             : base(repository)

@@ -7,7 +7,7 @@ using File = System.IO.File;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 {
-    public class AudioService : GenericService<Audio>, IAudioService
+    internal class AudioService : GenericService<Audio>, IAudioService
     {
         private readonly IFileRepository _fileRepository;
 

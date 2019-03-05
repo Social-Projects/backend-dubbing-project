@@ -4,7 +4,7 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces
 {
-    public interface IFileRepository
+    internal interface IFileRepository
     {
         Task UploadAsync(Audio audio, string path);
 
