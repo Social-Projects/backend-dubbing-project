@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 using SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
@@ -13,12 +13,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
     [ApiController]
     public class PerformanceController : ControllerBase
     {
-        private readonly IPerformanceService _performanceService;
+        private readonly IAdministrationService _administrationMicroservice;
         private readonly IMapper _mapper;
 
-        public PerformanceController(IPerformanceService performanceService, IMapper mapper)
+        public PerformanceController(IAdministrationService administrationMicroservice, IMapper mapper)
         {
-            _performanceService = performanceService;
+            _administrationMicroservice = administrationMicroservice;
             _mapper = mapper;
         }
 
@@ -29,7 +29,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet]
         public async Task<ActionResult<List<PerformanceDTO>>> GetAll()
         {
-            var listOfPerformances = await _performanceService.GetAllAsync();
+            var listOfPerformances = await _administrationMicroservice.GetAllPerformancesAsync();
 
             var listOfPerformanceDTOs = _mapper.Map<List<Performance>, List<PerformanceDTO>>(listOfPerformances);
 
@@ -44,7 +44,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PerformanceDTO>> GetById(int id)
         {
-            var performance = await _performanceService.GetByIdAsync(id);
+            var performance = await _administrationMicroservice.GetPerformanceByIdAsync(id);
 
             if (performance == null)
                 return NotFound();
@@ -63,10 +63,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}/speeches")]
         public async Task<ActionResult<List<SpeechDTO>>> GetByIdWithChildren(int id)
         {
-            var listOfSpeeches = await _performanceService.GetChildrenByIdAsync(id);
+            var listOfSpeeches = await _administrationMicroservice.GetSpeechesAsync(id);
 
             if (listOfSpeeches == null)
                 return BadRequest($"Performance with Id: {id} doesn't exist!");
+
+            if (!listOfSpeeches.Any())
+                return NotFound();
 
             var listOfSpeechDTOs = _mapper.Map<List<Speech>, List<SpeechDTO>>(listOfSpeeches);
 
@@ -84,7 +87,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         {
             var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
 
-            await _performanceService.CreateAsync(performance);
+            await _administrationMicroservice.CreatePerformanceAsync(performance);
+
+            performanceDTO.Id = performance.Id;
 
             return CreatedAtAction(nameof(GetById), new {id = performanceDTO.Id}, performanceDTO);
         }
@@ -104,7 +109,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
 
-            await _performanceService.UpdateAsync(id, performance);
+            await _administrationMicroservice.UpdatePerformanceAsync(id, performance);
 
             return NoContent();
         }
@@ -116,7 +121,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _performanceService.DeleteAsync(id);
+            await _administrationMicroservice.DeletePerformanceAsync(id);
 
             return NoContent();
         }

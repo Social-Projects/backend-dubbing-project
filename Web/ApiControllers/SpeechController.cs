@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 using SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
@@ -12,12 +12,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
     [ApiController]
     public class SpeechController : ControllerBase
     {
-        private readonly ISpeechService _speechService;
+        private readonly IAdministrationService _administrationMicroservice;
         private readonly IMapper _mapper;
 
-        public SpeechController(ISpeechService speechService, IMapper mapper)
+        public SpeechController(IAdministrationService administrationMicroservice, IMapper mapper)
         {
-            _speechService = speechService;
+            _administrationMicroservice = administrationMicroservice;
             _mapper = mapper;
         }
 
@@ -28,7 +28,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet]
         public async Task<ActionResult<List<SpeechDTO>>> GetAll()
         {
-            var listOfSpeeches = await _speechService.GetAllAsync();
+            var listOfSpeeches = await _administrationMicroservice.GetAllSpeechesAsync();
 
             var listOfSpeechesDTOs = _mapper.Map<List<Speech>, List<SpeechDTO>>(listOfSpeeches);
 
@@ -43,7 +43,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SpeechDTO>> GetById(int id)
         {
-            var speech = await _speechService.GetByIdAsync(id);
+            var speech = await _administrationMicroservice.GetSpeechByIdAsync(id);
 
             if (speech == null)
                 return NotFound();
@@ -51,25 +51,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             var speechDTO = _mapper.Map<Speech, SpeechDTO>(speech);
 
             return Ok(speechDTO);
-        }
-
-        /// <summary>Controller method for getting a speeches by id of performance.</summary>
-        /// <param name="id">Id of performance which speeches that need to receive.</param>
-        /// <returns>List of a speeches.</returns>
-        /// <response code="200">Is returned when speeches does exist.</response>
-        /// <response code="400">Is returned when performance with such Id doesn't exist.</response>
-        /// <response code="404">Is returned when speeches doesn't exist.</response>
-        [HttpGet("{id}/audios")]
-        public async Task<ActionResult<List<SpeechDTO>>> GetByIdWithChildren(int id)
-        {
-            var listOfAudios = await _speechService.GetChildrenByIdAsync(id);
-
-            if (listOfAudios == null)
-                return BadRequest($"Performance with Id: {id} doesn't exist!");
-
-            var listOfAudiosDTOs = _mapper.Map<List<Audio>, List<AudioDTO>>(listOfAudios);
-
-            return Ok(listOfAudiosDTOs);
         }
 
         /// <summary>Controller method for creating new speech.</summary>
@@ -83,7 +64,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         {
             var speech = _mapper.Map<SpeechDTO, Speech>(speechDTO);
 
-            await _speechService.CreateAsync(speech);
+            await _administrationMicroservice.CreateSpeechAsync(speech);
+
+            speechDTO.Id = speech.Id;
 
             return CreatedAtAction(nameof(GetById), new {id = speechDTO.Id}, speechDTO);
         }
@@ -103,7 +86,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             var speech = _mapper.Map<SpeechDTO, Speech>(speechDTO);
 
-            await _speechService.UpdateAsync(id, speech);
+            await _administrationMicroservice.UpdateSpeechAsync(id, speech);
 
             return NoContent();
         }
@@ -115,7 +98,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _speechService.DeleteAsync(id);
+            await _administrationMicroservice.DeleteSpeechAsync(id);
 
             return NoContent();
         }

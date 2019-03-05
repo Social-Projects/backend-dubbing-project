@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 using SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
@@ -12,12 +12,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
     [ApiController]
     public class LanguageController : ControllerBase
     {
-        private readonly ILanguageService _languageService;
+        private readonly IAdministrationService _administrationMicroservice;
         private readonly IMapper _mapper;
 
-        public LanguageController(ILanguageService languageService, IMapper mapper)
+        public LanguageController(IAdministrationService administrationMicroservice, IMapper mapper)
         {
-            _languageService = languageService;
+            _administrationMicroservice = administrationMicroservice;
             _mapper = mapper;
         }
 
@@ -28,7 +28,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet]
         public async Task<ActionResult<List<LanguageDTO>>> GetAll()
         {
-            var listOfLanguages = await _languageService.GetAllAsync();
+            var listOfLanguages = await _administrationMicroservice.GetAllLanguagesAsync();
 
             var listOfLanguageDTOs = _mapper.Map<List<Language>, List<LanguageDTO>>(listOfLanguages);
 
@@ -43,7 +43,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<LanguageDTO>> GetById(int id)
         {
-            var language = await _languageService.GetByIdAsync(id);
+            var language = await _administrationMicroservice.GetLanguageByIdAsync(id);
 
             if (language == null)
                 return NotFound();
@@ -64,7 +64,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         {
             var language = _mapper.Map<LanguageDTO, Language>(languageDTO);
 
-            await _languageService.CreateAsync(language);
+            await _administrationMicroservice.CreateLanguageAsync(language);
+
+            languageDTO.Id = language.Id;
 
             return CreatedAtAction(nameof(GetById), new {id = languageDTO.Id}, languageDTO);
         }
@@ -84,7 +86,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             var language = _mapper.Map<LanguageDTO, Language>(languageDTO);
 
-            await _languageService.UpdateAsync(id, language);
+            await _administrationMicroservice.UpdateLanguageAsync(id, language);
 
             return NoContent();
         }
@@ -96,7 +98,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _languageService.DeleteAsync(id);
+            await _administrationMicroservice.DeleteLanguageAsync(id);
 
             return NoContent();
         }
