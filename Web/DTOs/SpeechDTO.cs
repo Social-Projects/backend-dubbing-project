@@ -13,6 +13,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs
         [StringLength(128)]
         public string Text { get; set; }
 
+        public int Duration { get; set; }
+
         [Required]
         public int PerformanceId { get; set; }
     }
