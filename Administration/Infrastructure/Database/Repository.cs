@@ -8,7 +8,7 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database
 {
-    public class Repository<T> : IRepository<T>
+    internal class Repository<T> : IRepository<T>
         where T : BaseEntity
     {
         private readonly DubbingContext _dbContext;
