@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs
+namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs
 {
     public class AudioFileDTO
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs
+namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs
 {
     public class PerformanceDTO
     {
