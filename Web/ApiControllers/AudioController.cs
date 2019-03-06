@@ -56,8 +56,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         {
             await _administrationMicroservice.CreateAudioAsync(audioDTO);
 
-            audioDTO.Id = audioDTO.Id;
-
             return CreatedAtAction(nameof(GetById), new {id = audioDTO.Id}, audioDTO);
         }
 

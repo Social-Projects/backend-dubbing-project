@@ -45,23 +45,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             return Ok(performanceDTO);
         }
 
-        /// <summary>Controller method for getting a speeches by id of performance.</summary>
-        /// <param name="id">Id of performance which speeches that need to receive.</param>
-        /// <returns>List of a speeches.</returns>
-        /// <response code="200">Is returned when speeches does exist.</response>
-        /// <response code="400">Is returned when performance with such Id doesn't exist.</response>
-        /// <response code="404">Is returned when speeches doesn't exist.</response>
-        [HttpGet("{id}/speeches")]
-        public async Task<ActionResult<List<SpeechDTO>>> GetByIdWithChildren(int id)
-        {
-            var listOfSpeechDTOs = await _administrationMicroservice.GetSpeechesAsync(id);
-
-            if (listOfSpeechDTOs == null)
-                return BadRequest($"Performance with Id: {id} doesn't exist!");
-
-            return Ok(listOfSpeechDTOs);
-        }
-
         /// <summary>Controller method for creating new performance.</summary>
         /// <param name="performanceDTO">Performance model which needed to create.</param>
         /// <returns>Status code and performance.</returns>
@@ -104,6 +87,23 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             await _administrationMicroservice.DeletePerformanceAsync(id);
 
             return NoContent();
+        }
+
+        /// <summary>Controller method for getting a speeches by id of performance.</summary>
+        /// <param name="id">Id of performance which speeches that need to receive.</param>
+        /// <returns>List of a speeches.</returns>
+        /// <response code="200">Is returned when speeches does exist.</response>
+        /// <response code="400">Is returned when performance with such Id doesn't exist.</response>
+        /// <response code="404">Is returned when speeches doesn't exist.</response>
+        [HttpGet("{id}/speeches")]
+        public async Task<ActionResult<List<SpeechDTO>>> GetByIdWithChildren(int id)
+        {
+            var listOfSpeechDTOs = await _administrationMicroservice.GetSpeechesAsync(id);
+
+            if (listOfSpeechDTOs == null)
+                return BadRequest($"Performance with Id: {id} doesn't exist!");
+
+            return Ok(listOfSpeechDTOs);
         }
     }
 }

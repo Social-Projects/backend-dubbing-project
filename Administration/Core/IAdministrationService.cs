@@ -24,6 +24,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
 
         Task<List<SpeechDTO>> GetSpeechesAsync(int id);
 
+        Task<List<AudioDTO>> GetAudiosAsync(int id);
+
         Task CreatePerformanceAsync(PerformanceDTO performanceDTO);
 
         Task CreateSpeechAsync(SpeechDTO speechDTO);

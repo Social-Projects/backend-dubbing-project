@@ -92,11 +92,20 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
             return _mapper.Map<List<Speech>, List<SpeechDTO>>(listOfSpeeches);
         }
 
+        public async Task<List<AudioDTO>> GetAudiosAsync(int id)
+        {
+            var listOfAudios = await _speechService.GetChildrenByIdAsync(id);
+
+            return _mapper.Map<List<Audio>, List<AudioDTO>>(listOfAudios);
+        }
+
         public async Task CreatePerformanceAsync(PerformanceDTO performanceDTO)
         {
             var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
 
             await _performanceService.CreateAsync(performance);
+
+            performanceDTO.Id = performance.Id;
         }
 
         public async Task CreateSpeechAsync(SpeechDTO speechDTO)
@@ -104,6 +113,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
             var speech = _mapper.Map<SpeechDTO, Speech>(speechDTO);
 
             await _speechService.CreateAsync(speech);
+
+            speechDTO.Id = speech.Id;
         }
 
         public async Task CreateAudioAsync(AudioDTO audioDTO)
@@ -111,6 +122,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
             var audio = _mapper.Map<AudioDTO, Audio>(audioDTO);
 
             await _audioService.CreateAsync(audio);
+
+            audioDTO.Id = audio.Id;
         }
 
         public async Task CreateLanguageAsync(LanguageDTO languageDTO)
@@ -118,6 +131,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
             var language = _mapper.Map<LanguageDTO, Language>(languageDTO);
 
             await _languageService.CreateAsync(language);
+
+            languageDTO.Id = language.Id;
         }
 
         public async Task UpdatePerformanceAsync(int id, PerformanceDTO performanceDTO)
