@@ -1,11 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
-using SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 {
@@ -14,12 +11,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
     public class PerformanceController : ControllerBase
     {
         private readonly IAdministrationService _administrationMicroservice;
-        private readonly IMapper _mapper;
 
-        public PerformanceController(IAdministrationService administrationMicroservice, IMapper mapper)
+        public PerformanceController(IAdministrationService administrationMicroservice)
         {
             _administrationMicroservice = administrationMicroservice;
-            _mapper = mapper;
         }
 
         /// <summary>Controller method for getting a list of all performances.</summary>
@@ -29,9 +24,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet]
         public async Task<ActionResult<List<PerformanceDTO>>> GetAll()
         {
-            var listOfPerformances = await _administrationMicroservice.GetAllPerformancesAsync();
-
-            var listOfPerformanceDTOs = _mapper.Map<List<Performance>, List<PerformanceDTO>>(listOfPerformances);
+            var listOfPerformanceDTOs = await _administrationMicroservice.GetAllPerformancesAsync();
 
             return Ok(listOfPerformanceDTOs);
         }
@@ -44,12 +37,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PerformanceDTO>> GetById(int id)
         {
-            var performance = await _administrationMicroservice.GetPerformanceByIdAsync(id);
+            var performanceDTO = await _administrationMicroservice.GetPerformanceByIdAsync(id);
 
-            if (performance == null)
+            if (performanceDTO == null)
                 return NotFound();
-
-            var performanceDTO = _mapper.Map<Performance, PerformanceDTO>(performance);
 
             return Ok(performanceDTO);
         }
@@ -63,15 +54,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}/speeches")]
         public async Task<ActionResult<List<SpeechDTO>>> GetByIdWithChildren(int id)
         {
-            var listOfSpeeches = await _administrationMicroservice.GetSpeechesAsync(id);
+            var listOfSpeechDTOs = await _administrationMicroservice.GetSpeechesAsync(id);
 
-            if (listOfSpeeches == null)
+            if (listOfSpeechDTOs == null)
                 return BadRequest($"Performance with Id: {id} doesn't exist!");
-
-            if (!listOfSpeeches.Any())
-                return NotFound();
-
-            var listOfSpeechDTOs = _mapper.Map<List<Speech>, List<SpeechDTO>>(listOfSpeeches);
 
             return Ok(listOfSpeechDTOs);
         }
@@ -85,11 +71,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpPost]
         public async Task<ActionResult<PerformanceDTO>> Create(PerformanceDTO performanceDTO)
         {
-            var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
-
-            await _administrationMicroservice.CreatePerformanceAsync(performance);
-
-            performanceDTO.Id = performance.Id;
+            await _administrationMicroservice.CreatePerformanceAsync(performanceDTO);
 
             return CreatedAtAction(nameof(GetById), new {id = performanceDTO.Id}, performanceDTO);
         }
@@ -107,9 +89,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             if (performanceDTO.Id != id)
                 BadRequest();
 
-            var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
-
-            await _administrationMicroservice.UpdatePerformanceAsync(id, performance);
+            await _administrationMicroservice.UpdatePerformanceAsync(id, performanceDTO);
 
             return NoContent();
         }

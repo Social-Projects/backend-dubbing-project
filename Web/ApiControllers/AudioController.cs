@@ -1,11 +1,8 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
-using SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 {
@@ -14,12 +11,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
     public class AudioController : ControllerBase
     {
         private readonly IAdministrationService _administrationMicroservice;
-        private readonly IMapper _mapper;
 
-        public AudioController(IAdministrationService administrationMicroservice, IMapper mapper)
+        public AudioController(IAdministrationService administrationMicroservice)
         {
             _administrationMicroservice = administrationMicroservice;
-            _mapper = mapper;
         }
 
         /// <summary>Controller method for getting a list of all audios.</summary>
@@ -29,9 +24,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet]
         public async Task<ActionResult<List<AudioDTO>>> GetAll()
         {
-            var listOfAudios = await _administrationMicroservice.GetAllAudiosAsync();
-
-            var listOfAudiosDTOs = _mapper.Map<IEnumerable<Audio>, IEnumerable<AudioDTO>>(listOfAudios);
+            var listOfAudiosDTOs = await _administrationMicroservice.GetAllAudiosAsync();
 
             return Ok(listOfAudiosDTOs);
         }
@@ -44,12 +37,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AudioDTO>> GetById(int id)
         {
-            var audio = await _administrationMicroservice.GetAudioByIdAsync(id);
+            var audioDTO = await _administrationMicroservice.GetAudioByIdAsync(id);
 
-            if (audio == null)
+            if (audioDTO == null)
                 return NotFound();
-
-            var audioDTO = _mapper.Map<Audio, AudioDTO>(audio);
 
             return Ok(audioDTO);
         }
@@ -63,9 +54,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpPost]
         public async Task<ActionResult<AudioDTO>> Create(AudioDTO audioDTO)
         {
-            var audio = _mapper.Map<AudioDTO, Audio>(audioDTO);
+            await _administrationMicroservice.CreateAudioAsync(audioDTO);
 
-            await _administrationMicroservice.CreateAudioAsync(audio);
+            audioDTO.Id = audioDTO.Id;
 
             return CreatedAtAction(nameof(GetById), new {id = audioDTO.Id}, audioDTO);
         }
@@ -78,24 +69,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpPost("upload")]
         public async Task<ActionResult<AudioFileDTO>> Upload([FromForm] AudioFileDTO audioFileDTO)
         {
-            var audio = _mapper.Map<AudioFileDTO, Audio>(audioFileDTO);
+            await _administrationMicroservice.UploadAudioAsync(audioFileDTO);
 
-            using (var memStream = new MemoryStream())
-            {
-                audioFileDTO.File.CopyTo(memStream);
+            var urlOfAudioFile = HttpContext.Request.Host.Value + "/audio/" + audioFileDTO.File.FileName;
 
-                audio.AudioFile = memStream.ToArray();
-
-                audio.FileName = audioFileDTO.File.FileName;
-            }
-
-            await _administrationMicroservice.UploadAudioAsync(audio);
-
-            var audioDTO = _mapper.Map<Audio, AudioFileDTO>(audio);
-
-            var urlOfAudioFile = HttpContext.Request.Host.Value + "/audio/" + audio.FileName;
-
-            return Created(urlOfAudioFile, audioDTO);
+            return Created(urlOfAudioFile, audioFileDTO);
         }
 
         /// <summary>Controller method for updating an already existing audio with following id.</summary>
@@ -111,9 +89,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
             if (audioDTO.Id != id)
                 BadRequest();
 
-            var audio = _mapper.Map<AudioDTO, Audio>(audioDTO);
-
-            await _administrationMicroservice.UpdateAudioAsync(id, audio);
+            await _administrationMicroservice.UpdateAudioAsync(id, audioDTO);
 
             return NoContent();
         }
