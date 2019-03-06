@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 
@@ -11,101 +13,138 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
         private readonly ISpeechService _speechService;
         private readonly IAudioService _audioService;
         private readonly ILanguageService _languageService;
+        private readonly IMapper _mapper;
 
         public AdministrationService(
             IPerformanceService performanceService,
             ISpeechService speechService,
             IAudioService audioService,
-            ILanguageService languageService)
+            ILanguageService languageService,
+            IMapper mapper)
         {
             _performanceService = performanceService;
             _speechService = speechService;
             _audioService = audioService;
             _languageService = languageService;
+            _mapper = mapper;
         }
 
-        public async Task<List<Performance>> GetAllPerformancesAsync()
+        public async Task<List<PerformanceDTO>> GetAllPerformancesAsync()
         {
-            return await _performanceService.GetAllAsync();
+            var performances = await _performanceService.GetAllAsync();
+
+            return _mapper.Map<List<Performance>, List<PerformanceDTO>>(performances);
         }
 
-        public async Task<List<Speech>> GetAllSpeechesAsync()
+        public async Task<List<SpeechDTO>> GetAllSpeechesAsync()
         {
-            return await _speechService.GetAllAsync();
+            var speeches = await _speechService.GetAllAsync();
+
+            return _mapper.Map<List<Speech>, List<SpeechDTO>>(speeches);
         }
 
-        public async Task<List<Audio>> GetAllAudiosAsync()
+        public async Task<List<AudioDTO>> GetAllAudiosAsync()
         {
-            return await _audioService.GetAllAsync();
+            var audios = await _audioService.GetAllAsync();
+
+            return _mapper.Map<List<Audio>, List<AudioDTO>>(audios);
         }
 
-        public async Task<List<Language>> GetAllLanguagesAsync()
+        public async Task<List<LanguageDTO>> GetAllLanguagesAsync()
         {
-            return await _languageService.GetAllAsync();
+            var languages = await _languageService.GetAllAsync();
+
+            return _mapper.Map<List<Language>, List<LanguageDTO>>(languages);
         }
 
-        public async Task<Performance> GetPerformanceByIdAsync(int id)
+        public async Task<PerformanceDTO> GetPerformanceByIdAsync(int id)
         {
-            return await _performanceService.GetByIdAsync(id);
+            var performance = await _performanceService.GetByIdAsync(id);
+
+            return _mapper.Map<Performance, PerformanceDTO>(performance);
         }
 
-        public async Task<Speech> GetSpeechByIdAsync(int id)
+        public async Task<SpeechDTO> GetSpeechByIdAsync(int id)
         {
-            return await _speechService.GetByIdAsync(id);
+            var speech = await _speechService.GetByIdAsync(id);
+
+            return _mapper.Map<Speech, SpeechDTO>(speech);
         }
 
-        public async Task<Audio> GetAudioByIdAsync(int id)
+        public async Task<AudioDTO> GetAudioByIdAsync(int id)
         {
-            return await _audioService.GetByIdAsync(id);
+            var audio = await _audioService.GetByIdAsync(id);
+
+            return _mapper.Map<Audio, AudioDTO>(audio);
         }
 
-        public async Task<Language> GetLanguageByIdAsync(int id)
+        public async Task<LanguageDTO> GetLanguageByIdAsync(int id)
         {
-            return await _languageService.GetByIdAsync(id);
+            var language = await _languageService.GetByIdAsync(id);
+
+            return _mapper.Map<Language, LanguageDTO>(language);
         }
 
-        public async Task<List<Speech>> GetSpeechesAsync(int id)
+        public async Task<List<SpeechDTO>> GetSpeechesAsync(int id)
         {
-            return await _performanceService.GetChildrenByIdAsync(id);
+            var listOfSpeeches = await _performanceService.GetChildrenByIdAsync(id);
+
+            return _mapper.Map<List<Speech>, List<SpeechDTO>>(listOfSpeeches);
         }
 
-        public async Task CreatePerformanceAsync(Performance performance)
+        public async Task CreatePerformanceAsync(PerformanceDTO performanceDTO)
         {
+            var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
+
             await _performanceService.CreateAsync(performance);
         }
 
-        public async Task CreateSpeechAsync(Speech speech)
+        public async Task CreateSpeechAsync(SpeechDTO speechDTO)
         {
+            var speech = _mapper.Map<SpeechDTO, Speech>(speechDTO);
+
             await _speechService.CreateAsync(speech);
         }
 
-        public async Task CreateAudioAsync(Audio audio)
+        public async Task CreateAudioAsync(AudioDTO audioDTO)
         {
+            var audio = _mapper.Map<AudioDTO, Audio>(audioDTO);
+
             await _audioService.CreateAsync(audio);
         }
 
-        public async Task CreateLanguageAsync(Language language)
+        public async Task CreateLanguageAsync(LanguageDTO languageDTO)
         {
+            var language = _mapper.Map<LanguageDTO, Language>(languageDTO);
+
             await _languageService.CreateAsync(language);
         }
 
-        public async Task UpdatePerformanceAsync(int id, Performance performance)
+        public async Task UpdatePerformanceAsync(int id, PerformanceDTO performanceDTO)
         {
+            var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
+
             await _performanceService.UpdateAsync(id, performance);
         }
 
-        public async Task UpdateSpeechAsync(int id, Speech speech)
+        public async Task UpdateSpeechAsync(int id, SpeechDTO speechDTO)
         {
+            var speech = _mapper.Map<SpeechDTO, Speech>(speechDTO);
+
             await _speechService.UpdateAsync(id, speech);
         }
 
-        public async Task UpdateAudioAsync(int id, Audio audio)
+        public async Task UpdateAudioAsync(int id, AudioDTO audioDTO)
         {
+            var audio = _mapper.Map<AudioDTO, Audio>(audioDTO);
+
             await _audioService.UpdateAsync(id, audio);
         }
 
-        public async Task UpdateLanguageAsync(int id, Language language)
+        public async Task UpdateLanguageAsync(int id, LanguageDTO languageDTO)
         {
+            var language = _mapper.Map<LanguageDTO, Language>(languageDTO);
+
             await _languageService.UpdateAsync(id, language);
         }
 
@@ -124,9 +163,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
             await _languageService.DeleteAsync(id);
         }
 
-        public async Task UploadAudioAsync(Audio audio)
+        public async Task UploadAudioAsync(AudioFileDTO audioFileDTO)
         {
-            await _audioService.UploadAsync(audio);
+            var audio = _mapper.Map<AudioFileDTO, Audio>(audioFileDTO);
+
+            await _audioService.UploadAsync(audio, audioFileDTO);
         }
     }
 }

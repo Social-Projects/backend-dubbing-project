@@ -1,44 +1,44 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
 {
     public interface IAdministrationService
     {
-        Task<List<Performance>> GetAllPerformancesAsync();
+        Task<List<PerformanceDTO>> GetAllPerformancesAsync();
 
-        Task<List<Speech>> GetAllSpeechesAsync();
+        Task<List<SpeechDTO>> GetAllSpeechesAsync();
 
-        Task<List<Audio>> GetAllAudiosAsync();
+        Task<List<AudioDTO>> GetAllAudiosAsync();
 
-        Task<List<Language>> GetAllLanguagesAsync();
+        Task<List<LanguageDTO>> GetAllLanguagesAsync();
 
-        Task<Performance> GetPerformanceByIdAsync(int id);
+        Task<PerformanceDTO> GetPerformanceByIdAsync(int id);
 
-        Task<Speech> GetSpeechByIdAsync(int id);
+        Task<SpeechDTO> GetSpeechByIdAsync(int id);
 
-        Task<Audio> GetAudioByIdAsync(int id);
+        Task<AudioDTO> GetAudioByIdAsync(int id);
 
-        Task<Language> GetLanguageByIdAsync(int id);
+        Task<LanguageDTO> GetLanguageByIdAsync(int id);
 
-        Task<List<Speech>> GetSpeechesAsync(int id);
+        Task<List<SpeechDTO>> GetSpeechesAsync(int id);
 
-        Task CreatePerformanceAsync(Performance performance);
+        Task CreatePerformanceAsync(PerformanceDTO performanceDTO);
 
-        Task CreateSpeechAsync(Speech speech);
+        Task CreateSpeechAsync(SpeechDTO speechDTO);
 
-        Task CreateAudioAsync(Audio audio);
+        Task CreateAudioAsync(AudioDTO audioDTO);
 
-        Task CreateLanguageAsync(Language language);
+        Task CreateLanguageAsync(LanguageDTO languageDTO);
 
-        Task UpdatePerformanceAsync(int id, Performance performance);
+        Task UpdatePerformanceAsync(int id, PerformanceDTO performanceDTO);
 
-        Task UpdateSpeechAsync(int id, Speech speech);
+        Task UpdateSpeechAsync(int id, SpeechDTO speechDTO);
 
-        Task UpdateAudioAsync(int id, Audio audio);
+        Task UpdateAudioAsync(int id, AudioDTO audioDTO);
 
-        Task UpdateLanguageAsync(int id, Language language);
+        Task UpdateLanguageAsync(int id, LanguageDTO languageDTO);
 
         Task DeletePerformanceAsync(int id);
 
@@ -46,6 +46,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
 
         Task DeleteLanguageAsync(int id);
 
-        Task UploadAudioAsync(Audio audio);
+        Task UploadAudioAsync(AudioFileDTO audioFileDTO);
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces
@@ -12,7 +13,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 
         Task CreateAsync(Audio entity);
 
-        Task UploadAsync(Audio entity);
+        Task UploadAsync(Audio audio, AudioFileDTO audioFileDTO);
 
         Task UpdateAsync(int id, Audio newEntity);
     }

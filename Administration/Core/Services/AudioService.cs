@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 using File = System.IO.File;
@@ -32,11 +33,20 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             await Repository.AddAsync(audio);
         }
 
-        public async Task UploadAsync(Audio entity)
+        public async Task UploadAsync(Audio audio, AudioFileDTO audioFileDTO)
         {
-            var path = Path.Combine(_audioFilesFolderPath, entity.FileName);
+            using (var memStream = new MemoryStream())
+            {
+                audioFileDTO.File.CopyTo(memStream);
 
-            await _fileRepository.UploadAsync(entity, path);
+                audio.AudioFile = memStream.ToArray();
+
+                audio.FileName = audioFileDTO.File.FileName;
+            }
+
+            var path = Path.Combine(_audioFilesFolderPath, audio.FileName);
+
+            await _fileRepository.UploadAsync(audio, path);
         }
 
         public override async Task UpdateAsync(int id, Audio newEntity)

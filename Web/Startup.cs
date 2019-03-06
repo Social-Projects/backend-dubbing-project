@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +10,6 @@ using Microsoft.Extensions.FileProviders;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Configuration;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Configuration;
 using SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs;
-using SoftServe.ITAcademy.BackendDubbingProject.Web.Utilities;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web
@@ -49,12 +47,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
                             .AllowCredentials();
                     });
             });
-
-            var mappingConfiguration = new MapperConfiguration(conf => { conf.AddProfile<MappingProfile>(); });
-
-            var mapper = mappingConfiguration.CreateMapper();
-
-            services.AddSingleton(mapper);
 
             AddAdministrationServices(services);
 
