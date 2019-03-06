@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 {
-    public class Performance : BaseEntity
+    internal class Performance : BaseEntity
     {
         public string Title { get; set; }
 

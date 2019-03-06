@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 {
-    public class Audio : BaseEntity
+    internal class Audio : BaseEntity
     {
         public string FileName { get; set; }
 

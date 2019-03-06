@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 {
-    public class Language : BaseEntity
+    internal class Language : BaseEntity
     {
         public string Name { get; set; }
 

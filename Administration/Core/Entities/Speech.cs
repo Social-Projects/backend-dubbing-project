@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
 {
-    public class Speech : BaseEntity
+    internal class Speech : BaseEntity
     {
         public int Order { get; set; }
 
