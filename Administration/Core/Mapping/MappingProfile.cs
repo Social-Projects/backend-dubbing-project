@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
-using SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs;
 
-namespace SoftServe.ITAcademy.BackendDubbingProject.Web.Utilities
+namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Mapping
 {
-    public class MappingProfile : Profile
+    internal class MappingProfile : Profile
     {
         public MappingProfile()
         {
