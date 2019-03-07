@@ -57,12 +57,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             }
         }
 
-        public override async Task DeleteAsync(int id)
-        {
-            var audio = await Repository.GetByIdAsync(id);
+        //public override async Task DeleteAsync(int id)
+        //{
+        //    var audio = await Repository.GetByIdAsync(id);
 
-            _fileRepository.Delete(audio.Speech.Audios, _audioFilesFolderPath);
-        }
+        //    _fileRepository.Delete(audio.Speech.Audios, _audioFilesFolderPath);
+        //}
 
         private async Task<Audio> ChangeNameAndDuration(Audio entity)
         {

@@ -137,5 +137,20 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// Delete info about audio from DB
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            var audio = _audioService.GetByIdAsync(id);
+            _audioService.DeleteAsync(id);
+            string[] audios = { audio.Result.FileName };
+            Unload(audios);
+            return NoContent();
+        }
     }
 }
