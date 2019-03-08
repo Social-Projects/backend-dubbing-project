@@ -6,6 +6,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities
     {
         public string FileName { get; set; }
 
+        public string OriginalText { get; set; }
+
         public int Duration { get; set; }
 
         public int SpeechId { get; set; }

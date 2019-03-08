@@ -11,6 +11,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.DTOs
         public string FileName { get; set; }
 
         [Required]
+        public string OriginalText { get; set; }
+
+        [Required]
         public int SpeechId { get; set; }
 
         [Required]
