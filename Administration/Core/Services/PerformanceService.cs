@@ -32,7 +32,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
                 foreach (var speech in performance.Speeches)
                 {
                     var speechAudios = await _speechService.GetChildrenByIdAsync(speech.Id);
-                    speech.Duration = speechAudios.Max(a => a.Duration);
+                    if (speechAudios.Count != 0)
+                    {
+                        speech.Duration = speechAudios.Max(a => a.Duration);
+                    }
                 }
             }
 

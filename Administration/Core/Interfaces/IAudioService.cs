@@ -17,5 +17,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
         Task UpdateAsync(int id, Audio newEntity);
 
         Task DeleteAsync(int id);
+
+        Task DeleteFileAsync(ICollection<Audio> audios);
     }
 }

@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
@@ -57,12 +59,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             }
         }
 
-        //public override async Task DeleteAsync(int id)
-        //{
-        //    var audio = await Repository.GetByIdAsync(id);
-
-        //    _fileRepository.Delete(audio.Speech.Audios, _audioFilesFolderPath);
-        //}
+        public async Task DeleteFileAsync(ICollection<Audio> audios)
+        {
+            _fileRepository.Delete(audios, _audioFilesFolderPath);
+        }
 
         private async Task<Audio> ChangeNameAndDuration(Audio entity)
         {
