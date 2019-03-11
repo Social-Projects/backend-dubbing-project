@@ -113,7 +113,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            _administrationMicroservice.DeleteAudio(id);
+            _administrationMicroservice.DeleteFileAsync(id);
 
             return NoContent();
         }

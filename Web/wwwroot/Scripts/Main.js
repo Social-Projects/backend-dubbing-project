@@ -2,6 +2,8 @@ let currentSource;
 
 let context;
 
+let connection;
+
 let currentAudioLink;
 
 let languageId;
@@ -204,7 +206,7 @@ function saveAndPlayAudio(URL, audioLoop) {
 function connectToHub() {
     'use strict';
 
-    let connection = new signalR.HubConnectionBuilder()
+    connection = new signalR.HubConnectionBuilder()
         .withUrl("/StreamHub")
         .build();
 

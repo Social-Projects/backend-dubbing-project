@@ -174,6 +174,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
             _audioService.DeleteAudioFiles(fileNames);
         }
 
+        public async Task DeleteFileAsync(int id)
+        {
+            await _audioService.DeleteFileAsync(id);
+        }
+
         public async Task<List<LanguageDTO>> GetLanguagesByPerformanceIdAsync(int id)
         {
             var languages = await _performanceService.GetLanguagesAsync(id);

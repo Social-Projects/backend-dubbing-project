@@ -19,6 +19,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 
         Task DeleteAsync(int id);
 
+        Task DeleteFileAsync(int id);
+
         void DeleteAudioFiles(IEnumerable<string> namesList);
     }
 }

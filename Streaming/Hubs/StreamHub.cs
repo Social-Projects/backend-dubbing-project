@@ -8,6 +8,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs
     internal class StreamHub : Hub
     {
         private static int _count;
+        private static bool _needWait;
         private string _adminId;
 
         public override async Task OnConnectedAsync()
@@ -15,7 +16,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs
             _count++;
 
             await base.OnConnectedAsync();
-            await Clients.User(_adminId).SendAsync("updateCount", (_count - 1).ToString());
+
+            var numberOfConnections = (_count - 1).ToString();
+
+            await Clients.User(_adminId).SendAsync("updateCount", numberOfConnections);
+
+            if (_needWait)
+                await Clients.Caller.SendAsync("ReceiveMessage", "Start");
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
@@ -23,19 +30,30 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs
             _count--;
 
             await base.OnDisconnectedAsync(exception);
-            await Clients.User(_adminId).SendAsync("updateCount", (_count - 1).ToString());
+
+            var numberOfConnections = (_count - 1).ToString();
+
+            await Clients.User(_adminId).SendAsync("updateCount", numberOfConnections);
         }
 
         public async Task SendMessage(string message)
         {
-            var answer = message;
-
-            if (message == "start")
+            switch (message)
             {
-                _adminId = Context.ConnectionId;
+                case "Start":
+                    _adminId = Context.ConnectionId;
+                    _needWait = true;
+                    break;
+                case "End":
+                    _adminId = null;
+                    _needWait = false;
+                    break;
+                default:
+                    _needWait = false;
+                    break;
             }
 
-            await Clients.Others.SendAsync("ReceiveMessage", answer);
+            await Clients.Others.SendAsync("ReceiveMessage", message);
         }
     }
 }

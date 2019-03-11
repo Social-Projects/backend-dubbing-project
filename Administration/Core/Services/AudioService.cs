@@ -87,6 +87,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             DeleteAudioFiles(namesList);
         }
 
+        public async Task DeleteFileAsync(int id)
+        {
+            var audio = await Repository.GetByIdAsync(id);
+
+            await Repository.DeleteAsync(audio);
+        }
+
         public void DeleteAudioFiles(IEnumerable<string> namesList)
         {
             _fileSystemRepository.Delete(_audioFilesFolderPath, namesList);
