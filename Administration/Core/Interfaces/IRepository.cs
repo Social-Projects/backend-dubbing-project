@@ -6,18 +6,20 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces
 {
-    public interface IRepository<T>
+    internal interface IRepository<T>
         where T : BaseEntity
     {
-        Task<T> GetById(int id);
+        Task<T> GetByIdAsync(int id);
 
-        Task<IEnumerable<T>> ListAllAsync();
+        Task<T> GetByIdWithChildrenAsync(int id, string childrenName);
 
-        Task<IEnumerable<T>> List(Expression<Func<T, bool>> predicate);
+        Task<List<T>> ListAllAsync();
 
         Task AddAsync(T entity);
 
-        Task UpdateAsync(T entity);
+        Task UpdateAsync(T oldEntity, T newEntity);
+
+        Task UpdateFieldAsync(T entity, string fieldName);
 
         Task DeleteAsync(T entity);
     }

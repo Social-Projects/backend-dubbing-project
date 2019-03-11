@@ -10,6 +10,9 @@ Migrations
 #SQLite database file
 *.db
 
+#Mp3 files
+*.mp3
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

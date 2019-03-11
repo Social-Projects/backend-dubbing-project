@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,88 +7,64 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 {
-    public class PerformanceService : IPerformanceService
+    internal class PerformanceService : GenericService<Performance>, IPerformanceService
     {
-        private readonly IRepository<Performance> _performanceRepository;
-        private readonly IRepository<Speech> _speechRepository;
-        private readonly IRepository<Audio> _audioRepository;
+        private readonly IAudioService _audioService;
+        private readonly ISpeechService _speechService;
+        private readonly ILanguageService _languageService;
 
         public PerformanceService(
-            IRepository<Performance> performanceRepository,
-            IRepository<Speech> speechRepository,
-            IRepository<Audio> audioRepository)
+            IRepository<Performance> repository,
+            IAudioService audioService,
+            ISpeechService speechService,
+            ILanguageService languageService)
+            : base(repository)
         {
-            _performanceRepository = performanceRepository;
-            _speechRepository = speechRepository;
-            _audioRepository = audioRepository;
+            _audioService = audioService;
+            _speechService = speechService;
+            _languageService = languageService;
         }
 
-        public async Task<IEnumerable<Performance>> GetAllAsync()
+        public async Task<List<Speech>> GetChildrenByIdAsync(int id)
         {
-            return await _performanceRepository.ListAllAsync();
+            var performance = await Repository.GetByIdWithChildrenAsync(id, "Speeches");
+
+            return performance?.Speeches.ToList();
         }
 
-        public async Task<IEnumerable<Speech>> GetSpeechesAsync(int id)
+        public override async Task DeleteAsync(int id)
         {
-            var performance = await _performanceRepository.List(p => p.Id == id);
+            var performance = await Repository.GetByIdWithChildrenAsync(id, "Speeches");
 
-            if (performance.Count() == 0)
+            if (performance == null)
+                return;
+
+            foreach (var speech in performance.Speeches)
             {
-                return null;
+                await _audioService.DeleteAsync(speech.Id);
             }
-            else
-            {
-                var speeches = await _speechRepository.List(s => s.PerformanceId == id);
 
-                foreach (var speech in speeches)
-                {
-                    var audios = await _audioRepository.List(a => a.SpeechId == speech.Id);
-                    if (audios.Count() != 0)
-                        speech.Duration = audios.Max(a => a.Duration);
-                }
-
-                return speeches;
-            }
+            await Repository.DeleteAsync(performance);
         }
 
-        public async Task<Performance> GetByIdAsync(int id)
+        public async Task<List<Language>> GetLanguagesAsync(int id)
         {
-            return await _performanceRepository.GetById(id);
-        }
+            var speeches = await GetChildrenByIdAsync(id);
 
-        public async Task CreateAsync(Performance performance)
-        {
-            await _performanceRepository.AddAsync(performance);
-        }
+            var speech = speeches.First();
 
-        public async Task<Performance> UpdateAsync(Performance performance)
-        {
-            var performances = await _performanceRepository.List(p => p.Id == performance.Id);
+            var audios = await _speechService.GetChildrenByIdAsync(speech.Id);
 
-            if (performances.Count() == 0)
+            var languagesIds = audios.Select(audio => audio.LanguageId).ToList();
+
+            var listOfLanguages = new List<Language>();
+
+            foreach (var langId in languagesIds)
             {
-                return null;
+                listOfLanguages.Add(await _languageService.GetByIdAsync(langId));
             }
-            else
-            {
-                await _performanceRepository.UpdateAsync(performance);
-                return performance;
-            }
-        }
 
-        public async Task<Performance> DeleteAsync(int id)
-        {
-            var performances = await _performanceRepository.List(p => p.Id == id);
-
-            if (performances.Count() == 0)
-            {
-                return null;
-            }
-            else
-            {
-                await _performanceRepository.DeleteAsync(performances.First());
-                return performances.First();
-            }
+            return listOfLanguages;
         }
     }
 }

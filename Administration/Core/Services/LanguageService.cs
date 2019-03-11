@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
@@ -8,64 +5,28 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 {
-    public class LanguageService : ILanguageService
+    internal class LanguageService : GenericService<Language>, ILanguageService
     {
-        private readonly IRepository<Language> _languageRepository;
-
         private readonly IAudioService _audioService;
 
-        public LanguageService(IRepository<Language> languageRepository, IAudioService audioService)
+        public LanguageService(IRepository<Language> repository, IAudioService audioService)
+            : base(repository)
         {
-            _languageRepository = languageRepository;
             _audioService = audioService;
         }
 
-        public async Task<IEnumerable<Language>> GetAllLanguagesAsync()
+        public override async Task DeleteAsync(int id)
         {
-            var listOfAllLanguages = await _languageRepository.ListAllAsync();
+            var language = await Repository.GetByIdWithChildrenAsync(id, "Audios");
 
-            return listOfAllLanguages;
-        }
+            if (language == null)
+                return;
 
-        public async Task<Language> GetByIdAsync(int id)
-        {
-            var language = await _languageRepository.GetById(id);
+            var namesList = language.Audios.Select(audio => audio.FileName).AsEnumerable();
 
-            return language;
-        }
+            _audioService.DeleteAudioFiles(namesList);
 
-        public async Task CreateAsync(Language language)
-        {
-            await _languageRepository.AddAsync(language);
-        }
-
-        public async Task<Language> UpdateAsync(Language language)
-        {
-            if (_languageRepository.GetById(language.Id) == null)
-                return null;
-
-            await _languageRepository.UpdateAsync(language);
-
-            return language;
-        }
-
-        public async Task<Language> DeleteAsync(int id)
-        {
-            var langById = await _languageRepository.GetById(id);
-
-            if (langById == null)
-                return null;
-
-            var audios = await _audioService.ListAllAsync(x => x.Id == id);
-
-            foreach (var audio in audios)
-            {
-                await _audioService.DeleteAsync(audio);
-            }
-
-            await _languageRepository.DeleteAsync(langById);
-
-            return langById;
+            await Repository.DeleteAsync(language);
         }
     }
 }

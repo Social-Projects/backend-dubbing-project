@@ -5,12 +5,10 @@
         <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
         <LangVersion>7.3</LangVersion>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <CodeAnalysisRuleSet>CodeStyle.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>..\CodeStyle.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="8.0.0" />
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
@@ -20,6 +18,10 @@
     <ItemGroup>
         <ProjectReference Include="..\Administration\Infrastructure\Infrastructure.csproj" />
         <ProjectReference Include="..\Streaming\Hubs\Hubs.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="AudioFiles" />
     </ItemGroup>
 
 </Project>

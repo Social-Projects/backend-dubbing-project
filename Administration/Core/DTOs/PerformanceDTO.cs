@@ -1,16 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Web.ViewModels
+namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs
 {
-    public class PerformanceViewModel
+    public class PerformanceDTO
     {
-        [Required]
         public int Id { get; set; }
 
         [Required]
+        [StringLength(64)]
         public string Title { get; set; }
 
         [Required]
+        [StringLength(256)]
         public string Description { get; set; }
     }
 }

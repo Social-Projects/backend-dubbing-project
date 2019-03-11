@@ -3,7 +3,7 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database
 {
-    public partial class DubbingContext
+    internal partial class DubbingContext
     {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,7 +26,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
 
             modelBuilder
                 .Entity<Speech>()
-                .HasMany(s => s.Audio)
+                .HasMany(s => s.Audios)
                 .WithOne(s => s.Speech)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
@@ -35,7 +35,21 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .HasKey(s => s.Id);
 
             modelBuilder.Entity<Speech>()
+                .Property(s => s.Order)
+                .IsRequired();
+
+            modelBuilder.Entity<Speech>()
                 .Property(s => s.Text)
+                .IsRequired();
+
+            modelBuilder.Entity<Speech>()
+                .Property(s => s.Duration)
+                .IsRequired();
+
+            modelBuilder.Entity<Language>()
+                .HasMany(l => l.Audios)
+                .WithOne(a => a.Language)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
             modelBuilder.Entity<Language>()
@@ -45,10 +59,12 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .Property(l => l.Name)
                 .IsRequired();
 
-            modelBuilder.Entity<Language>()
-                .HasMany(l => l.Audios)
-                .WithOne(a => a.Language)
-                .OnDelete(DeleteBehavior.Cascade)
+            modelBuilder.Entity<Audio>()
+                .Property(a => a.FileName)
+                .IsRequired();
+
+            modelBuilder.Entity<Audio>()
+                .Property(a => a.OriginalText)
                 .IsRequired();
         }
     }

@@ -4,16 +4,16 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces
 {
-    public interface ILanguageService
+    internal interface ILanguageService
     {
-        Task<IEnumerable<Language>> GetAllLanguagesAsync();
+        Task<List<Language>> GetAllAsync();
 
         Task<Language> GetByIdAsync(int id);
 
-        Task CreateAsync(Language language);
+        Task CreateAsync(Language entity);
 
-        Task<Language> UpdateAsync(Language language);
+        Task UpdateAsync(int id, Language newEntity);
 
-        Task<Language> DeleteAsync(int id);
+        Task DeleteAsync(int id);
     }
 }

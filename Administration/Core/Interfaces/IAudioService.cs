@@ -1,27 +1,26 @@
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces
 {
-    public interface IAudioService
+    internal interface IAudioService
     {
-        Task<Audio> GetById(int id);
+        Task<List<Audio>> GetAllAsync();
 
-        Task<IEnumerable<Audio>> ListAllAsync();
+        Task<Audio> GetByIdAsync(int id);
 
-        Task<IEnumerable<Audio>> ListAllAsync(Expression<Func<Audio, bool>> predicate);
+        Task CreateAsync(Audio entity);
 
-        Task UploadAsync(Audio entity);
+        Task UploadAsync(Audio audio, AudioFileDTO audioFileDTO);
 
-        Task AddAsync(Audio entity);
+        Task UpdateAsync(int id, Audio newEntity);
 
-        Task UpdateAsync(Audio entity);
+        Task DeleteAsync(int id);
 
-        Task DeleteAsync(Audio entity);
+        Task DeleteFileAsync(int id);
 
-        //Task DeleteAllFromSpeech();
+        void DeleteAudioFiles(IEnumerable<string> namesList);
     }
 }

@@ -1,84 +1,132 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq.Expressions;
+using System.Linq;
 using System.Threading.Tasks;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
+using File = System.IO.File;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 {
-    public class AudioService : IAudioService
+    internal class AudioService : GenericService<Audio>, IAudioService
     {
-        private readonly IRepository<Audio> _audioRepository;
-        private readonly IFileRepository _fileRepository;
+        private readonly IFileSystemRepository _fileSystemRepository;
+
         private readonly IRepository<Speech> _speechRepository;
 
         private readonly string _audioFilesFolderPath = Path.GetFullPath("../Web/AudioFiles/");
 
-        public AudioService(IRepository<Audio> audioRepository, IFileRepository fileRepository, IRepository<Speech> speechRepository)
+        public AudioService(
+            IRepository<Audio> repository,
+            IRepository<Speech> speechRepository,
+            IFileSystemRepository fileSystemRepository)
+            : base(repository)
         {
-            _audioRepository = audioRepository;
-            _fileRepository = fileRepository;
             _speechRepository = speechRepository;
+            _fileSystemRepository = fileSystemRepository;
         }
 
-        public async Task<Audio> GetById(int id)
+        public override async Task CreateAsync(Audio entity)
         {
-            return await _audioRepository.GetById(id);
+            var audio = await ChangeName(entity);
+
+            audio = await ChangeDuration(entity);
+
+            entity.Id = default(int);
+
+            await Repository.AddAsync(audio);
         }
 
-        public async Task<IEnumerable<Audio>> ListAllAsync()
+        public async Task UploadAsync(Audio audio, AudioFileDTO audioFileDTO)
         {
-            return await _audioRepository.ListAllAsync();
+            using (var memStream = new MemoryStream())
+            {
+                audioFileDTO.File.CopyTo(memStream);
+
+                audio.AudioFile = memStream.ToArray();
+
+                if (audio.FileName != "waiting.mp3")
+                {
+                    audio.FileName = audioFileDTO.File.FileName;
+                }
+            }
+
+            var path = Path.Combine(_audioFilesFolderPath, audio.FileName);
+
+            await _fileSystemRepository.WriteToFileSystemAsync(audio, path);
         }
 
-        public async Task<IEnumerable<Audio>> ListAllAsync(Expression<Func<Audio, bool>> predicate)
+        public override async Task UpdateAsync(int id, Audio newEntity)
         {
-            return await _audioRepository.List(predicate);
+            var oldEntity = await Repository.GetByIdAsync(id);
+
+            if (oldEntity == null)
+                throw new Exception($"{typeof(Audio)} entity with ID: {id} doesn't exist.");
+
+            newEntity = await ChangeDuration(newEntity);
+
+            if (oldEntity.FileName != newEntity.FileName)
+            {
+                var fileToRemovePath = Path.Combine(_audioFilesFolderPath, oldEntity.FileName);
+                File.Delete(fileToRemovePath);
+
+                newEntity = await ChangeName(newEntity);
+
+                await Repository.UpdateAsync(oldEntity, newEntity);
+            }
         }
 
-        public async Task AddAsync(Audio entity)
+        public override async Task DeleteAsync(int id)
         {
-            Audio audio = await ChangeNameAndDuration(entity);
+            var speech = await _speechRepository.GetByIdWithChildrenAsync(id, "Audios");
 
-            await _audioRepository.AddAsync(audio);
+            var namesList = speech.Audios.Select(audio => audio.FileName).AsEnumerable();
+
+            DeleteAudioFiles(namesList);
         }
 
-        public async Task UploadAsync(Audio entity)
+        public async Task DeleteFileAsync(int id)
         {
-            string path = Path.Combine(_audioFilesFolderPath, entity.FileName);
+            var audio = await Repository.GetByIdAsync(id);
 
-            await _fileRepository.UploadAsync(entity, path);
+            await Repository.DeleteAsync(audio);
         }
 
-        public async Task UpdateAsync(Audio entity)
+        public void DeleteAudioFiles(IEnumerable<string> namesList)
         {
-            var fileToRemovePath = Path.Combine(_audioFilesFolderPath, entity.FileName);
-            File.Delete(fileToRemovePath);
-            Audio audio = await ChangeNameAndDuration(entity);
-
-            await _audioRepository.UpdateAsync(audio);
+            _fileSystemRepository.Delete(_audioFilesFolderPath, namesList);
         }
 
-        public async Task DeleteAsync(Audio entity)
+        private async Task<Audio> ChangeName(Audio entity)
         {
-            _fileRepository.Delete(entity.Speech.Audio, _audioFilesFolderPath);
-        }
+            var speech = await _speechRepository.GetByIdAsync(entity.SpeechId);
 
-        private async Task<Audio> ChangeNameAndDuration(Audio entity)
-        {
-            var speech = await _speechRepository.GetById(entity.SpeechId);
-
-            string newFileName = $"{speech.PerformanceId}_{entity.SpeechId}_{entity.LanguageId}.mp3";
-            string oldPath = Path.Combine(_audioFilesFolderPath, entity.FileName + ".mp3");
-            string newPath = Path.Combine(_audioFilesFolderPath, newFileName + ".mp3");
+            var newFileName = $"{speech.PerformanceId}_{entity.SpeechId}_{entity.LanguageId}.mp3";
+            var oldPath = Path.Combine(_audioFilesFolderPath, entity.FileName);
+            var newPath = Path.Combine(_audioFilesFolderPath, newFileName);
             File.Move(oldPath, newPath);
 
-            var file = TagLib.File.Create(newPath);
+            entity.FileName = newFileName;
+
+            return entity;
+        }
+
+        private async Task<Audio> ChangeDuration(Audio entity)
+        {
+            var speech = await _speechRepository.GetByIdAsync(entity.SpeechId);
+
+            var file = TagLib.File.Create(_audioFilesFolderPath + entity.FileName);
             var duration = file.Properties.Duration;
             entity.Duration = Convert.ToInt32(duration.TotalSeconds);
-            entity.FileName = newFileName;
+
+            if (speech.Duration >= entity.Duration)
+                return entity;
+
+            var newSpeech = new Speech {Id = speech.Id, Duration = entity.Duration};
+
+            await _speechRepository.UpdateFieldAsync(newSpeech, "Duration");
 
             return entity;
         }

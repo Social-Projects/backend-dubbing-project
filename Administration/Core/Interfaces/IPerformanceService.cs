@@ -4,18 +4,20 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces
 {
-    public interface IPerformanceService
+    internal interface IPerformanceService
     {
-        Task<IEnumerable<Performance>> GetAllAsync();
-
-        Task<IEnumerable<Speech>> GetSpeechesAsync(int id);
-
         Task<Performance> GetByIdAsync(int id);
 
-        Task CreateAsync(Performance performance);
+        Task<List<Speech>> GetChildrenByIdAsync(int id);
 
-        Task<Performance> UpdateAsync(Performance performance);
+        Task<List<Performance>> GetAllAsync();
 
-        Task<Performance> DeleteAsync(int id);
+        Task CreateAsync(Performance entity);
+
+        Task UpdateAsync(int id, Performance newEntity);
+
+        Task DeleteAsync(int id);
+
+        Task<List<Language>> GetLanguagesAsync(int id);
     }
 }

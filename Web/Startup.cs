@@ -1,31 +1,33 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Database;
-using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.FileSystem;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Configuration;
+using SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.Configuration;
 using SoftServe.ITAcademy.BackendDubbingProject.Streaming.Core.Hubs;
 using Swashbuckle.AspNetCore.Swagger;
-using Web.Utilities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 {
     public class Startup
     {
         private const string CorsName = "AllowAllOrigins";
+        private readonly IAdministrationServiceCollection _administrationServiceCollection;
+        private readonly IInfrastructureServiceCollection _infrastructureServiceCollection;
 
-        public Startup(IConfiguration configuration)
+        public Startup(
+            IConfiguration configuration,
+            IAdministrationServiceCollection administrationServiceCollection,
+            IInfrastructureServiceCollection infrastructureServiceCollection)
         {
             Configuration = configuration;
+            _administrationServiceCollection = administrationServiceCollection;
+            _infrastructureServiceCollection = infrastructureServiceCollection;
         }
 
         public IConfiguration Configuration { get; }
@@ -39,39 +41,16 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
                     builder =>
                     {
                         builder
-                            .AllowAnyOrigin()
+                            .SetIsOriginAllowed(host => true)
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowCredentials();
                     });
             });
-            const string connection = "Data Source=dubbing.db";
 
-            services.AddDbContext<DubbingContext>(o => o.UseSqlite(connection));
+            AddAdministrationServices(services);
 
-            var mappingConfiguration = new MapperConfiguration(conf =>
-            {
-                conf.AddProfile<MappingProfile>();
-            });
-            IMapper mapper = mappingConfiguration.CreateMapper();
-
-            services.AddSingleton(mapper);
-
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-            services.AddScoped<IFileRepository, FilesRepository>();
-
-            services.AddScoped<IAudioService, AudioService>();
-
-            services.AddScoped<ILanguageService, LanguageService>();
-
-            services.AddScoped<IPerformanceService, PerformanceService>();
-
-            services.AddScoped<ISpeechService, SpeechService>();
-
-            services.AddScoped<DbContext, DubbingContext>();
-
-            services.AddScoped<IFileRepository, FilesRepository>();
+            AddInfrastructureServices(services);
 
             services.AddSignalR();
 
@@ -88,6 +67,16 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+        }
+
+        private void AddAdministrationServices(IServiceCollection services)
+        {
+            _administrationServiceCollection.RegisterDependencies(services);
+        }
+
+        private void AddInfrastructureServices(IServiceCollection services)
+        {
+            _infrastructureServiceCollection.RegisterDependencies(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
