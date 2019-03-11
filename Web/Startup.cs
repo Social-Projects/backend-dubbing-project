@@ -37,7 +37,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
             services.AddCors(options =>
             {
                 options.AddPolicy(
-                    CorsName,
+                    "http://104.248.28.238:3000",
                     builder =>
                     {
                         builder
