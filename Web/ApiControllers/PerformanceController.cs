@@ -98,12 +98,26 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}/speeches")]
         public async Task<ActionResult<List<SpeechDTO>>> GetByIdWithChildren(int id)
         {
-            var listOfSpeechDTOs = await _administrationMicroservice.GetSpeechesAsync(id);
+            var listOfSpeechDTOs = await _administrationMicroservice.GetSpeechesByPerformanceIdAsync(id);
 
             if (listOfSpeechDTOs == null)
                 return BadRequest($"Performance with Id: {id} doesn't exist!");
 
             return Ok(listOfSpeechDTOs);
+        }
+
+        /// <summary>dd</summary>
+        /// <param name="id"></param>
+        /// <returns>ff</returns>
+        /// <response code="200"></response>
+        /// <response code="400"></response>
+        /// <response code="404"></response>
+        [HttpGet("{id}/languages")]
+        public async Task<ActionResult<List<LanguageDTO>>> GetByIdLanguages(int id)
+        {
+            var listOfLanguagesDTOs = await _administrationMicroservice.GetLanguagesByPerformanceIdAsync(id);
+
+            return Ok(listOfLanguagesDTOs);
         }
     }
 }

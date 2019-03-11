@@ -22,11 +22,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             return await Repository.ListAllAsync();
         }
 
-        public virtual async Task<List<T>> GetAllByConditionAsync(Expression<Func<T, bool>> predicate)
-        {
-            return await Repository.ListAsync(predicate);
-        }
-
         public virtual async Task<T> GetByIdAsync(int id)
         {
             return await Repository.GetByIdAsync(id);

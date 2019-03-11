@@ -17,5 +17,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
         Task UpdateAsync(int id, Performance newEntity);
 
         Task DeleteAsync(int id);
+
+        Task<List<Language>> GetLanguagesAsync(int id);
     }
 }

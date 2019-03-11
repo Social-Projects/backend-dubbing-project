@@ -81,7 +81,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         /// <response code="204">Is returned when speech is successfully updated.</response>
         /// <response code="400">Is returned when speech with or invalid data is passed.</response>
         /// <response code="404">Is returned when speech with such Id is not founded</response>
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, AudioDTO audioDTO)
         {
             if (audioDTO.Id != id)

@@ -40,14 +40,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .ToListAsync();
         }
 
-        public async Task<List<T>> ListAsync(Expression<Func<T, bool>> predicate)
-        {
-            return await _dbContext
-                .Set<T>()
-                .Include(predicate)
-                .ToListAsync();
-        }
-
         public async Task AddAsync(T entity)
         {
             _dbContext

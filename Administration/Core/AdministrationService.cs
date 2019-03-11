@@ -85,20 +85,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
             return _mapper.Map<Language, LanguageDTO>(language);
         }
 
-        public async Task<List<SpeechDTO>> GetSpeechesAsync(int id)
-        {
-            var listOfSpeeches = await _performanceService.GetChildrenByIdAsync(id);
-
-            return _mapper.Map<List<Speech>, List<SpeechDTO>>(listOfSpeeches);
-        }
-
-        public async Task<List<AudioDTO>> GetAudiosAsync(int id)
-        {
-            var listOfAudios = await _speechService.GetChildrenByIdAsync(id);
-
-            return _mapper.Map<List<Audio>, List<AudioDTO>>(listOfAudios);
-        }
-
         public async Task CreatePerformanceAsync(PerformanceDTO performanceDTO)
         {
             var performance = _mapper.Map<PerformanceDTO, Performance>(performanceDTO);
@@ -178,6 +164,37 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
             await _languageService.DeleteAsync(id);
         }
 
+        public async Task DeleteAudio(int id)
+        {
+            await _audioService.DeleteAsync(id);
+        }
+
+        public void DeleteAudioFiles(IEnumerable<string> fileNames)
+        {
+            _audioService.DeleteAudioFiles(fileNames);
+        }
+
+        public async Task<List<LanguageDTO>> GetLanguagesByPerformanceIdAsync(int id)
+        {
+            var languages = await _performanceService.GetLanguagesAsync(id);
+
+            return _mapper.Map<List<Language>, List<LanguageDTO>>(languages);
+        }
+
+        public async Task<List<SpeechDTO>> GetSpeechesByPerformanceIdAsync(int id)
+        {
+            var listOfSpeeches = await _performanceService.GetChildrenByIdAsync(id);
+
+            return _mapper.Map<List<Speech>, List<SpeechDTO>>(listOfSpeeches);
+        }
+
+        public async Task<List<AudioDTO>> GetAudiosBySpeechIdAsync(int id)
+        {
+            var listOfAudios = await _speechService.GetChildrenByIdAsync(id);
+
+            return _mapper.Map<List<Audio>, List<AudioDTO>>(listOfAudios);
+        }
+
         public async Task UploadAudioAsync(AudioFileDTO audioFileDTO)
         {
             var audio = _mapper.Map<AudioFileDTO, Audio>(audioFileDTO);
@@ -192,16 +209,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
             audio.FileName = "waiting.mp3";
 
             await _audioService.UploadAsync(audio, audioFileDTO);
-        }
-
-        public async Task DeleteAudio(int id)
-        {
-            await _audioService.DeleteAsync(id);
-        }
-
-        public void DeleteAudioFiles(IEnumerable<string> fileNames)
-        {
-            _audioService.DeleteAudioFiles(fileNames);
         }
     }
 }

@@ -30,7 +30,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 
         public override async Task CreateAsync(Audio entity)
         {
-            var audio = await ChangeNameAndDuration(entity);
+            var audio = await ChangeName(entity);
+
+            audio = await ChangeDuration(entity);
 
             entity.Id = default(int);
 
@@ -63,12 +65,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             if (oldEntity == null)
                 throw new Exception($"{typeof(Audio)} entity with ID: {id} doesn't exist.");
 
+            newEntity = await ChangeDuration(newEntity);
+
             if (oldEntity.FileName != newEntity.FileName)
             {
                 var fileToRemovePath = Path.Combine(_audioFilesFolderPath, oldEntity.FileName);
                 File.Delete(fileToRemovePath);
 
-                newEntity = await ChangeNameAndDuration(newEntity);
+                newEntity = await ChangeName(newEntity);
 
                 await Repository.UpdateAsync(oldEntity, newEntity);
             }
@@ -88,7 +92,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             _fileSystemRepository.Delete(_audioFilesFolderPath, namesList);
         }
 
-        private async Task<Audio> ChangeNameAndDuration(Audio entity)
+        private async Task<Audio> ChangeName(Audio entity)
         {
             var speech = await _speechRepository.GetByIdAsync(entity.SpeechId);
 
@@ -97,17 +101,25 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             var newPath = Path.Combine(_audioFilesFolderPath, newFileName);
             File.Move(oldPath, newPath);
 
-            var file = TagLib.File.Create(newPath);
+            entity.FileName = newFileName;
+
+            return entity;
+        }
+
+        private async Task<Audio> ChangeDuration(Audio entity)
+        {
+            var speech = await _speechRepository.GetByIdAsync(entity.SpeechId);
+
+            var file = TagLib.File.Create(_audioFilesFolderPath + entity.FileName);
             var duration = file.Properties.Duration;
             entity.Duration = Convert.ToInt32(duration.TotalSeconds);
 
-            if (speech.Duration < entity.Duration)
-            {
-                var newSpeech = new Speech {Id = speech.Id, Duration = entity.Duration};
-                await _speechRepository.UpdateFieldAsync(newSpeech, "Duration");
-            }
+            if (speech.Duration >= entity.Duration)
+                return entity;
 
-            entity.FileName = newFileName;
+            var newSpeech = new Speech {Id = speech.Id, Duration = entity.Duration};
+
+            await _speechRepository.UpdateFieldAsync(newSpeech, "Duration");
 
             return entity;
         }

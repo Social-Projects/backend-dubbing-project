@@ -22,10 +22,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
 
         Task<LanguageDTO> GetLanguageByIdAsync(int id);
 
-        Task<List<SpeechDTO>> GetSpeechesAsync(int id);
-
-        Task<List<AudioDTO>> GetAudiosAsync(int id);
-
         Task CreatePerformanceAsync(PerformanceDTO performanceDTO);
 
         Task CreateSpeechAsync(SpeechDTO speechDTO);
@@ -48,11 +44,17 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
 
         Task DeleteLanguageAsync(int id);
 
-        Task UploadAudioAsync(AudioFileDTO audioFileDTO);
-
         Task DeleteAudio(int id);
 
         void DeleteAudioFiles(IEnumerable<string> fileNames);
+
+        Task<List<LanguageDTO>> GetLanguagesByPerformanceIdAsync(int id);
+
+        Task<List<SpeechDTO>> GetSpeechesByPerformanceIdAsync(int id);
+
+        Task<List<AudioDTO>> GetAudiosBySpeechIdAsync(int id);
+
+        Task UploadAudioAsync(AudioFileDTO audioFileDTO);
 
         Task UploadWaitingAudioAsync(AudioFileDTO audioFileDTO);
     }

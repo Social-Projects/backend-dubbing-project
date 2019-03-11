@@ -4,15 +4,13 @@ let context;
 
 let currentAudioLink;
 
-let performanceId;
-
-let languagesId;
+let languageId;
 
 const performancesAPI = 'api/performance';
 
-const languagesAPI = `api/performance/${performanceId}/languages/`;
+let languagesAPI;
 
-const button = document.getElementById('connecting-button');
+const connectionButton = document.getElementById('connecting-button');
 
 const performancePart = document.getElementById('performance-selection-part');
 
@@ -32,28 +30,55 @@ function init() {
     getData(performancesAPI).then(response => {
         response.forEach(performance => {
             let button = document.createElement('button');
-            button.setAttribute('id', performance.id);
+            button.setAttribute('class', "performanceButton");
             let title = document.createTextNode(performance.title);
+            button.addEventListener('click', () =>
+                goToLanguagesPart(performance.id)
+            );
             button.appendChild(title);
             performancePart.appendChild(button);
         })
-    }).catch(error => 
+    }).catch(error =>
         console.log(error)
     );
 
     performancePart.style.display = 'flex';
 }
 
-function goToStreamingPart() {
+function goToLanguagesPart(performanceId) {
+    'use strict';
+    
+    languagesAPI = 'api/performance/' + performanceId +'/languages/';
+    
+    getData(languagesAPI).then(response => {
+        response.forEach(language => {
+            let button = document.createElement('button');
+            button.setAttribute('class', "languagesButton");
+            let name = document.createTextNode(language.name);
+            button.addEventListener('click', () =>
+                goToStreamingPart(language.id)
+            );
+            button.appendChild(name);
+            languagePart.appendChild(button);
+        })
+    }).catch(error =>
+        console.log(error)
+    );
+
+    performancePart.style.display = 'none';
+    languagePart.style.display = 'flex';
+}
+
+function goToStreamingPart(langId) {
     'use strict';
 
+    languageId = '_' + langId;
+    
     languagePart.style.display = 'none';
 
     streamingPart.style.display = 'flex';
 
-    const connectButton = document.getElementById('connecting-button');
-    connectButton.addEventListener('click', connectToStream);
-
+    connectionButton.addEventListener('click', connectToStream);
 }
 
 function connectToStream() {
@@ -73,9 +98,9 @@ function connectToStream() {
 function changeButton() {
     'use strict';
 
-    button.style.backgroundColor = 'green';
+    connectionButton.style.backgroundColor = 'green';
 
-    button.textContent = 'You are connected to stream';
+    connectionButton.textContent = 'You are connected to stream';
 }
 
 function handleMessage(link) {
@@ -150,7 +175,7 @@ function restartCurrentAudio() {
 }
 
 function playNewAudio(link) {
-    link = 'audio/' + link + langId + '.mp3';
+    link = 'audio/' + link + languageId + '.mp3';
 
     if (currentAudioLink !== undefined) {
         currentSource.stop();

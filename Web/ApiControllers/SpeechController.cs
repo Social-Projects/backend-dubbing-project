@@ -98,7 +98,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
         [HttpGet("{id}/audios")]
         public async Task<ActionResult<List<AudioDTO>>> GetByIdWithChildren(int id)
         {
-            var listOfAudioDTOs = await _administrationMicroservice.GetAudiosAsync(id);
+            var listOfAudioDTOs = await _administrationMicroservice.GetAudiosBySpeechIdAsync(id);
 
             if (listOfAudioDTOs == null)
                 return BadRequest($"Speech with Id: {id} doesn't exist!");

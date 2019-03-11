@@ -11,7 +11,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs
         public string FileName { get; set; }
 
         [Required]
-        [StringLength(64)]
+        [StringLength(256)]
         public string OriginalText { get; set; }
 
         [Required]

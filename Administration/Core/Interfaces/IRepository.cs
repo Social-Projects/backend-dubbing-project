@@ -15,8 +15,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 
         Task<List<T>> ListAllAsync();
 
-        Task<List<T>> ListAsync(Expression<Func<T, bool>> predicate);
-
         Task AddAsync(T entity);
 
         Task UpdateAsync(T oldEntity, T newEntity);
