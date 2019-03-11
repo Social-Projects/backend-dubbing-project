@@ -73,7 +73,7 @@ a {
     color: white;
 }
 
-#language-selection-part {
+#language-selection-part, #performance-selection-part {
 
     flex: 1 0 100%;
     flex-direction: column;

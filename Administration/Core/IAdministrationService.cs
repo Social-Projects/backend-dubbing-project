@@ -49,5 +49,11 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
         Task DeleteLanguageAsync(int id);
 
         Task UploadAudioAsync(AudioFileDTO audioFileDTO);
+
+        Task DeleteAudio(int id);
+
+        void DeleteAudioFiles(IEnumerable<string> fileNames);
+
+        Task UploadWaitingAudioAsync(AudioFileDTO audioFileDTO);
     }
 }

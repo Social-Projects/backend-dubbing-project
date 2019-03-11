@@ -10,7 +10,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs
         public int Order { get; set; }
 
         [Required]
-        [StringLength(128)]
+        [StringLength(256)]
         public string Text { get; set; }
 
         public int Duration { get; set; }

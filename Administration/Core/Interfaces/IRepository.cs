@@ -21,6 +21,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
 
         Task UpdateAsync(T oldEntity, T newEntity);
 
+        Task UpdateFieldAsync(T entity, string fieldName);
+
         Task DeleteAsync(T entity);
     }
 }

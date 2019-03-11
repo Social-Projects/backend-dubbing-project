@@ -184,5 +184,24 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core
 
             await _audioService.UploadAsync(audio, audioFileDTO);
         }
+
+        public async Task UploadWaitingAudioAsync(AudioFileDTO audioFileDTO)
+        {
+            var audio = _mapper.Map<AudioFileDTO, Audio>(audioFileDTO);
+
+            audio.FileName = "waiting.mp3";
+
+            await _audioService.UploadAsync(audio, audioFileDTO);
+        }
+
+        public async Task DeleteAudio(int id)
+        {
+            await _audioService.DeleteAsync(id);
+        }
+
+        public void DeleteAudioFiles(IEnumerable<string> fileNames)
+        {
+            _audioService.DeleteAudioFiles(fileNames);
+        }
     }
 }

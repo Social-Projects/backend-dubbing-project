@@ -19,7 +19,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            services.AddScoped<IFileRepository, FilesRepository>();
+            services.AddScoped<IFileSystemRepository, FileSystemRepository>();
         }
     }
 }

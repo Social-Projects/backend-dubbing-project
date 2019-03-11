@@ -91,5 +91,46 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web.ApiControllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// Unload audio from server
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns>Delete</returns>
+        [HttpDelete("unload")]
+        public ActionResult Delete([FromQuery] string[] files)
+        {
+            _administrationMicroservice.DeleteAudioFiles(files);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Delete info about audio from DB
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Delete</returns>
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            _administrationMicroservice.DeleteAudio(id);
+
+            return NoContent();
+        }
+
+        /// <summary>Controller method for uploading a file to server and saving it to a local storage.</summary>
+        /// <returns>Status code, URL of audio file and audio model.</returns>
+        /// <param name="audioFileDTO">Audio file which needed to create.</param>
+        /// <response code="201">Is returned when audio is successfully uploaded.</response>
+        /// <response code="400">Is returned when invalid data is passed.</response>
+        [HttpPost("upload/waiting")]
+        public async Task<ActionResult<AudioFileDTO>> UploadWaiting([FromForm] AudioFileDTO audioFileDTO)
+        {
+            await _administrationMicroservice.UploadWaitingAudioAsync(audioFileDTO);
+
+            var urlOfAudioFile = HttpContext.Request.Host.Value + "/audio/" + audioFileDTO.File.FileName;
+
+            return Created(urlOfAudioFile, audioFileDTO);
+        }
     }
 }

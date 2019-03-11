@@ -16,5 +16,9 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfac
         Task UploadAsync(Audio audio, AudioFileDTO audioFileDTO);
 
         Task UpdateAsync(int id, Audio newEntity);
+
+        Task DeleteAsync(int id);
+
+        void DeleteAudioFiles(IEnumerable<string> namesList);
     }
 }

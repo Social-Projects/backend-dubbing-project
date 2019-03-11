@@ -4,19 +4,23 @@ let context;
 
 let currentAudioLink;
 
-let langId;
+let performanceId;
+
+let languagesId;
+
+const performancesAPI = 'api/performance';
+
+const languagesAPI = `api/performance/${performanceId}/languages/`;
 
 const button = document.getElementById('connecting-button');
 
-const englishButton = document.getElementById('english-button');
-
-const polishButton = document.getElementById('polish-button');
-
-const streamingPart = document.getElementById('streaming-part');
+const performancePart = document.getElementById('performance-selection-part');
 
 const languagePart = document.getElementById('language-selection-part');
 
 const linkPart = document.getElementById('link-part');
+
+const streamingPart = document.getElementById('streaming-part');
 
 
 window.onload = init;
@@ -25,17 +29,23 @@ window.onload = init;
 function init() {
     'use strict';
 
-    languagePart.style.display = 'flex';
-    
-    englishButton.addEventListener('click', goToStreamingPart);
+    getData(performancesAPI).then(response => {
+        response.forEach(performance => {
+            let button = document.createElement('button');
+            button.setAttribute('id', performance.id);
+            let title = document.createTextNode(performance.title);
+            button.appendChild(title);
+            performancePart.appendChild(button);
+        })
+    }).catch(error => 
+        console.log(error)
+    );
 
-    polishButton.addEventListener('click', goToStreamingPart);
+    performancePart.style.display = 'flex';
 }
 
 function goToStreamingPart() {
     'use strict';
-
-    langId = '_1';
 
     languagePart.style.display = 'none';
 
@@ -221,5 +231,19 @@ function play(currentBuffer, loopCondition) {
 
     currentSource.start();
 }
+
+function getData(api) {
+    'use strict';
+    return fetch(api)
+        .then(response => {
+            console.log(response);
+            if (!response.ok) {
+                throw new Error('HTTP error, status = ' + response.status);
+            }
+            return response.json();
+        });
+}
+
+
 
 

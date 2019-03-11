@@ -69,6 +69,16 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .SaveChangesAsync();
         }
 
+        public async Task UpdateFieldAsync(T entity, string fieldName)
+        {
+            _dbContext
+                .Entry(entity)
+                .Property(fieldName)
+                .IsModified = true;
+
+            await _dbContext.SaveChangesAsync();
+        }
+
         public async Task DeleteAsync(T entity)
         {
             _dbContext

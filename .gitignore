@@ -12,7 +12,6 @@ Migrations
 
 #Mp3 files
 *.mp3
-!waiting.mp3
 
 # Build results
 [Dd]ebug/

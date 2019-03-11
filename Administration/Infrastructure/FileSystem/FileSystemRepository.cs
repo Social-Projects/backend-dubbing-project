@@ -6,21 +6,21 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructure.FileSystem
 {
-    internal class FilesRepository : IFileRepository
+    internal class FileSystemRepository : IFileSystemRepository
     {
-        public async Task UploadAsync(Audio audio, string path)
+        public async Task WriteToFileSystemAsync(Audio audio, string path)
         {
             await File.WriteAllBytesAsync(path, audio.AudioFile);
         }
 
-        public void Delete(IEnumerable<Audio> audios, string folderPath)
+        public void Delete(string folderPath, IEnumerable<string> names)
         {
-            foreach (var audio in audios)
+            Parallel.ForEach(names, name =>
             {
-                var audioPath = Path.Combine(folderPath, audio.FileName);
+                var pathToAudio = Path.Combine(folderPath, name);
 
-                File.Delete(audioPath);
-            }
+                File.Delete(pathToAudio);
+            });
         }
     }
 }

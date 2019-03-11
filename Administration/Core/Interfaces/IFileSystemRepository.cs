@@ -4,10 +4,10 @@ using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
 
 namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Interfaces
 {
-    internal interface IFileRepository
+    internal interface IFileSystemRepository
     {
-        Task UploadAsync(Audio audio, string path);
+        Task WriteToFileSystemAsync(Audio audio, string path);
 
-        void Delete(IEnumerable<Audio> audios, string path);
+        void Delete(string folderPath, IEnumerable<string> names);
     }
 }

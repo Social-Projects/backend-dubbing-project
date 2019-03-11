@@ -42,6 +42,10 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
                 .Property(s => s.Text)
                 .IsRequired();
 
+            modelBuilder.Entity<Speech>()
+                .Property(s => s.Duration)
+                .IsRequired();
+
             modelBuilder.Entity<Language>()
                 .HasMany(l => l.Audios)
                 .WithOne(a => a.Language)
@@ -53,6 +57,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Infrastructur
 
             modelBuilder.Entity<Language>()
                 .Property(l => l.Name)
+                .IsRequired();
+
+            modelBuilder.Entity<Audio>()
+                .Property(a => a.FileName)
+                .IsRequired();
+
+            modelBuilder.Entity<Audio>()
+                .Property(a => a.OriginalText)
                 .IsRequired();
         }
     }

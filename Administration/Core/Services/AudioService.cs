@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.DTOs;
 using SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Entities;
@@ -10,7 +12,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 {
     internal class AudioService : GenericService<Audio>, IAudioService
     {
-        private readonly IFileRepository _fileRepository;
+        private readonly IFileSystemRepository _fileSystemRepository;
 
         private readonly IRepository<Speech> _speechRepository;
 
@@ -19,16 +21,18 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
         public AudioService(
             IRepository<Audio> repository,
             IRepository<Speech> speechRepository,
-            IFileRepository fileRepository)
+            IFileSystemRepository fileSystemRepository)
             : base(repository)
         {
             _speechRepository = speechRepository;
-            _fileRepository = fileRepository;
+            _fileSystemRepository = fileSystemRepository;
         }
 
         public override async Task CreateAsync(Audio entity)
         {
             var audio = await ChangeNameAndDuration(entity);
+
+            entity.Id = default(int);
 
             await Repository.AddAsync(audio);
         }
@@ -41,17 +45,20 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 
                 audio.AudioFile = memStream.ToArray();
 
-                audio.FileName = audioFileDTO.File.FileName;
+                if (audio.FileName != "waiting.mp3")
+                {
+                    audio.FileName = audioFileDTO.File.FileName;
+                }
             }
 
             var path = Path.Combine(_audioFilesFolderPath, audio.FileName);
 
-            await _fileRepository.UploadAsync(audio, path);
+            await _fileSystemRepository.WriteToFileSystemAsync(audio, path);
         }
 
         public override async Task UpdateAsync(int id, Audio newEntity)
         {
-            var oldEntity = await Repository.GetByIdAsync(newEntity.Id);
+            var oldEntity = await Repository.GetByIdAsync(id);
 
             if (oldEntity == null)
                 throw new Exception($"{typeof(Audio)} entity with ID: {id} doesn't exist.");
@@ -69,9 +76,16 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 
         public override async Task DeleteAsync(int id)
         {
-            var audio = await Repository.GetByIdAsync(id);
+            var speech = await _speechRepository.GetByIdWithChildrenAsync(id, "Audios");
 
-            _fileRepository.Delete(audio.Speech.Audios, _audioFilesFolderPath);
+            var namesList = speech.Audios.Select(audio => audio.FileName).AsEnumerable();
+
+            DeleteAudioFiles(namesList);
+        }
+
+        public void DeleteAudioFiles(IEnumerable<string> namesList)
+        {
+            _fileSystemRepository.Delete(_audioFilesFolderPath, namesList);
         }
 
         private async Task<Audio> ChangeNameAndDuration(Audio entity)
@@ -86,6 +100,13 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
             var file = TagLib.File.Create(newPath);
             var duration = file.Properties.Duration;
             entity.Duration = Convert.ToInt32(duration.TotalSeconds);
+
+            if (speech.Duration < entity.Duration)
+            {
+                var newSpeech = new Speech {Id = speech.Id, Duration = entity.Duration};
+                await _speechRepository.UpdateFieldAsync(newSpeech, "Duration");
+            }
+
             entity.FileName = newFileName;
 
             return entity;

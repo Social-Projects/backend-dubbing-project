@@ -11,19 +11,18 @@
 
 <body>
 <header>
-    <img src="Media/theater-logo.png" class="header-logo"/>
+    <img src="Media/theater-logo.png" class="header-logo" alt="logo"/>
 </header>
 <main>
+    <div id="performance-selection-part">
+        <h1 class="headers">
+            Choose performance:
+        </h1>
+    </div>
     <div id="language-selection-part">
         <h1 class="headers">
             Choose your language:
         </h1>
-        <button id="english-button" class="language-button">
-            English
-        </button>
-        <button id="polish-button" class="language-button">
-            Polish
-        </button>
     </div>
     <div id="streaming-part">
         <button id="connecting-button">
@@ -37,21 +36,21 @@
         <h2 class="headers">
             Our links:
         </h2>
-        <a href="https://www.facebook.com/LvivPuppetTheater">
+        <a href="https://www.facebook.com/LvivPuppetTheater" target="_blank">
             <img
                     id="facebook-button"
                     src="Media/facebook-logo.png"
                     alt="facebook-logo"
             />
         </a>
-        <a href="https://www.instagram.com/lvivpuppettheater/">
+        <a href="https://www.instagram.com/lvivpuppettheater/" target="_blank">
             <img
                     id="instagram-button"
                     src="Media/instagram-logo.png"
                     alt="instagram-logo"
             />
         </a>
-        <a href="https://lvivpuppet.com/">
+        <a href="https://lvivpuppet.com/" target="_blank">
             <img
                     id="website-button"
                     src="Media/site-logo.png"
@@ -60,9 +59,6 @@
         </a>
     </div>
 </main>
-<footer>
-    <img src="Media/settings.png" class="footer-pic" alt="settings"/>
-</footer>
 <script defer src="Scripts/Main.js"></script>
 <script defer src="Scripts/signalr.js"></script>
 </body>
