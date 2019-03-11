@@ -19,7 +19,6 @@ FROM base AS final
 WORKDIR /app
 RUN mkdir AudioFiles
 COPY ./Web/AudioFiles ./AudioFiles
-RUN mkdir AudioFiles
 COPY --from=publish /app .
 COPY --from=build /src/Web/dubbing.db .
 ENTRYPOINT ["dotnet", "Web.dll"]
