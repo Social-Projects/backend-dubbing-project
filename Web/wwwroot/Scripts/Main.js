@@ -135,7 +135,7 @@ function handleMessage(link) {
 function startStream() {
     'use strict';
 
-    currentAudioLink = 'audio/Waiting.mp3';
+    currentAudioLink = 'audio/waiting.mp3';
 
     saveAndPlayAudio(currentAudioLink, true);
 }

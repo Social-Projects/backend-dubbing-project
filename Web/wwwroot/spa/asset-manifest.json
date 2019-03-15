@@ -1,0 +1,18 @@
+{
+  "main.css": "/spa/static/css/main.9f24532a.chunk.css",
+  "main.js": "/spa/static/js/main.b848fe42.chunk.js",
+  "main.js.map": "/spa/static/js/main.b848fe42.chunk.js.map",
+  "static/css/1.7b1f00b0.chunk.css": "/spa/static/css/1.7b1f00b0.chunk.css",
+  "static/js/1.a6d1a503.chunk.js": "/spa/static/js/1.a6d1a503.chunk.js",
+  "static/js/1.a6d1a503.chunk.js.map": "/spa/static/js/1.a6d1a503.chunk.js.map",
+  "runtime~main.js": "/spa/static/js/runtime~main.2ed039b0.js",
+  "runtime~main.js.map": "/spa/static/js/runtime~main.2ed039b0.js.map",
+  "static/media/index.css": "/spa/static/media/Montserrat-Regular.9c460951.ttf",
+  "static/media/theater-logo.png": "/spa/static/media/theater-logo.8b68e78f.png",
+  "static/media/font-awesome.css": "/spa/static/media/fa-brands-400.4b115e11.woff2",
+  "static/css/main.9f24532a.chunk.css.map": "/spa/static/css/main.9f24532a.chunk.css.map",
+  "static/css/1.7b1f00b0.chunk.css.map": "/spa/static/css/1.7b1f00b0.chunk.css.map",
+  "index.html": "/spa/index.html",
+  "precache-manifest.38f820e02656eba879388f034897ec3d.js": "/spa/precache-manifest.38f820e02656eba879388f034897ec3d.js",
+  "service-worker.js": "/spa/service-worker.js"
+}

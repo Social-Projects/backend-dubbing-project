@@ -19,6 +19,6 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
                     services.AddTransient<IAdministrationServiceCollection, AdministrationServiceCollection>())
                 .ConfigureServices(services =>
                     services.AddTransient<IInfrastructureServiceCollection, InfrastructureServiceCollection>())
-                .UseStartup<Startup>();
+                .UseStartup<Startup>().UseUrls("http://0.0.0.0:80");
     }
 }

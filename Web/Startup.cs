@@ -37,7 +37,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
             services.AddCors(options =>
             {
                 options.AddPolicy(
-                    "http://104.248.28.238:3000",
+                    CorsName,
                     builder =>
                     {
                         builder
@@ -110,7 +110,14 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Web
 
             app.UseStaticFiles();
 
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute("default", "{controller}/{action}");
+
+                routes.MapRoute("Home", "streamer", defaults: new { controller = "Spa", action = "Spa" });
+                routes.MapRoute("Performance", "streamer/performance", defaults: new { controller = "Spa", action = "Spa" });
+                routes.MapRoute("Stream", "streamer/stream", defaults: new { controller = "Spa", action = "Spa" });
+            });
         }
     }
 }
