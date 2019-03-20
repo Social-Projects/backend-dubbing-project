@@ -13,6 +13,8 @@ Migrations
 #Mp3 files
 *.mp3
 
+app/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

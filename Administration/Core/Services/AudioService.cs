@@ -16,7 +16,8 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
 
         private readonly IRepository<Speech> _speechRepository;
 
-        private readonly string _audioFilesFolderPath = Path.GetFullPath("../Web/AudioFiles/");
+        // private readonly string _audioFilesFolderPath = Path.GetFullPath("../Web/AudioFiles/");
+        private readonly string _audioFilesFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "AudioFiles");
 
         public AudioService(
             IRepository<Audio> repository,
@@ -117,7 +118,7 @@ namespace SoftServe.ITAcademy.BackendDubbingProject.Administration.Core.Services
         {
             var speech = await _speechRepository.GetByIdAsync(entity.SpeechId);
 
-            var file = TagLib.File.Create(_audioFilesFolderPath + entity.FileName);
+            var file = TagLib.File.Create(Path.Combine(_audioFilesFolderPath, entity.FileName));
             var duration = file.Properties.Duration;
             entity.Duration = Convert.ToInt32(duration.TotalSeconds);
 
